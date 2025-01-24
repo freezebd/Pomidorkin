@@ -1,0 +1,49 @@
+#	####################################################
+#	СИНТАКСИЧЕСКАЯ РАСКРАСКА ДЛЯ БИБИЛИОТЕКИ:
+#	iarduino_I2C_Relay
+#	####################################################
+#	ТИПЫ ДАННЫХ:							   (KEYWORD1)
+	iarduino_I2C_Relay	KEYWORD1
+#	####################################################
+#	МЕТОДЫ И ФУНКЦИИ:						   (KEYWORD2)
+	begin	KEYWORD2
+	changeAddress	KEYWORD2
+	reset	KEYWORD2
+	getAddress	KEYWORD2
+	getVersion	KEYWORD2
+	getModel	KEYWORD2
+	getPullI2C	KEYWORD2
+	setPullI2C	KEYWORD2
+	digitalWrite	KEYWORD2
+	digitalRead	KEYWORD2
+	analogWrite	KEYWORD2
+	analogRead	KEYWORD2
+	analogAveraging	KEYWORD2
+	freqPWM	KEYWORD2
+	currentWrite	KEYWORD2
+	currentWrite	KEYWORD2
+	currentRead	KEYWORD2
+	setCurrentProtection	KEYWORD2
+	getCurrentProtection	KEYWORD2
+	delCurrentProtection	KEYWORD2
+	resCurrentProtection	KEYWORD2
+	enableWDT	KEYWORD2
+	disableWDT	KEYWORD2
+	resetWDT	KEYWORD2
+	getStateWDT	KEYWORD2
+
+#	####################################################
+#	КОНСТАНТЫ:								   (LITERAL1)
+	LOW	LITERAL1
+	HIGH	LITERAL1
+	CURRENT_DISABLE	LITERAL1
+	CURRENT_LIMIT	LITERAL1
+	ALL_CHANNEL	LITERAL1
+	DEF_MODEL_2RM	LITERAL1
+	DEF_MODEL_4RT	LITERAL1
+	DEF_MODEL_4NC	LITERAL1
+	DEF_MODEL_4PC	LITERAL1
+	DEF_MODEL_4NP	LITERAL1
+	DEF_MODEL_4PP	LITERAL1
+
+	

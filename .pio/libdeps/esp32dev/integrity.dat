@@ -1,9 +1,9 @@
+gyverlibs/GyverNTP
 adafruit/DHT sensor library
-adafruit/Adafruit Unified Sensor
-emelianov/modbus-esp8266@^4.1.0
-gyverlibs/GyverDB
 tremaru/iarduino_I2C_Relay@^1.1.7
 gyverlibs/WiFiConnector
-gyverlibs/GyverNTP
 gyverlibs/Settings
 gyverlibs/GyverDS18
+adafruit/Adafruit Unified Sensor
+gyverlibs/GyverDB
+emelianov/modbus-esp8266@^4.1.0
