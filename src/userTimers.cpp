@@ -101,7 +101,7 @@ void read_t1_from_db() {
 //
 
 void userDhtRelays() {
-    // === термореле DHT1 AirTemp для  воздуха
+    // === термореле DHT1 AirTemp для нагрев  воздуха
     switch (data.Air1.State) {//data.dhtOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
@@ -118,22 +118,29 @@ void userDhtRelays() {
         case 5:  // ожидание понижение теспературы
             if (data.Air1.tx10 <= data.Air1.tTrigx10){//data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
                 data.Air1.State = 10;
+                Serial.println("Температура = " + (String)data.Air1.tx10);
+                Serial.println("Температура сработки = " + (String)data.Air1.tTrigx10);
+                Serial.println("Температура уставка = " + (String)data.Air1.tTreshold);
+
             }
             break;
         case 10:  // включаем охлаждение
             //digitalWrite(DHT1RELAY, ON);
-            reley_1_on();
+            reley_Air_on();
             data.Air1.Rel_on = true;
             data.Air1.State = 15;
             break;
         case 15:  // ожидаем повышение температуры + трешхолд
-            if (data.Air1.tx10 >= data.Air1.tTrigx10 - data.Air1.tTreshold) {
+            if (data.Air1.tx10 >= data.Air1.tTrigx10 + data.Air1.tTreshold) {
                 data.Air1.State = 20;
+                Serial.println("Температура = " + (String)data.Air1.tx10);
+                Serial.println("Температура сработки = " + (String)data.Air1.tTrigx10);
+                Serial.println("Температура уставка = " + (String)data.Air1.tTreshold);
             }
             break;
         case 20:  // используется при переключении ползунка в морде
             //digitalWrite(DHT1RELAY, OFF);
-            reley_1_off();
+            reley_Air_off();
             data.Air1.Rel_on = false;
             data.Air1.State = 0;
             break;

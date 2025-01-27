@@ -335,7 +335,7 @@ void build(sets::Builder &b) {
     }
 
     {//"Воздух"  
-        sets::Group g(b, "Воздух");
+        sets::Group g(b, db[kk::DS1name]);
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);

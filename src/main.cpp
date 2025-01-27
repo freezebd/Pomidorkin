@@ -278,8 +278,8 @@ void setup() {
 
 void loop() {
     if((millis()-prevMs) > 2ul){
-        Serial.print("время цикла: ");
-        Serial.println(millis()-prevMs);
+       // Serial.print("время цикла: ");
+       // Serial.println(millis()-prevMs);
     }
     prevMs = millis();
     // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.
