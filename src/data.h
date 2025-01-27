@@ -30,6 +30,7 @@ struct Air_sensor
     int16_t tTrigx10 = 0;   // температура срабатывания реле
     int16_t hTrig = 0; //влажность сработки реле
     int16_t hTreshold = 0;
+    int16_t tTreshold = 0;
     bool Rel_on = false;  // флаг включения реле
     byte State = 0;  // автомат работы реле
 };

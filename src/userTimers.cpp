@@ -115,25 +115,25 @@ void userDhtRelays() {
                 data.Air1.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
-        case 5:  // ожидание превышения теспературы
+        case 5:  // ожидание понижение теспературы
             if (data.Air1.tx10 <= data.Air1.tTrigx10){//data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
                 data.Air1.State = 10;
             }
             break;
         case 10:  // включаем охлаждение
             //digitalWrite(DHT1RELAY, ON);
-            reley_Air_on();
+            reley_1_on();
             data.Air1.Rel_on = true;
             data.Air1.State = 15;
             break;
-        case 15:  // ожидаем понижения температуры + трешхолд
-            if (data.Air1.tx10 >= data.Air1.tTrigx10 - data.Air1.hTreshold) {
+        case 15:  // ожидаем повышение температуры + трешхолд
+            if (data.Air1.tx10 >= data.Air1.tTrigx10 - data.Air1.tTreshold) {
                 data.Air1.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
             //digitalWrite(DHT1RELAY, OFF);
-            reley_Air_off();
+            reley_1_off();
             data.Air1.Rel_on = false;
             data.Air1.State = 0;
             break;

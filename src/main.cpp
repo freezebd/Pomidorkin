@@ -175,22 +175,24 @@ void setup() {
     // пересчитываем температуру х10 чтобы не множиться в цикле
     // tdht1MaxX10
     // hdht2Min
-    data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+   // data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+    data.Air1.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+
     //data.dhtTwo.hTrig = db[kk::dht2HumRele_startHum].toInt();
     data.Soil1.hTrig = db[kk::dht2HumRele_startHum].toInt();
     // берем показания
     switch (db[kk::dht1TempRele_TempThreshold].toInt()) {
         case 0:
-            data.dhtOne.tTreshold = 5;
+            data.Air1.tTreshold = 5;
             break;
         case 1:
-            data.dhtOne.tTreshold = 10;
+            data.Air1.tTreshold = 10;
             break;
         case 2:
-            data.dhtOne.tTreshold = 20;
+            data.Air1.tTreshold = 20;
             break;
         case 3:
-            data.dhtOne.tTreshold = 30;
+            data.Air1.tTreshold = 30;
             break;
     }
     switch (db[kk::dht2HumRele_HumThreshold].toInt()) {
@@ -213,21 +215,21 @@ void setup() {
     }
     // userDhtRelays();
     //
-    data.dsOne.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+    data.Air1.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
     data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;  // дописать для влажности
     
     switch (db[kk::DS1Rele_TempThreshold].toInt()) {
         case 0:
-            data.dsOne.tTreshold = 2;
+            data.Air1.tTreshold = 2;
             break;
         case 1:
-            data.dsOne.tTreshold = 5;
+            data.Air1.tTreshold = 5;
             break;
         case 2:
-            data.dsOne.tTreshold = 10;
+            data.Air1.tTreshold = 10;
             break;
         case 3:
-            data.dsOne.tTreshold = 30;
+            data.Air1.tTreshold = 30;
             break;
     }
     switch (db[kk::DS2Rele_TempThreshold].toInt()) {
@@ -321,11 +323,11 @@ void loop() {
             data.secondsUptime = 0;
             data.uptime_Days++;
         }
-        get1ds18();  // тут умножение, часто не вызываем
-        get2ds18();  // тут умножение, часто не вызываем
+       // get1ds18();  // тут умножение, часто не вызываем
+       // get2ds18();  // тут умножение, часто не вызываем
         userSixTimers();
-        userNatureTimer();
-        userFertiTimer();
+       // userNatureTimer();
+       // userFertiTimer();
 
          
     }
