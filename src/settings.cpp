@@ -63,9 +63,12 @@ void update(sets::Updater &upd) {
     upd.update("aquaDoz1_led"_h, data.relFerti_on);
     upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
-    upd.update(kk::floattempdht1, data.Air1.tfloat);  // rs485
-    upd.update(kk::humdht1, data.Air1.AirHum);          // rs485
+    upd.update(kk::floattempdht1, data.Air1.tfloat);   // rs485 Температура float
+    upd.update(kk::humdht1, data.Air1.hfloat);          // rs485 Влажность float
     upd.update(kk::dht1Rele_led, data.Air1.Rel_on);
+  //  upd.update(kk::dht1TempRele_startTemp, data.Air1.tTrigx10 / 10 );
+  //  upd.update(kk::dht1TempRele_TempThreshold, data.Air1.tTreshold );
+
     upd.update(kk::floattempdht2, data.Soil1.SoilTemp); // rs 485
     upd.update(kk::humdht2, data.Soil1.SoilHum);        // rs 485
     //upd.update(kk::dht2Rele_led, data.dhtTwo.Rel_on);
@@ -205,7 +208,7 @@ void build(sets::Builder &b) {
             break;
         case kk::dht1TempRele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.Air1.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+             data.Air1.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
             userDhtRelays();
             b.reload();
             break;
@@ -335,7 +338,7 @@ void build(sets::Builder &b) {
     }
 
     {//"Воздух"  
-        sets::Group g(b, db[kk::DS1name]);
+        sets::Group g(b, db[kk::DS1name]); // ИЗМЕНИТЬ ИМЯ ПЕРЕМЕННОЙ НА НОРМАЛЬНОЕ !!!!
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
@@ -345,7 +348,7 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             // b.LabelNum(kk::humdht1, "Влажность", data.dhtOne.hum, sets::Colors::Aqua);  // влажность 1
-            b.LabelNum(kk::humdht1, "Влажность", data.Air1.AirHum, 0xd17e1f);  // 0xd17e1f влажность 1
+            b.LabelFloat(kk::humdht1, "Влажность", data.Air1.hfloat, 1, 0xd17e1f);  // 0xd17e1f влажность 1
             // b.Label("%", "");
             b.Label("%");
         }
@@ -372,7 +375,7 @@ void build(sets::Builder &b) {
     }     //"Воздух"   
     
     { //"Почва" 
-        sets::Group g(b, "Почва");
+        sets::Group g(b, db[kk::DS2name]); // ИЗЕНИТЬ НА НОРМАЛЬНОЕ ИМЯ ДАТЧИКА
         {
             sets::Row g(b);
             b.LabelFloat(kk::floattempdht2, db[kk::dht2name], data.Soil1.SoilTemp, 1, 0x3da7f2);  // DHT22 темп 2
@@ -380,7 +383,7 @@ void build(sets::Builder &b) {
         }
         {
             sets::Row g(b);
-            b.LabelNum(kk::humdht2, "Влажность", data.Soil1.SoilHum, 0x2680bf);  // Влажность 2
+            b.LabelFloat(kk::humdht2, "Влажность", data.Soil1.SoilHum, 1, 0x2680bf);  // Влажность 2
             b.Label("%");
         }
         if (b.Switch(kk::dht2HumRele_enabled, "Увлажнение", nullptr, 0x3da7f2)) {  // Реле 1
@@ -727,8 +730,8 @@ void build(sets::Builder &b) {
                 b.Input(kk::t6Discr_name, "Имя Реле6:");
                 b.Input(kk::dht1name, "dht22 1:");
                 b.Input(kk::dht2name, "dht22 2:");
-                b.Input(kk::DS1name, "DS18B20 1:");
-                b.Input(kk::DS2name, "DS18B20 2:");
+                b.Input(kk::DS1name, "ДАТЧИК 1");
+                b.Input(kk::DS2name, "ДАТЧИК 2:");
             }
             {
                 sets::Menu g(b, "Расширенные");

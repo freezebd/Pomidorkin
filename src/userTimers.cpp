@@ -117,25 +117,27 @@ void userDhtRelays() {
             break;
         case 5:  // ожидание понижение теспературы
             if (data.Air1.tx10 <= data.Air1.tTrigx10){//data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
-                data.Air1.State = 10;
+               
                 Serial.println("Температура = " + (String)data.Air1.tx10);
                 Serial.println("Температура сработки = " + (String)data.Air1.tTrigx10);
                 Serial.println("Температура уставка = " + (String)data.Air1.tTreshold);
-
+                data.Air1.State = 10;
             }
             break;
-        case 10:  // включаем охлаждение
+        case 10:  // включаем нагрев
             //digitalWrite(DHT1RELAY, ON);
-            reley_Air_on();
+            reley_Air_on(); 
             data.Air1.Rel_on = true;
+            Serial.println(data.Air1.Rel_on);
             data.Air1.State = 15;
             break;
         case 15:  // ожидаем повышение температуры + трешхолд
             if (data.Air1.tx10 >= data.Air1.tTrigx10 + data.Air1.tTreshold) {
-                data.Air1.State = 20;
+                
                 Serial.println("Температура = " + (String)data.Air1.tx10);
                 Serial.println("Температура сработки = " + (String)data.Air1.tTrigx10);
                 Serial.println("Температура уставка = " + (String)data.Air1.tTreshold);
+                data.Air1.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
@@ -161,6 +163,9 @@ void userDhtRelays() {
             break;
         case 5:  // ожидание понижения влажности
             if (data.Soil1.SoilHum <= data.Soil1.hTrig){   //(data.dhtTwo.hum <= data.dhtTwo.hTrig) 
+                Serial.println("Почва = " + (String)data.Soil1.SoilHum);
+                Serial.println("Почва сработки = " + (String)data.Soil1.hTrig);
+                Serial.println("Почва уставка = " + (String)data.Soil1.hTreshold);
                 data.Soil1.State = 10;
             }
             break;

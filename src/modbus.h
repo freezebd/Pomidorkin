@@ -53,8 +53,9 @@ void riadSensorAir() {
       
       mb.task();
       data.Air1.tfloat = (airSensorData[1] / 10.0);
-      data.Air1.AirHum = (airSensorData[0] / 10.0);
       data.Air1.tx10 = (airSensorData[1]);
+      data.Air1.hfloat = (airSensorData[0]) / 10.0;
+      data.Air1.hx10 = (airSensorData[0]);
       delay(10);  // Небольшая задержка, чтобы не блокировать выполнение
     }
   

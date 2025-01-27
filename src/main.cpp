@@ -79,7 +79,7 @@ void setup() {
 
     db.init(kk::dht1name, "Имя первого dht22");
     db.init(kk::dht1TempRele_enabled, (uint8_t)0);
-    db.init(kk::dht1TempRele_startTemp, (uint8_t)26);
+    db.init(kk::dht1TempRele_startTemp, (uint8_t)30);
     db.init(kk::dht1TempRele_TempThreshold, (uint8_t)1);
 
     db.init(kk::dht2name, "Имя второго dht22");
@@ -215,7 +215,7 @@ void setup() {
     }
     // userDhtRelays();
     //
-    data.Air1.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+  /*  data.Air1.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
     data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;  // дописать для влажности
     
     switch (db[kk::DS1Rele_TempThreshold].toInt()) {
@@ -247,7 +247,7 @@ void setup() {
             data.dsTwo.tTreshold = 30;
             break;
     }
-    // userDSRelays();
+    // userDSRelays(); */
 
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
