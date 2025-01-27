@@ -353,14 +353,17 @@ void build(sets::Builder &b) {
             // data.dht1TempRele_enbl = db[kk::dht1TempRele_enabled].toInt();
 
             if (db[kk::dht1TempRele_enabled].toInt() == 0)
-                data.dhtOne.State = 0;  // принудительно выключаем реле
+               // data.dhtOne.State = 0;  // принудительно выключаем реле
+               data.Air1.State = 0;  // принудительно выключаем реле
             userDhtRelays();
             b.reload();
         }
         if (db[kk::dht1TempRele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
-                b.LED(kk::dht1Rele_led, "Cтатус >>", data.dhtOne.Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
+               // b.LED(kk::dht1Rele_led, "Cтатус >>", data.dhtOne.Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
+                b.LED(kk::dht1Rele_led, "Cтатус >>", data.Air1.Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
+
                 b.Label(" ");
             }
             b.Number(kk::dht1TempRele_startTemp, "Включается при понижении, °C");

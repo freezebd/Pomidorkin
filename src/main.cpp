@@ -157,8 +157,8 @@ void setup() {
     db.init(kk::aquaDoz1_8time, (uint32_t)76000ul);
     db.init(kk::aquaDoze1_dozeTime, (uint16_t)59);
 
-    db.init(kk::btnName, "имечко кнопоньки");
-    db.init(kk::btnColor, 0xff00aa);
+   // db.init(kk::btnName, "имечко кнопоньки");
+   // db.init(kk::btnColor, 0xff00aa);
     db.dump(Serial);
 
     // первый запуск всех исполнительных механизмов
