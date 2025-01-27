@@ -101,42 +101,45 @@ void read_t1_from_db() {
 //
 
 void userDhtRelays() {
-    // === термореле DHT1 для охлаждения воздуха
-    switch (data.dhtOne.State) {
+    // === термореле DHT1 AirTemp для  воздуха
+    switch (data.Air1.State) {//data.dhtOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
             //            // if (data.dht1TempRele_enbl != 0) {
             if (db[kk::dht1TempRele_enabled].toInt() != 0) {
-                data.dhtOne.State = 5;
-            } else if (data.dhtOne.Rel_on) {
-                data.dhtOne.State = 20;  // выключим по перемещению ползунка в OFF
+                //data.dhtOne.State = 5;
+                data.Air1.State = 5;
+            } else if (data.Air1.Rel_on) {
+                data.Air1.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
         case 5:  // ожидание превышения теспературы
-            if (data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
-                data.dhtOne.State = 10;
+            if (data.Air1.tx10 <= data.Air1.tTrigx10){//data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
+                data.Air1.State = 10;
             }
             break;
         case 10:  // включаем охлаждение
-            digitalWrite(DHT1RELAY, ON);
-            data.dhtOne.Rel_on = true;
-            data.dhtOne.State = 15;
+            //digitalWrite(DHT1RELAY, ON);
+            reley_Air_on();
+            data.Air1.Rel_on = true;
+            data.Air1.State = 15;
             break;
         case 15:  // ожидаем понижения температуры + трешхолд
-            if (data.dhtOne.tx10 <= data.dhtOne.tTrigx10 - data.dhtOne.tTreshold) {
-                data.dhtOne.State = 20;
+            if (data.Air1.tx10 >= data.Air1.tTrigx10 - data.Air1.hTreshold) {
+                data.Air1.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-            digitalWrite(DHT1RELAY, OFF);
-            data.dhtOne.Rel_on = false;
-            data.dhtOne.State = 0;
+            //digitalWrite(DHT1RELAY, OFF);
+            reley_Air_off();
+            data.Air1.Rel_on = false;
+            data.Air1.State = 0;
             break;
     }  // switch (dht1State)
     //
-    // === термореле DHT2 для увлажнения почвы
+    // === термореле Датчика почвы для увлажнения почвы
     switch (data.Soil1.State) {    //(data.dhtTwo.State) 
         // инициализация
         //  ползунок включен - отрабатываем
@@ -156,7 +159,7 @@ void userDhtRelays() {
             break;
         case 10:  // включаем охлаждение
            // digitalWrite(DHT2RELAY, ON);
-           reley_on();
+           reley_Soil_on();
             //data.dhtTwo.Rel_on = true;
             data.Soil1.Rel_on =true;
             data.Soil1.State = 15;
@@ -168,7 +171,7 @@ void userDhtRelays() {
             break;
         case 20:  // используется при переключении ползунка в морде
             //digitalWrite(DHT2RELAY, OFF);
-            reley_off();
+            reley_Soil_off();
            // relay1.digitalWrite(1,LOW);
             data.Soil1.Rel_on = false;
             data.Soil1.State = 0;
@@ -262,13 +265,15 @@ void userSixTimers() {
             if ((db[kk::t1Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t1Discr_endTime].toInt())) {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_1, ON);
+                   // digitalWrite(RELE_1, ON);
+                   reley_1_on();
                     data.rel1_on = 1;
                 }
             } else {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_1, OFF);
+                    //digitalWrite(RELE_1, OFF);
+                    reley_1_off();
                     data.rel1_on = 0;
                 }
             }
@@ -277,13 +282,15 @@ void userSixTimers() {
             if ((db[kk::t1Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t1Discr_endTime].toInt())) {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_1, OFF);
+                    //digitalWrite(RELE_1, OFF);
+                    reley_1_off();
                     data.rel1_on = 0;
                 }
             } else {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_1, ON);
+                    //digitalWrite(RELE_1, ON);
+                    reley_1_on();
                     data.rel1_on = 1;
                 }
             }
@@ -291,7 +298,8 @@ void userSixTimers() {
     } else {
         if (data.rel1_on)  // если было включено, выключим
         {
-            digitalWrite(RELE_1, OFF);
+            //digitalWrite(RELE_1, OFF);
+            reley_1_off();
             data.rel1_on = 0;
         }
     }

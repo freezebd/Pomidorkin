@@ -23,8 +23,15 @@ Data data;
 
 struct Air_sensor
 {
-    float AirTemp = -100.0;
-    float AirHum = -100.0;
+    int16_t AirTemp = -100;
+    int16_t AirHum = -100;
+    float tfloat = -100.0;
+    int16_t tx10 = 0;       // температура переведенная из флоат в интежер * 10
+    int16_t tTrigx10 = 0;   // температура срабатывания реле
+    int16_t hTrig = 0; //влажность сработки реле
+    int16_t hTreshold = 0;
+    bool Rel_on = false;  // флаг включения реле
+    byte State = 0;  // автомат работы реле
 };
 struct Soil_sensor
 {
@@ -137,7 +144,7 @@ extern DHTxx_sensor dhtTwo;
 extern Ds18b20_sensor dsOne;
 extern Ds18b20_sensor dsTwo;
 
-extern Air_sensor Air1;
+extern Air_sensor Air1; 
 extern Soil_sensor Soil1;
 
 

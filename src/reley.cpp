@@ -20,7 +20,7 @@ void init_reley(){                                                       //
 
 }                                                                   //
                                                                     //
- void reley_on(){                                                        //
+ void reley_Soil_on(){                                                        //
 // //  Включаем и выключаем каналы модуля:                             //
      pwrkey.digitalWrite(1,HIGH); 
      //pwrkey1.digitalWrite(2,LOW);        //   Включаем 1 канал и выключаем 4.
@@ -32,7 +32,21 @@ void init_reley(){                                                       //
 //     pwrkey.digitalWrite(4,HIGH); pwrkey.digitalWrite(3,LOW);        //   Включаем 4 канал и выключаем 3.
 //     delay(500);                                                     //   Ждём   500 мс.
  }       
- void reley_off(){
+ void reley_Soil_off(){
     pwrkey.digitalWrite(1,LOW);
 
- }                     
+ }  
+ void reley_1_on(){
+    pwrkey.digitalWrite(2,HIGH);
+ }    
+ void reley_1_off(){
+    pwrkey.digitalWrite(2, LOW);
+ }
+void reley_Air_on(){
+    pwrkey1.digitalWrite(1,HIGH);
+
+ }    
+ void reley_Air_off(){
+    pwrkey1.digitalWrite(1,LOW);
+ } 
+                 
