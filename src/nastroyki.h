@@ -9,7 +9,7 @@
 #define ON 1  // включение симмисторов лог. единицей
 #define OFF 0 //
 
-//      //      //      для тестов пин 17 
+/* //      //      //      для тестов пин 17 
 #define DS18B20_1 13
 #define DS_1_RELAY 18
  
@@ -42,7 +42,7 @@
 #define RED_PWM_CHANNEL 0  // не менять
 #define GREEN_PWM_CHANNEL 1 
 #define BLUE_PWM_CHANNEL 2
-
+*/
 #define INDIKATOR 2 // на каком пине индикаторный светодиод
 #define BTN 0 // встроенная кнопка
 

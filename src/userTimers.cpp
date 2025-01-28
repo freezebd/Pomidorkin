@@ -6,22 +6,22 @@
 
 #include "data.h"
 #include "nastroyki.h"
-#include "sensors.h"
+// #include "sensors.h"
 #include "settings.h"
 #include "reley.h"
 
 
-static uint16_t RED_PWM, GREEN_PWM, BLUE_PWM;  // Значения компонентов Red, Green, Blue (0–4095)
-static bool t6_rightDay = 0;
-static uint16_t brightness = 4095;  // Максимальная яркость (4095 для 12-битного PWM)
-static byte t1fase = 0;             // автомат состояний каждой фазы природного освещения
+// static uint16_t RED_PWM, GREEN_PWM, BLUE_PWM;  // Значения компонентов Red, Green, Blue (0–4095)
+ static bool t6_rightDay = 0;  // День недели для таймера 6
+// static uint16_t brightness = 4095;  // Максимальная яркость (4095 для 12-битного PWM)
+// static byte t1fase = 0;             // автомат состояний каждой фазы природного освещения
 // static bool data.t1isWorks = 0;                     // прямо сейчас работает
-static uint32_t t1fase_prevSeconds = 0;  // секунденый таймер для отрисовки природного освещения
-static byte curr_sunrise_dim = 0;        // шаги яркости при рассвете
-static byte curr_sunset_dim = 0;         // шаги яркости при закате
+// static uint32_t t1fase_prevSeconds = 0;  // секунденый таймер для отрисовки природного освещения
+// static byte curr_sunrise_dim = 0;        // шаги яркости при рассвете
+// static byte curr_sunset_dim = 0;         // шаги яркости при закате
 
-byte releFertiProcess = 0;  // автомат подачи дозы удобрений
-
+// byte releFertiProcess = 0;  // автомат подачи дозы удобрений
+/*  init pins()
 void init_pins() {
     pinMode(DHT1RELAY, OUTPUT);
     digitalWrite(DHT1RELAY, OFF);
@@ -76,7 +76,9 @@ void init_pins() {
 //
 //
 
-// ЧИТАЕМ ИЗ БАЗЫ В RAM data.xxx
+*/
+
+/* // ЧИТАЕМ ИЗ БАЗЫ В RAM data.xxx
 void read_t1_from_db() {
     // рассчет времени шага увеличения яркости при рассвете (в сек)
     if (!db[kk::t1f2_dim].toInt()) db[kk::t1f2_dim] = 1ul;
@@ -99,9 +101,9 @@ void read_t1_from_db() {
 //
 //
 //
-
-void userDhtRelays() {
-    // === термореле DHT1 AirTemp для нагрев  воздуха
+*/
+void userDhtRelays() { // === термореле DHT1 AirTemp для нагрев  воздуха
+   
     switch (data.Air1.State) {//data.dhtOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
@@ -193,8 +195,8 @@ void userDhtRelays() {
 //
 //
 //
-void userDSRelays() {
-    // === термореле DS18B20_1 для охлаждения воды\почвы
+void userDSRelays() {// === термореле DS18B20_1 для охлаждения воды\почвы
+    
     switch (data.dsOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
@@ -212,7 +214,7 @@ void userDSRelays() {
             }
             break;
         case 10:  // включаем охлаждение
-            digitalWrite(DS_1_RELAY, ON);
+           // digitalWrite(DS_1_RELAY, ON); // СЮДА ДОБАВИМ СВОЕ РЕЛЕ
             data.dsOne.rel_on = true;
             data.dsOne.State = 15;
             break;
@@ -222,7 +224,8 @@ void userDSRelays() {
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-            digitalWrite(DS_1_RELAY, OFF);
+           // digitalWrite(DS_1_RELAY, OFF);  // СЮДА ДОБАВИМ СВОЕ РЕЛЕ
+            data.dsOne.rel_on = true;
             data.dsOne.rel_on = false;
             data.dsOne.State = 0;
             break;
@@ -246,7 +249,7 @@ void userDSRelays() {
             }
             break;
         case 10:  // включаем нагрев
-            digitalWrite(DS_2_RELAY, ON);
+           // digitalWrite(DS_2_RELAY, ON);
             data.dsTwo.rel_on = true;
             data.dsTwo.State = 15;
             break;
@@ -256,7 +259,7 @@ void userDSRelays() {
             }
             break;
         case 20:  // так же используется при переключении ползунка в морде
-            digitalWrite(DS_2_RELAY, OFF);
+           // digitalWrite(DS_2_RELAY, OFF);
             data.dsTwo.rel_on = false;
             data.dsTwo.State = 0;
             break;
@@ -267,8 +270,8 @@ void userDSRelays() {
 //
 //
 
-void userSixTimers() {
-    // таймер 1 ===
+void userSixTimers() { // Таймеры с1 - по 6 ===
+   
     // === таймер Реле 1
     // if (db[kk::t1Discr_enabled].toBool()) {
     if (data.t1discr_enbl) {
@@ -324,13 +327,13 @@ void userSixTimers() {
             if ((db[kk::t2Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t2Discr_endTime].toInt())) {
                 if (!data.rel2_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_2, ON);
+                   // digitalWrite(RELE_2, ON);
                     data.rel2_on = 1;
                 }
             } else {
                 if (data.rel2_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_2, OFF);
+                   // digitalWrite(RELE_2, OFF);
                     data.rel2_on = 0;
                 }
             }
@@ -339,13 +342,13 @@ void userSixTimers() {
             if ((db[kk::t2Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t2Discr_endTime].toInt())) {
                 if (data.rel2_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_2, OFF);
+                   // digitalWrite(RELE_2, OFF);
                     data.rel2_on = 0;
                 }
             } else {
                 if (!data.rel2_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_2, ON);
+                  //  digitalWrite(RELE_2, ON);
                     data.rel2_on = 1;
                 }
             }
@@ -353,7 +356,7 @@ void userSixTimers() {
     } else {
         if (data.rel2_on)  // если было включено, выключим
         {
-            digitalWrite(RELE_2, OFF);
+          //  digitalWrite(RELE_2, OFF);
             data.rel2_on = 0;
         }
     }
@@ -366,13 +369,13 @@ void userSixTimers() {
             if ((db[kk::t3Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t3Discr_endTime].toInt())) {
                 if (!data.rel3_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_3, ON);
+                   // digitalWrite(RELE_3, ON);
                     data.rel3_on = 1;
                 }
             } else {
                 if (data.rel3_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_3, OFF);
+                   // digitalWrite(RELE_3, OFF);
                     data.rel3_on = 0;
                 }
             }
@@ -381,13 +384,13 @@ void userSixTimers() {
             if ((db[kk::t3Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t3Discr_endTime].toInt())) {
                 if (data.rel3_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_3, OFF);
+                  //  digitalWrite(RELE_3, OFF);
                     data.rel3_on = 0;
                 }
             } else {
                 if (!data.rel3_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_3, ON);
+                   // digitalWrite(RELE_3, ON);
                     data.rel3_on = 1;
                 }
             }
@@ -395,7 +398,7 @@ void userSixTimers() {
     } else {
         if (data.rel3_on)  // если было включено, выключим
         {
-            digitalWrite(RELE_3, OFF);
+           // digitalWrite(RELE_3, OFF);
             data.rel3_on = 0;
         }
     }
@@ -408,13 +411,13 @@ void userSixTimers() {
             if ((db[kk::t4Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t4Discr_endTime].toInt())) {
                 if (!data.rel4_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_4, ON);
+                  //  digitalWrite(RELE_4, ON);
                     data.rel4_on = 1;
                 }
             } else {
                 if (data.rel4_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_4, OFF);
+                   // digitalWrite(RELE_4, OFF);
                     data.rel4_on = 0;
                 }
             }
@@ -423,13 +426,13 @@ void userSixTimers() {
             if ((db[kk::t4Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t4Discr_endTime].toInt())) {
                 if (data.rel4_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_4, OFF);
+                  //  digitalWrite(RELE_4, OFF);
                     data.rel4_on = 0;
                 }
             } else {
                 if (!data.rel4_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_4, ON);
+                   // digitalWrite(RELE_4, ON);
                     data.rel4_on = 1;
                 }
             }
@@ -438,7 +441,7 @@ void userSixTimers() {
         if (data.rel4_on)  // если было включено, выключим
         {
             data.rel4_on = 0;
-            digitalWrite(RELE_4, OFF);
+          // digitalWrite(RELE_4, OFF);
         }
     }
     // таймер 5===
@@ -450,13 +453,13 @@ void userSixTimers() {
             if ((db[kk::t5Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t5Discr_endTime].toInt())) {
                 if (!data.rel5_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_5, ON);
+                  //  digitalWrite(RELE_5, ON);
                     data.rel5_on = 1;
                 }
             } else {
                 if (data.rel5_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_5, OFF);
+                   // digitalWrite(RELE_5, OFF);
                     data.rel5_on = 0;
                 }
             }
@@ -465,13 +468,13 @@ void userSixTimers() {
             if ((db[kk::t5Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t5Discr_endTime].toInt())) {
                 if (data.rel5_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_5, OFF);
+                  //  digitalWrite(RELE_5, OFF);
                     data.rel5_on = 0;
                 }
             } else {
                 if (!data.rel5_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_5, ON);
+                   // digitalWrite(RELE_5, ON);
                     data.rel5_on = 1;
                 }
             }
@@ -479,7 +482,7 @@ void userSixTimers() {
     } else {
         if (data.rel5_on)  // если было включено, выключим
         {
-            digitalWrite(RELE_5, OFF);
+          //  digitalWrite(RELE_5, OFF);
             data.rel5_on = 0;
         }
     }
@@ -524,13 +527,13 @@ void userSixTimers() {
             if ((db[kk::t6Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t6Discr_endTime].toInt())) {
                 if (!data.rel6_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_6, ON);
+                   // digitalWrite(RELE_6, ON);
                     data.rel6_on = 1;
                 }
             } else {
                 if (data.rel6_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_6, OFF);
+                   // digitalWrite(RELE_6, OFF);
                     data.rel6_on = 0;
                 }
             }
@@ -539,13 +542,13 @@ void userSixTimers() {
             if ((db[kk::t6Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t6Discr_endTime].toInt())) {
                 if (data.rel6_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_6, OFF);
+                   // digitalWrite(RELE_6, OFF);
                     data.rel6_on = 0;
                 }
             } else {
                 if (!data.rel6_on)  // avoid extra digWrite
                 {
-                    digitalWrite(RELE_6, ON);
+                   // digitalWrite(RELE_6, ON);
                     data.rel6_on = 1;
                 }
             }
@@ -553,7 +556,7 @@ void userSixTimers() {
     } else {
         if (data.rel6_on)  // если было включено, выключим
         {
-            digitalWrite(RELE_6, OFF);
+           // digitalWrite(RELE_6, OFF);
             data.rel6_on = 0;
         }
     }
@@ -563,7 +566,7 @@ void userSixTimers() {
 //
 //
 //
-
+/*  // Природное освещение
 void userNatureTimer() {  //     // Природное освещение
     // нажали кнопку "Утвердить" в настройках природного освещения, или первый старт
     if (data.timer_nature_applied) {
@@ -762,8 +765,9 @@ void userNatureTimer() {  //     // Природное освещение
 //
 //
 //
+*/
 
-// таймер автодозатора от Аквамена
+/* // таймер автодозатора от Аквамена
 // https://www.youtube.com/watch?v=XGLbtAAbIi4&feature=youtu.be
 void userFertiTimer() {
     // if (data.tFerti_enbl) {
@@ -875,3 +879,4 @@ void userFertiTimer() {
             break;
     }  // switch
 }  // userFertiTimer()
+*/

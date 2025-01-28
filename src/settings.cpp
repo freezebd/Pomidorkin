@@ -63,8 +63,8 @@ void update(sets::Updater &upd) {
     upd.update("t6Discr_led"_h, data.rel6_on);
 
     // upd.update("t1f_led"_h, data.t1isWorks);
-    upd.update("aquaDoz1_led"_h, data.relFerti_on);
-    upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
+   // upd.update("aquaDoz1_led"_h, data.relFerti_on);
+   // upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
     upd.update(kk::floattempdht1, data.Air1.tfloat);   // rs485 Температура float
     upd.update(kk::humdht1, data.Air1.hfloat);          // rs485 Влажность float
@@ -77,9 +77,9 @@ void update(sets::Updater &upd) {
     //upd.update(kk::dht2Rele_led, data.dhtTwo.Rel_on);
     upd.update(kk::dht2Rele_led, data.Soil1.Rel_on);    // реле влажность 
 
-    upd.update(kk::floattempDS1, data.dsOne.tfloat);
-    upd.update(kk::DS1Rele_led, data.dsOne.rel_on);
-    upd.update(kk::floattempDS2, data.dsTwo.tfloat);
+  //  upd.update(kk::floattempDS1, data.dsOne.tfloat);
+  //  upd.update(kk::DS1Rele_led, data.dsOne.rel_on);
+ //   upd.update(kk::floattempDS2, data.dsTwo.tfloat);
     //upd.update(kk::DS2Rele_led, data.dsTwo.rel_on);
     upd.update(kk::DS2Rele_led, data.Soil1.Rel_on);
 
@@ -163,7 +163,9 @@ void build(sets::Builder &b) {
             userSixTimers();
             b.reload();
             break;
-        // обовляем отрисовку природного освещения если в вебморде изменения
+
+       
+ /*       // обовляем отрисовку природного освещения если в вебморде изменения
         case kk::t1f1_startTime:
             data.timer_nature_applied = 1;
             userNatureTimer();
@@ -209,6 +211,8 @@ void build(sets::Builder &b) {
             userNatureTimer();
             b.reload();
             break;
+*/
+
         case kk::dht1TempRele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
              data.Air1.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;

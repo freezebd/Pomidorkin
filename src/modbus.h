@@ -67,9 +67,6 @@ void riadSensorAir() {
 
   }
 }
-
-
-
 void riadSensorSoil() {
   if (!mb.slave()) {    // Проверяем, не идет ли в данный момент транзакция
     mb.readHreg(SOIL_SENSOR_ADDR, FIRST_REG, soilSensorData, REG_COUNT);//, cb);// Чтение данных с датчика воздуха (адрес 2)

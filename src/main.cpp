@@ -25,7 +25,7 @@
 // #include "driver/temp_sensor.h"
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
-#include "sensors.h"
+// #include "sensors.h"
 #include "settings.h"
 #include "userTimers.h"
 #include "modbus.h"
@@ -50,11 +50,11 @@ uint32_t prevMs = 0;
 uint32_t myMillis_sens;  // таймер для опроса датчиков
 void setup() {
     each5min.rst();
-    init_pins();
+    // init_pins();
 
     Serial.begin(115200);
     init_modbus(); // Настройка modbus
-    init_reley(); 
+    init_reley();  // Реле I2C
     
     Serial.println("\n\n\n\t\t\t ESP STARTED !\n\n");
 
@@ -130,7 +130,7 @@ void setup() {
     db.init(kk::t6Discr_inFriday, (uint8_t)0);
     db.init(kk::t6Discr_inSaturday, (uint8_t)0);
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
-
+/*
     db.init(kk::t1f_enabled, (uint8_t)0);
     db.init(kk::t1f1_startTime, (uint32_t)21600ul);
     db.init(kk::t1f2_startTime, (uint32_t)25200ul);
@@ -158,15 +158,16 @@ void setup() {
     db.init(kk::aquaDoz1_need8th, (uint8_t)0);
     db.init(kk::aquaDoz1_8time, (uint32_t)76000ul);
     db.init(kk::aquaDoze1_dozeTime, (uint16_t)59);
-
+*/
    // db.init(kk::btnName, "имечко кнопоньки");
    // db.init(kk::btnColor, 0xff00aa);
     db.dump(Serial);
 
     // первый запуск всех исполнительных механизмов
-    data.timer_nature_applied = 1;  // запустим природное освещение
-    data.t1f_enbl = db[kk::t1f_enabled];
-    userNatureTimer();
+   // data.timer_nature_applied = 1;  // запустим природное освещение
+   // data.t1f_enbl = db[kk::t1f_enabled]; // что то связанно с дозаторо
+   // userNatureTimer();
+
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
     data.t2discr_enbl = db[kk::t2Discr_enabled];
     data.t3discr_enbl = db[kk::t3Discr_enabled];
@@ -313,13 +314,13 @@ void loop() {
         } else
             Serial.println("\n\n\t\t\t\tNTP not reached\n\n");
         // sensorsProbe(); // опросим датчики
-        getdht1();  // опрос датчика медленный и умножение
-        delay(1);   //  отдадим управление вайфаю
-        getdht2();  // // опрос датчика медленный и умножение
-      //  data.datime1 = db[kk::datime1].toInt();                       // Для тесто в со временем
-      //  Serial.println("data.datim = " + (String)datime);             // Для тесто в со временем
-      //  Serial.println("data.datim1 = " + (String)data.datime1);     // Для тесто в со временем
-    }  // each5Sec
+        // getdht1();  // опрос датчика медленный и умножение
+        // delay(1);   //  отдадим управление вайфаю
+        // getdht2();  // // опрос датчика медленный и умножение
+        // data.datime1 = db[kk::datime1].toInt();                       // Для тесто в со временем
+        // Serial.println("data.datim = " + (String)datime);             // Для тесто в со временем
+        // Serial.println("data.datim1 = " + (String)data.datime1);     // Для тесто в со временем
+    }   // each5Sec
 
     if (eachSec.ready()) {                  // раз в 1 сек
         data.secondsNow++;                  // инкермент реалтайм

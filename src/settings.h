@@ -84,7 +84,13 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_inFriday,
     t6Discr_inSaturday,
     t6Discr_inSunday,
+    date,
+    datime,
+    datime1,
 
+    btn1,
+    btn2);
+/*
     t1f_enabled,
     t1f_led,
     t1f1_startTime,
@@ -138,13 +144,8 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
 
     lbl1,
     lbl2,
-
-    date,
-    datime,
-    datime1,
-
-    btn1,
-    btn2);
+*/
+    
 
 extern GyverDBFile db;  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 extern SettingsGyver sett;

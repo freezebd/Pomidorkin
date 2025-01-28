@@ -1,3 +1,4 @@
+/*
 
 #include "sensors.h"
 
@@ -75,4 +76,4 @@ void getdht2() {
 }  // getdht()
 //
 //
-//
+*/
