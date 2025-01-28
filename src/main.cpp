@@ -77,6 +77,8 @@ void setup() {
     db.init(kk::wifi_pass, WIFIPASS);
     db.init(kk::ntp_gmt, 5);
 
+    db.init(kk::datime1, 1728123055);  // Для тестов с временем
+
     db.init(kk::dht1name, "Имя первого dht22");
     db.init(kk::dht1TempRele_enabled, (uint8_t)0);
     db.init(kk::dht1TempRele_startTemp, (uint8_t)30);
@@ -314,6 +316,9 @@ void loop() {
         getdht1();  // опрос датчика медленный и умножение
         delay(1);   //  отдадим управление вайфаю
         getdht2();  // // опрос датчика медленный и умножение
+      //  data.datime1 = db[kk::datime1].toInt();                       // Для тесто в со временем
+      //  Serial.println("data.datim = " + (String)datime);             // Для тесто в со временем
+      //  Serial.println("data.datim1 = " + (String)data.datime1);     // Для тесто в со временем
     }  // each5Sec
 
     if (eachSec.ready()) {                  // раз в 1 сек

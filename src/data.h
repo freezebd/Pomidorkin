@@ -85,6 +85,7 @@ struct Data  // обьявляем класс структуры
     byte uptime_Days = 0;
     // uint32_t secondsUptime = 86390;
     // byte uptime_Days = 1;
+    uint32_t datime1 = 0ul;          // для тестов со временем
 
     struct DHTxx_sensor dhtOne;
     struct DHTxx_sensor dhtTwo;

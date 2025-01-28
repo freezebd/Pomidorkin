@@ -39,6 +39,9 @@ void update(sets::Updater &upd) {
     // upd.update(kk::datime, String(curDataTime)); // старое
     upd.update(kk::datime, NTP.dateToString());
     // upd.update(kk::testlabel,  NTP.dateToString()); //https://github.com/GyverLibs/Stamp
+   
+    upd.update(kk::datime1, data.datime1); // Для тестов со временем
+
 
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));
@@ -323,6 +326,7 @@ void build(sets::Builder &b) {
                 // b.DateTime(kk::datime, "Сегодня ");
                 b.Label(kk::dayofweek, "Сегодня");  // текущая дата
                 b.Label(kk::datime, " ");           // текущая дата
+                
             }
         }  // NTP.synced()
 
@@ -335,6 +339,7 @@ void build(sets::Builder &b) {
 
         b.Time(kk::secondsNow, "Времечко");
         // b.Label(kk::secondsNow, "Времечко");
+        b.DateTime(kk::datime1, "Сегодня ");
     }
 
     {//"Воздух"  
