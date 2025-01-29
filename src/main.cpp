@@ -14,22 +14,25 @@
 #endif
 
 #include <GyverDBFile.h>
-#include <GyverDS18.h>
 #include <GyverNTP.h>
+// #include <GyverDS3231.h> // Модуль часов реального времени
 #include <LittleFS.h>
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
 
 
 
-// #include "driver/temp_sensor.h"
+
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
-// #include "sensors.h"
+
 #include "settings.h"
 #include "userTimers.h"
 #include "modbus.h"
 #include "reley.h"
+
+
+
 
 
 // обявление фкнций для их видимости из вкладок.
@@ -44,15 +47,18 @@ int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
 byte initially = 5;        // первых 10 секунд приписываем время в переменную
-bool firstSlowSensor = 1;  // опрос датчиков по очереди
+// bool firstSlowSensor = 1;  // опрос датчиков по очереди
 byte checker = 0;          // автомат modbus
-uint32_t prevMs = 0;
+uint32_t prevMs = 0;      // Опрос время цикла loop    
 uint32_t myMillis_sens;  // таймер для опроса датчиков
 void setup() {
     each5min.rst();
     // init_pins();
-
     Serial.begin(115200);
+    
+    Wire.begin(); // 
+    
+    
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
     
@@ -75,7 +81,7 @@ void setup() {
     db.begin();
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
-    db.init(kk::ntp_gmt, 5);
+    db.init(kk::ntp_gmt, 3);
 
     db.init(kk::datime1, 1728123055);  // Для тестов с временем
 
@@ -265,6 +271,12 @@ void setup() {
         NTP.setPeriod(600);  // обновлять раз в 600 сек
         NTP.tick();
         NTP.setGMT(db[kk::ntp_gmt]);
+
+        // ds.begin(); // запустить и синхронизировать время, если возможно
+        // if (!ds.begin()) ds.setBuildTime(); // установить время равным времении компиляции
+        // setStampZone(db[kk::ntp_gmt]); // указать часовой пояс, если в программе нужен реальный unix
+        // ds.tick();
+
     });
     WiFiConnector.onError([]() {
         Serial.print("Error! start AP ");
@@ -276,8 +288,8 @@ void setup() {
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
     //  getdht1(); //опрос медленных датчиков
     //  delay(1);
-    //   getdht2();
-}  // setup
+    //  getdht2();
+}   // setup
 
 void loop() {
     if((millis()-prevMs) > 2ul){
@@ -303,16 +315,18 @@ void loop() {
     }  // WiFi.connected()
     sett.tick();  // поддержка веб интерфейса
     NTP.tick();
+   // ds.tick();
     indikator.tick();  // in loop
 
     if (each5Sec.ready())  // раз в 5 сек
     {
-        // поддержка NTP
+       // поддержка NTP
         if (!NTP.status() && NTP.synced()) {
             data.secondsNow = NTP.daySeconds();
             curDataTime = NTP.getUnix();
         } else
             Serial.println("\n\n\t\t\t\tNTP not reached\n\n");
+           
         // sensorsProbe(); // опросим датчики
         // getdht1();  // опрос датчика медленный и умножение
         // delay(1);   //  отдадим управление вайфаю

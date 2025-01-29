@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include <Arduino.h>
 
@@ -14,3 +15,4 @@ void get1ds18();
 void get2ds18();
 void getdht1();
 void getdht2();
+*/

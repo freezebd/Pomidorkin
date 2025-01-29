@@ -1,6 +1,7 @@
 #include "settings.h"
 
 #include <GyverNTP.h>
+#include <GyverDS3231.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
@@ -15,6 +16,9 @@
 GyverDBFile db(&LittleFS, "/nicelight.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);  // указывается заголовок меню, подключается база данных
 Datime curDataTime(NTP);                         // NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
+//GyverDS3231 ds;  // метод реальных часов
+//Datime curDataTime(ds);                         // ds это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
+
 static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
 
 static const char *const WEEKdays[] = {
@@ -32,15 +36,17 @@ sets::Logger logger(150);
 
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
-
-    upd.update(kk::secondsNow, data.secondsNow);
+    
+    
+    upd.update(kk::secondsNow, data.secondsNow); 
     upd.update(kk::secondsUptime, data.secondsUptime);
 
-    // upd.update(kk::datime, String(curDataTime)); // старое
-    upd.update(kk::datime, NTP.dateToString());
+    
+    upd.update(kk::datime, NTP.dateToString());    // NTP
+    
     // upd.update(kk::testlabel,  NTP.dateToString()); //https://github.com/GyverLibs/Stamp
    
-    upd.update(kk::datime1, data.datime1); // Для тестов со временем
+    //upd.update(kk::datime1, ds.getUnix() ); // Для тестов со временем // получить unix секунды
 
 
     if (!data.uptime_Days) {
@@ -112,7 +118,10 @@ void build(sets::Builder &b) {
     switch (b.build.id) {    // костыль на моментальное обновление индикаторных светодиодов
         // перезапись NTP времени
         case kk::ntp_gmt:
-            NTP.setGMT(b.build.value);
+            NTP.setGMT(b.build.value); // перезапись часового пояса
+            //setStampZone(b.build.value); // указать часовой пояс, если в программе нужен реальный unix
+            Serial.print("Часовой пояс = ");
+             Serial.println(b.build.value);
             b.reload();
             break;
         case kk::t1Discr_startTime:
