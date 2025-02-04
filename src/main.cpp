@@ -1,5 +1,3 @@
-
-
 // прошивка тут
 // C:\Users\Acer\Documents\PlatformIO\Projects\minihub\.pio\build\esp32doit-devkit-v1
 
@@ -14,8 +12,7 @@
 #endif
 
 #include <GyverDBFile.h>
-#include <GyverNTP.h>
-// #include <GyverDS3231.h> // Модуль часов реального времени
+#include <GyverDS3231.h> // Модуль часов реального времени
 #include <LittleFS.h>
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
@@ -37,6 +34,8 @@
 
 // обявление фкнций для их видимости из вкладок.
 
+
+
 Timer each5Sec(5000ul);    // таймер раз в 10 сек
 Timer each5min(300000ul);  // таймер раз в 5 мин
 Timer eachSec(1000ul);     // таймер раз в сек
@@ -49,20 +48,24 @@ uint32_t stopSeconds = 0;
 byte initially = 5;        // первых 10 секунд приписываем время в переменную
 // bool firstSlowSensor = 1;  // опрос датчиков по очереди
 byte checker = 0;          // автомат modbus
-uint32_t prevMs = 0;      // Опрос время цикла loop    
-uint32_t myMillis_sens;  // таймер для опроса датчиков
+uint32_t prevMs = 0;       // Опрос время цикла loop    
+uint32_t myMillis_sens;    // таймер для опроса датчиков
+
 void setup() {
     each5min.rst();
     // init_pins();
     Serial.begin(115200);
-    
     Wire.begin(); // 
-    
+    rtc.begin();
+    Serial.print("Часы подключены ");
+    Serial.println(rtc.isOK());
+    //setStampZone(3); // указать часовой пояс, если в программе нужен реальный unix
+
     
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
     
-    Serial.println("\n\n\n\t\t\t ESP STARTED !\n\n");
+    Serial.println("ESP STARTED !");
 
     // ======== SETTINGS ========
     WiFi.mode(WIFI_AP_STA);  // режим AP_STA. Вызываем перед sett.begin(), чтобы settings знал о текущем режиме wifi
@@ -82,8 +85,6 @@ void setup() {
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
     db.init(kk::ntp_gmt, 3);
-
-    db.init(kk::datime1, 1728123055);  // Для тестов с временем
 
     db.init(kk::dht1name, "Имя первого dht22");
     db.init(kk::dht1TempRele_enabled, (uint8_t)0);
@@ -165,14 +166,6 @@ void setup() {
     db.init(kk::aquaDoz1_8time, (uint32_t)76000ul);
     db.init(kk::aquaDoze1_dozeTime, (uint16_t)59);
 */
-   // db.init(kk::btnName, "имечко кнопоньки");
-   // db.init(kk::btnColor, 0xff00aa);
-    db.dump(Serial);
-
-    // первый запуск всех исполнительных механизмов
-   // data.timer_nature_applied = 1;  // запустим природное освещение
-   // data.t1f_enbl = db[kk::t1f_enabled]; // что то связанно с дозаторо
-   // userNatureTimer();
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
     data.t2discr_enbl = db[kk::t2Discr_enabled];
@@ -267,16 +260,7 @@ void setup() {
         Serial.println(WiFi.localIP());
         indikator.setPeriod(3000, 1, 200, 150);  // раз в 000 сек, 0 раз взмигнем - по 00 милисек периоды, гореть будем 0 милисек
         gotWifi = true;
-        NTP.begin();
-        NTP.setPeriod(600);  // обновлять раз в 600 сек
-        NTP.tick();
-        NTP.setGMT(db[kk::ntp_gmt]);
-
-        // ds.begin(); // запустить и синхронизировать время, если возможно
-        // if (!ds.begin()) ds.setBuildTime(); // установить время равным времении компиляции
-        // setStampZone(db[kk::ntp_gmt]); // указать часовой пояс, если в программе нужен реальный unix
-        // ds.tick();
-
+      
     });
     WiFiConnector.onError([]() {
         Serial.print("Error! start AP ");
@@ -286,15 +270,12 @@ void setup() {
     });
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
-    //  getdht1(); //опрос медленных датчиков
-    //  delay(1);
-    //  getdht2();
 }   // setup
 
 void loop() {
     if((millis()-prevMs) > 2ul){
-       // Serial.print("время цикла: ");
-       // Serial.println(millis()-prevMs);
+       Serial.print("время цикла: ");
+       Serial.println(millis()-prevMs);
     }
     prevMs = millis();
     
@@ -314,28 +295,19 @@ void loop() {
         }
         if (each5min.ready()) ESP.restart();
     }  // WiFi.connected()
-    sett.tick();  // поддержка веб интерфейса
-    NTP.tick();
-   // ds.tick();
+    
     indikator.tick();  // in loop
-
-    if (each5Sec.ready())  // раз в 5 сек
-    {
-       // поддержка NTP
-        if (!NTP.status() && NTP.synced()) {
-            data.secondsNow = NTP.daySeconds();
-            curDataTime = NTP.getUnix();
-        } else
-            Serial.println("\n\n\t\t\t\tNTP not reached\n\n");
-           
-        // sensorsProbe(); // опросим датчики
-        // getdht1();  // опрос датчика медленный и умножение
-        // delay(1);   //  отдадим управление вайфаю
-        // getdht2();  // // опрос датчика медленный и умножение
-        // data.datime1 = db[kk::datime1].toInt();                       // Для тесто в со временем
-        // Serial.println("data.datim = " + (String)datime);             // Для тесто в со временем
-        // Serial.println("data.datim1 = " + (String)data.datime1);     // Для тесто в со временем
-    }   // each5Sec
+    sett.tick();  // поддержка веб интерфейса
+    
+     if (each5Sec.ready())  // раз в 5 сек
+     {
+        // поддержка NTP
+         if (rtc.tick()) {
+            data.secondsNow = rtc.daySeconds();
+            curDataTime = rtc.getTime().getUnix();
+            }
+         
+     }   // each5Sec
 
     if (eachSec.ready()) {                  // раз в 1 сек
         data.secondsNow++;                  // инкермент реалтайм
@@ -344,65 +316,31 @@ void loop() {
             data.secondsUptime = 0;
             data.uptime_Days++;
         }
-       // get1ds18();  // тут умножение, часто не вызываем
-       // get2ds18();  // тут умножение, часто не вызываем
         userSixTimers();
        // userNatureTimer();
-       // userFertiTimer();
-
-         
+       // userFertiTimer(); 
     }
-    userDhtRelays();  // тут ничего медленного, можно часто
-    userDSRelays();   // тут ничего медленного, можно часто
+   
+    // if (millis() - myMillis_sens >= 1000) {
+    // myMillis_sens = millis(); // сбросить таймер
 
-    // if(db.changed()){
-    //   Serial.print("База изменена\t");
-    //   Serial.println(millis());
-    // }
-    // static bool prevPinState = 0;
-    // if(digitalRead(RELE_4) != prevPinState){
-    //     prevPinState = digitalRead(RELE_4);
-    //     Serial.print("RELE_4 = ");
-    //     Serial.print(prevPinState);
-    //     Serial.print("\n");
-    // }
-    // if (!digitalRead(BTN)) {
-    //     delay(20);
-    //     if (!digitalRead(BTN)) {
-    //         int cnt = 0;
-    //         while (!digitalRead(BTN)) {
-    //             digitalWrite(INDIKATOR, 1);
-    //             delay(30);
-    //             digitalWrite(INDIKATOR, 0);
-    //             delay(30);
-    //             if(cnt < 60) cnt++;
-    //             else ESP.restart();
-
-    //         }
-    //     }
-    // }//BTN
-    if (millis() - myMillis_sens >= 1000) {
-    myMillis_sens = millis(); // сбросить таймер
-
-    switch (checker) { // Опрос датчиков RS485
-        case 0: // INIT
-            checker = 5;
-            break;
-        case 5: // SOIL
-            riadSensorSoil();    // Опрос датчика почвы
-            Serial.println("");
-            checker = 10;
-            delay(1);
-            break;
-        case 10://AIR
-            riadSensorAir();  // Опрос датчика воздуха
-            Serial.println("");
-            checker = 5;
-             delay(1);
-            break;
-        }//switch(checker)
-    } //myMillis
-    
-
+    // // switch (checker) { // Опрос датчиков RS485
+    //     case 0: // INIT
+    //         checker = 5;
+    //         break;
+    //     case 5: // SOIL
+    //         riadSensorSoil();    // Опрос датчика почвы
+    //         Serial.println("Запрос датчику-1");
+    //         checker = 10;
+    //         delay(1);
+    //         break;
+    //     case 10://AIR
+    //         riadSensorAir();  // Опрос датчика воздуха
+    //         Serial.println("Запрос датчику-2");
+    //         checker = 5;
+    //          delay(1);
+    //         break;
+    //     }//switch(checker)
+    // } //myMillis
 
   }// loop

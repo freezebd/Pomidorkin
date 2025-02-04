@@ -1,6 +1,5 @@
 #include "settings.h"
 
-#include <GyverNTP.h>
 #include <GyverDS3231.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
@@ -10,12 +9,11 @@
 #include "nastroyki.h"
 #include "userTimers.h"
 
-// GyverDBFile db(&LittleFS, "/data.db");
-// static SettingsESP sett(PROJECT_NAME " v" PROJECT_VER, &db);
 
-GyverDBFile db(&LittleFS, "/nicelight.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+GyverDBFile db(&LittleFS, "/pomidorkin.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);  // указывается заголовок меню, подключается база данных
-Datime curDataTime(NTP);                         // NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
+GyverDS3231 rtc;
+Datime curDataTime(rtc);                         // NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
 //GyverDS3231 ds;  // метод реальных часов
 //Datime curDataTime(ds);                         // ds это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
 
@@ -38,17 +36,10 @@ void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
     
     
-    upd.update(kk::secondsNow, data.secondsNow); 
-    upd.update(kk::secondsUptime, data.secondsUptime);
-
-    
-    upd.update(kk::datime, NTP.dateToString());    // NTP
-    
-    // upd.update(kk::testlabel,  NTP.dateToString()); //https://github.com/GyverLibs/Stamp
-   
-    //upd.update(kk::datime1, ds.getUnix() ); // Для тестов со временем // получить unix секунды
-
-
+    upd.update(kk::secondsNow, data.secondsNow);         //Секунды с начало суток
+    upd.update(kk::secondsUptime, data.secondsUptime);   // Секунды аптайм
+    upd.update(kk::datime, rtc.getTime().getUnix());     // rtc время UNIX
+       
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));
     } else if (data.uptime_Days == 1)
@@ -57,9 +48,9 @@ void update(sets::Updater &upd) {
         upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дня")));
     else if (data.uptime_Days >= 5)
         upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дней")));
-    // день недели выводим, оч красиво, Гайвер посоветовал
-
-    upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay]));
+    
+    // день недели выводим, оч красиво
+    upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay])); // день недели (1 понедельник - 7 воскресенье)
 
     upd.update("t1Discr_led"_h, data.rel1_on);
     upd.update("t2Discr_led"_h, data.rel2_on);
@@ -67,10 +58,6 @@ void update(sets::Updater &upd) {
     upd.update("t4Discr_led"_h, data.rel4_on);
     upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
-
-    // upd.update("t1f_led"_h, data.t1isWorks);
-   // upd.update("aquaDoz1_led"_h, data.relFerti_on);
-   // upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
     upd.update(kk::floattempdht1, data.Air1.tfloat);   // rs485 Температура float
     upd.update(kk::humdht1, data.Air1.hfloat);          // rs485 Влажность float
@@ -98,9 +85,7 @@ void update(sets::Updater &upd) {
         //    upd.alert("Ошибка");
     }
 }  // update
-//
-//
-//
+
 
 void build(sets::Builder &b) {
     // обработка действий от виджетов:
@@ -118,10 +103,10 @@ void build(sets::Builder &b) {
     switch (b.build.id) {    // костыль на моментальное обновление индикаторных светодиодов
         // перезапись NTP времени
         case kk::ntp_gmt:
-            NTP.setGMT(b.build.value); // перезапись часового пояса
-            //setStampZone(b.build.value); // указать часовой пояс, если в программе нужен реальный unix
+            //NTP.setGMT(b.build.value); // перезапись часового пояса
+            setStampZone(b.build.value); // указать часовой пояс, если в программе нужен реальный unix
             Serial.print("Часовой пояс = ");
-             Serial.println(b.build.value);
+            Serial.println(b.build.value);
             b.reload();
             break;
         case kk::t1Discr_startTime:
@@ -172,55 +157,6 @@ void build(sets::Builder &b) {
             userSixTimers();
             b.reload();
             break;
-
-       
- /*       // обовляем отрисовку природного освещения если в вебморде изменения
-        case kk::t1f1_startTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f2_startTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f2_dim:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f3_startTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f3_dim:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f4_startTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f4_dim:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1f5_startTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-        case kk::t1_stopTime:
-            data.timer_nature_applied = 1;
-            userNatureTimer();
-            b.reload();
-            break;
-*/
 
         case kk::dht1TempRele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
@@ -276,70 +212,70 @@ void build(sets::Builder &b) {
             userDhtRelays();
             b.reload();
             break;
-        case kk::DS1Rele_startTemp:
-            // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.dsOne.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
-            userDSRelays();
-            b.reload();
-            break;
 
-        case kk::DS1Rele_TempThreshold:
-            switch (db[kk::DS1Rele_TempThreshold].toInt()) {
-                case 0:
-                    data.dsOne.tTreshold = 2;
-                    break;
-                case 1:
-                    data.dsOne.tTreshold = 5;
-                    break;
-                case 2:
-                    data.dsOne.tTreshold = 10;
-                    break;
-                case 3:
-                    data.dsOne.tTreshold = 30;
-                    break;
-            }
-            userDSRelays();
-            b.reload();
-            break;
+        // case kk::DS1Rele_startTemp:
+        //     // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
+        //     data.dsOne.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+        //     userDSRelays();
+        //     b.reload();
+        //     break;
 
-        case kk::DS2Rele_startTemp:
-            // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;
-            userDSRelays();
-            b.reload();
-            break;
+        // case kk::DS1Rele_TempThreshold:
+        //     switch (db[kk::DS1Rele_TempThreshold].toInt()) {
+        //         case 0:
+        //             data.dsOne.tTreshold = 2;
+        //             break;
+        //         case 1:
+        //             data.dsOne.tTreshold = 5;
+        //             break;
+        //         case 2:
+        //             data.dsOne.tTreshold = 10;
+        //             break;
+        //         case 3:
+        //             data.dsOne.tTreshold = 30;
+        //             break;
+        //     }
+        //     userDSRelays();
+        //     b.reload();
+        //     break;
 
-        case kk::DS2Rele_TempThreshold:
-            switch (db[kk::DS2Rele_TempThreshold].toInt()) {
-                case 0:
-                    data.dsTwo.tTreshold = 2;
-                    break;
-                case 1:
-                    data.dsTwo.tTreshold = 5;
-                    break;
-                case 2:
-                    data.dsTwo.tTreshold = 10;
-                    break;
-                case 3:
-                    data.dsTwo.tTreshold = 30;
-                    break;
-            }
-            userDSRelays();
-            b.reload();
-            break;
+        // case kk::DS2Rele_startTemp:
+        //     // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
+        //     data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;
+        //     userDSRelays();
+        //     b.reload();
+        //     break;
+
+        // case kk::DS2Rele_TempThreshold:
+        //     switch (db[kk::DS2Rele_TempThreshold].toInt()) {
+        //         case 0:
+        //             data.dsTwo.tTreshold = 2;
+        //             break;
+        //         case 1:
+        //             data.dsTwo.tTreshold = 5;
+        //             break;
+        //         case 2:
+        //             data.dsTwo.tTreshold = 10;
+        //             break;
+        //         case 3:
+        //             data.dsTwo.tTreshold = 30;
+        //             break;
+        //     }
+        //     userDSRelays();
+        //     b.reload();
+        //     break;
     }  //  switch (b.build.id)
 
     
     {// WEB интерфейс ВЕБ морда формируется здесь
         sets::Group g(b, "Nicelight");
-        if (NTP.synced()) {
+        if (rtc.isOK()) {
             {
                 sets::Row g(b);
-                // sets::Row g(b, "Row");
                 // b.DateTime(kk::datime, "Сегодня ");
                 b.Label(kk::dayofweek, "Сегодня");  // текущая дата
-                b.Label(kk::datime, " ");           // текущая дата
-                
+                //b.Label(kk::datime, " ");           // текущая дата
+                b.Date(kk::datime, " ");
             }
         }  // NTP.synced()
 
@@ -351,8 +287,6 @@ void build(sets::Builder &b) {
         }
 
         b.Time(kk::secondsNow, "Времечко");
-        // b.Label(kk::secondsNow, "Времечко");
-        b.DateTime(kk::datime1, "Сегодня ");
     }
 
     {//"Воздух"  

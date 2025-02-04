@@ -2,7 +2,6 @@
 #pragma once
 #include <Arduino.h>
 #include <GyverDBFile.h>
-#include <GyverNTP.h>
 #include <GyverDS3231.h>
 #include <SettingsGyver.h>
 
@@ -152,7 +151,7 @@ extern GyverDBFile db;  // база данных для хранения нас�
 extern SettingsGyver sett;
 
 extern Datime curDataTime;
-extern GyverDS3231 ds;
+extern GyverDS3231 rtc;
 
 // чтобы функции были видимыми, делаем их в *.cpp  не static
 // и тут объявляем. Или же делаем их static ( не видимыми за пределами)
