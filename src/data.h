@@ -78,8 +78,8 @@ struct DHTxx_sensor {
     byte State = 0;  // автомат работы реле
 };
 
-struct Data  // обьявляем класс структуры
-{
+struct Data {  // обьявляем класс структуры
+
     uint32_t secondsNow = 44000ul;
     uint32_t secondsUptime = 1;
     byte uptime_Days = 0;

@@ -1,28 +1,27 @@
 #include <Arduino.h>
-#include <GyverDS3231.h>
+#include <StampKeeper.h>
 
-GyverDS3231 rtc;
+StampKeeper rtc;  // GyverNTP, GyverDS3231, Settings.rtc
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("start");
 
-    setStampZone(3);  // часовой пояс
+    // часовой пояс, установить до всех действий с объектами
+    setStampZone(3);
 
-    Wire.begin();
-    rtc.begin();
+    // обработчик секунды (вызывается из тикера)
+    rtc.onSecond([]() {
+        Serial.println("new second!");
+    });
 
-    Serial.print("OK: ");
-    Serial.println(rtc.isOK());
+    // обработчик синхронизации (вызывается из sync)
+    rtc.onSync([](uint32_t unix) {
+        Serial.println("sync: ");
+        Serial.print(unix);
+    });
 
-    Serial.print("Reset: ");
-    Serial.println(rtc.isReset());
-
-    // был сброс питания RTC, время некорректное
-    if (rtc.isReset()) {
-        rtc.setBuildTime();     // установить время компиляции прошивки
-        // rtc.setTime(2025, 1, 30, 12, 45, 0); // установить время вручную
-    }
+    // синхронизация вручную для примера
+    // rtc.sync(1738237474);
 }
 void loop() {
     // тикер вернёт true каждую секунду в 0 мс секунды, если время синхронизировано

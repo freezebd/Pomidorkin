@@ -3,9 +3,9 @@
 
 // тикающий unix - встроенный таймер на 1 секунду
 
-#include "core/StampCore.h"
+#include "./core/StampConvert.h"
 
-class StampTicker : public StampCore {
+class StampTicker : public StampConvert {
 #ifdef __AVR__
     typedef void (*SecondHandler)();
 #else
@@ -17,7 +17,7 @@ class StampTicker : public StampCore {
     StampTicker(uint32_t unix = 0, uint16_t ms = 0) {
         update(unix, ms);
     }
-    StampTicker(const StampTicker& ticker) {
+    StampTicker(StampTicker& ticker) {
         update(ticker);
     }
 
@@ -34,11 +34,9 @@ class StampTicker : public StampCore {
         }
     }
 
-    // обновить из другого тикера
-    void update(const StampTicker& ticker) {
-        _unix = ticker._unix;
-        _tmr = ticker._tmr;
-        _diff = ticker._diff;
+    // синхронизировать с другим тикером
+    void update(StampTicker& ticker, bool skipTicks = false) {
+        update(ticker.getUnix(), ticker.ms(), skipTicks);
     }
 
     // пропустить отставшие секунды (вызывать после update)
