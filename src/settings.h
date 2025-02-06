@@ -86,65 +86,10 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_inSunday,
     date,
     datime,
-    datime1,
 
     btn1,
-    btn2);
-/*
-    t1f_enabled,
-    t1f_led,
-    t1f1_startTime,
-    t1f2_startTime,
-    t1f2_dim,
-    t1f3_startTime,
-    t1f3_dim,
-    t1f4_startTime,
-    t1f4_dim,
-    t1f5_startTime,
-    t1_stopTime,
-    t1_btn_accept,
-
-    aquaDoz1_enabled,
-    aquaDoz1_nextDozeIn,
-    aquaDoz1_led,
-    aquaDoz1_1time,
-    aquaDoz1_2time,
-    aquaDoz1_need3rd,
-    aquaDoz1_3time,
-    aquaDoz1_need4th,
-    aquaDoz1_4time,
-    aquaDoz1_need5th,
-    aquaDoz1_5time,
-    aquaDoz1_need6th,
-    aquaDoz1_6time,
-    aquaDoz1_need7th,
-    aquaDoz1_7time,
-    aquaDoz1_need8th,
-    aquaDoz1_8time,
-    aquaDoze1_dozeTime,
-    aquaDoz1_btn_accept,
-    aquaDoz1_makeDoze,
-
-    logUpdate,
-    testlabel,
-
-    btnflex,
-    btnName,
-    btnColor,
-    txt,
-    pass,
-    uintw,
-    intw,
-    int64w,
-
-    color,
-    toggle,
-    slider,
-    selectw,
-
-    lbl1,
-    lbl2,
-*/
+    btn2
+);
     
 
 extern GyverDBFile db;  // база данных для хранения настроек будет автоматически записываться в файл при изменениях

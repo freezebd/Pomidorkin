@@ -40,6 +40,7 @@ struct Data {  // обьявляем класс структуры
     uint32_t secondsNow = 44000ul;
     uint32_t secondsUptime = 1;
     byte uptime_Days = 0;
+    uint32_t datime = 0ul;
 
     struct Air_sensor Air1;
     struct Soil_sensor Soil1;

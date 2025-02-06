@@ -10,9 +10,7 @@
 #else
 #include <WiFi.h>
 #endif
-
 #include <GyverDBFile.h>
-#include <GyverDS3231.h> // Модуль часов реального времени
 #include <LittleFS.h>
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
@@ -22,7 +20,6 @@
 
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
-
 #include "settings.h"
 #include "userTimers.h"
 #include "modbus.h"
@@ -53,11 +50,10 @@ uint32_t myMillis_sens;    // таймер для опроса датчиков
 
 void setup() {
     each5min.rst();
-    // init_pins();
     Serial.begin(115200);
     Wire.begin(); // 
     rtc.begin();
-    Serial.print("Часы подключены ");
+    Serial.print("Часы >> ");
     Serial.println(rtc.isOK());
     //setStampZone(3); // указать часовой пояс, если в программе нужен реальный unix
 
@@ -74,7 +70,6 @@ void setup() {
     sett.onUpdate(update);
 
 
-
     // ======== DATABASE ========
 #ifdef ESP32
     LittleFS.begin(true);
@@ -85,6 +80,7 @@ void setup() {
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
     db.init(kk::ntp_gmt, 3);
+    db.init(kk::datime, (uint32_t)0);
 
     db.init(kk::dht1name, "Имя первого dht22");
     db.init(kk::dht1TempRele_enabled, (uint8_t)0);
@@ -137,35 +133,6 @@ void setup() {
     db.init(kk::t6Discr_inFriday, (uint8_t)0);
     db.init(kk::t6Discr_inSaturday, (uint8_t)0);
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
-/*
-    db.init(kk::t1f_enabled, (uint8_t)0);
-    db.init(kk::t1f1_startTime, (uint32_t)21600ul);
-    db.init(kk::t1f2_startTime, (uint32_t)25200ul);
-    db.init(kk::t1f2_dim, (uint8_t)70);
-    db.init(kk::t1f3_startTime, (uint32_t)43200ul);
-    db.init(kk::t1f3_dim, (uint8_t)95);
-    db.init(kk::t1f4_startTime, (uint32_t)64800ul);
-    db.init(kk::t1f4_dim, (uint8_t)80);
-    db.init(kk::t1f5_startTime, (uint32_t)72000ul);
-    db.init(kk::t1_stopTime, (uint32_t)75600ul);
-
-    db.init(kk::aquaDoz1_enabled, (uint8_t)0);
-    db.init(kk::aquaDoz1_1time, (uint32_t)25200ul);
-    db.init(kk::aquaDoz1_2time, (uint32_t)43200ul);
-    db.init(kk::aquaDoz1_need3rd, (uint8_t)0);
-    db.init(kk::aquaDoz1_3time, (uint32_t)64800ul);
-    db.init(kk::aquaDoz1_need4th, (uint8_t)0);
-    db.init(kk::aquaDoz1_4time, (uint32_t)72000ul);
-    db.init(kk::aquaDoz1_need5th, (uint8_t)0);
-    db.init(kk::aquaDoz1_5time, (uint32_t)73000ul);
-    db.init(kk::aquaDoz1_need6th, (uint8_t)0);
-    db.init(kk::aquaDoz1_6time, (uint32_t)74000ul);
-    db.init(kk::aquaDoz1_need7th, (uint8_t)0);
-    db.init(kk::aquaDoz1_7time, (uint32_t)75000ul);
-    db.init(kk::aquaDoz1_need8th, (uint8_t)0);
-    db.init(kk::aquaDoz1_8time, (uint32_t)76000ul);
-    db.init(kk::aquaDoze1_dozeTime, (uint16_t)59);
-*/
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
     data.t2discr_enbl = db[kk::t2Discr_enabled];
@@ -177,7 +144,7 @@ void setup() {
     // пересчитываем температуру х10 чтобы не множиться в цикле
     // tdht1MaxX10
     // hdht2Min
-   // data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+    // data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
     data.Air1.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
 
     //data.dhtTwo.hTrig = db[kk::dht2HumRele_startHum].toInt();

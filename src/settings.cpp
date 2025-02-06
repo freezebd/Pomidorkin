@@ -13,9 +13,7 @@
 GyverDBFile db(&LittleFS, "/pomidorkin.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);  // указывается заголовок меню, подключается база данных
 GyverDS3231 rtc;
-Datime curDataTime(rtc);                         // NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
-//GyverDS3231 ds;  // метод реальных часов
-//Datime curDataTime(ds);                         // ds это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
+Datime curDataTime(rtc);                         
 
 static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
 
@@ -30,15 +28,16 @@ static const char *const WEEKdays[] = {
     "Воскресенье"};
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 
-sets::Logger logger(150);
+//sets::Logger logger(150);
 
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
     
-    
-    upd.update(kk::secondsNow, data.secondsNow);         //Секунды с начало суток
+    //upd.update(kk::secondsNow, data.secondsNow);         //Секунды с начало суток
+    upd.update(kk::secondsNow, rtc.daySeconds());         //Секунды с начало суток
+    upd.update(kk::datime, rtc.getTime().getUnix());
     upd.update(kk::secondsUptime, data.secondsUptime);   // Секунды аптайм
-    upd.update(kk::datime, rtc.getTime().getUnix());     // rtc время UNIX
+    // upd.update(kk::datime, rtc.getTime().getUnix());     // rtc время UNIX
        
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));
@@ -268,14 +267,27 @@ void build(sets::Builder &b) {
 
     
     {// WEB интерфейс ВЕБ морда формируется здесь
-        sets::Group g(b, "Nicelight");
-        if (rtc.isOK()) {
+        sets::Group g(b, "Дата & Время");
+        if (rtc.tick() || rtc.updateNow()) {
             {
                 sets::Row g(b);
-                // b.DateTime(kk::datime, "Сегодня ");
-                b.Label(kk::dayofweek, "Сегодня");  // текущая дата
+                b.Label(kk::dayofweek, "");  // текущая дата
+            if (b.Date(kk::datime, ""))      // Установка даты
+            {
+                rtc.setTime(Datime(db[kk::datime])); 
+                
+                Serial.println(db[kk::datime]);
+                Serial.println(data.datime);
+            }
+            if (b.Time(kk::secondsNow, ""))  // установка время
+            {
+               rtc.setTime(Datime(data.datime + data.secondsNow));
+               Serial.println(data.secondsNow);
+               Serial.println(data.datime);
+            }
+               // b.DateTime(kk::datime, "");
                 //b.Label(kk::datime, " ");           // текущая дата
-                b.Date(kk::datime, " ");
+                //b.Date(kk::datime, " ");
             }
         }  // NTP.synced()
 
@@ -286,7 +298,8 @@ void build(sets::Builder &b) {
             b.Time(kk::secondsUptime, " ");
         }
 
-        b.Time(kk::secondsNow, "Времечко");
+        
+        b.Label("", rtc.dateToString());
     }
 
     {//"Воздух"  
