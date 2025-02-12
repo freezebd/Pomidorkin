@@ -1,7 +1,6 @@
-gyverlibs/WiFiConnector
 gyverlibs/GyverDS3231
-gyverlibs/Settings
-emelianov/modbus-esp8266@^4.1.0
 tremaru/iarduino_I2C_Relay@^1.1.7
-gyverlibs/GyverNTP
+gyverlibs/Settings
 gyverlibs/GyverDB
+gyverlibs/WiFiConnector
+tremaru/iarduino_Modbus @ ^1.0.3
