@@ -19,8 +19,8 @@ bool sens_alert = false;
 
 void init_modbus() {// Чтение данных с датчика воздуха (адрес 2)
    Serial1.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);// Настройка HardwareSerial для связи с RS485
-    modbus.setTimeout( 15 ); // Указываем жать ответ от модулей не более 15 мс.
-    modbus.setDelay( 5 ); // Указываем выдерживать паузу между пакетами в 5 мс.
+    modbus.setTimeout( 25 ); // Указываем жать ответ от модулей не более 15 мс.
+    modbus.setDelay( 10 ); // Указываем выдерживать паузу между пакетами в 5 мс.
     Serial.println("Modbus RTU Master Initialized");
 }
 void readSensorAir() {

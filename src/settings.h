@@ -8,103 +8,112 @@
 
 DB_KEYS(  // ключи по которым идет привязка к базе и к виджетам в web
     kk,
-    wifi_ssid,
-    wifi_pass,
-    apply,
-    ntp_gmt,
-    ntp_gmt_set,
-    secondsNow,
-    secondsUptime,
-    dayofweek,
-    uptimeDays,
+    wifi_ssid,               // имя wifi
+    wifi_pass,               // пароль wifi
+    apply,                   // кнопка применить
+    ntp_gmt,                 // часовой пояс
+    ntp_gmt_set,             // кнопка установить часовой пояс
+    secondsNow,              // секунды с начала дня
+    secondsUptime,           // секунды с начала запуска
+    dayofweek,               // день недели
+    uptimeDays,              // дни работы
 
-    dht1name,
-    floattempdht1,
-    humdht1,
-    dht1TempRele_enabled,
-    dht1TempRele_startTemp,
-    dht1TempRele_TempThreshold,
-    dht1Rele_led,
+    airTempName,             // имя датчика воздуха
+    floattempair,           // температура воздуха float
+    airTempRele_enabled,     // включение реле температуры воздуха
+    airRele_startTemp,       // температура включения реле температуры воздуха
+    airRele_TempThreshold,   // порог отключения реле температуры воздуха
+    airTempRele_led,         // светодиод реле температуры воздуха
+    
+    airHumeName,             // имя датчика влажности воздуха
+    floathumeair,           // влажность воздуха float
+    airHumeRele_enabled,     // включение реле влажности воздуха
+    airRele_startHume,       // влажность включения реле влажности воздуха
+    airRele_HumeTreshold,    // порог отключения реле влажности воздуха
+    airHumeRele_led,         // светодиод реле влажности воздуха
 
-    dht2name,
-    floattempdht2,
-    humdht2,
-    dht2HumRele_enabled,
-    dht2HumRele_startHum,
-    dht2HumRele_HumThreshold,
-    dht2Rele_led,
 
-    DS1name,
-    floattempDS1,
-    DS1Rele_enabled,
-    DS1Rele_startTemp,
-    DS1Rele_TempThreshold,
-    DS1Rele_led,
+    soilTempName,            // имя датчика температуры почвы
+    floattempsoil,           // температура почвы float
+    soilTempRele_enabled,    // включение реле температуры почвы
+    soilRele_startTemp,      // включения реле температуры почвы
+    soilRele_TempThreshold,  // порог отключения реле температуры почвы
+    soilTempRele_led,        // светодиод реле температуры почвы
 
-    DS2name,
-    floattempDS2,
-    DS2Rele_enabled,
-    DS2Rele_startTemp,
-    DS2Rele_TempThreshold,
-    DS2Rele_led,
+    soilHumeName,            // имя датчика влажности почвы
+    floathumsoil,           // влажность почвы float
+    soilHumeRele_enabled,    // включение реле влажности почвы
+    soilRele_startHume,      // включения реле влажности почвы
+    soilRele_HumeTreshold,  // порог отключения реле влажности почвы
+    soilHumeRele_led,        // светодиод реле влажности почвы
 
-    t1Discr_name,
-    t1Discr_led,
-    t1Discr_enabled,
-    t1Discr_startTime,
-    t1Discr_endTime,
-    t2Discr_name,
-    t2Discr_led,
-    t2Discr_enabled,
-    t2Discr_startTime,
-    t2Discr_endTime,
-    t3Discr_name,
-    t3Discr_led,
-    t3Discr_enabled,
-    t3Discr_startTime,
-    t3Discr_endTime,
-    t4Discr_name,
-    t4Discr_led,
-    t4Discr_enabled,
-    t4Discr_startTime,
-    t4Discr_endTime,
-    t5Discr_name,
-    t5Discr_led,
-    t5Discr_enabled,
-    t5Discr_startTime,
-    t5Discr_endTime,
-    t6Discr_name,
-    t6Discr_led,
-    t6Discr_enabled,
-    t6Discr_startTime,
-    t6Discr_endTime,
-    t6Discr_inMonday,
-    t6Discr_inTuesday,
-    t6Discr_inWensday,
-    t6Discr_inThursday,
-    t6Discr_inFriday,
-    t6Discr_inSaturday,
-    t6Discr_inSunday,
-    date,
-    datime,
-    dTest,
-    dTest1,
-    nowData,
-    nowTime,
-    btn1,
-    btn2
+
+    // DS1name,
+    // floattempDS1,
+    // DS1Rele_enabled,
+    // DS1Rele_startTemp,
+    // DS1Rele_TempThreshold,
+    // DS1Rele_led,
+
+    // DS2name,
+    // floattempDS2,
+    // DS2Rele_enabled,
+    // DS2Rele_startTemp,
+    // DS2Rele_TempThreshold,
+    // DS2Rele_led,
+
+    t1Discr_name,            // имя дискриминатора 1
+    t1Discr_led,             // светодиод дискриминатора 1
+    t1Discr_enabled,         // включение дискриминатора 1
+    t1Discr_startTime,       // время включения дискриминатора 1
+    t1Discr_endTime,         // время отключения дискриминатора 1
+    t2Discr_name,            // имя дискриминатора 2
+    t2Discr_led,             // светодиод дискриминатора 2
+    t2Discr_enabled,         // включение дискриминатора 2
+    t2Discr_startTime,       // время включения дискриминатора 2
+    t2Discr_endTime,         // время отключения дискриминатора 2
+    t3Discr_name,            // имя дискриминатора 3
+    t3Discr_led,             // светодиод дискриминатора 3
+    t3Discr_enabled,         // включение дискриминатора 3
+    t3Discr_startTime,       // время включения дискриминатора 3
+    t3Discr_endTime,         // время отключения дискриминатора 3
+    t4Discr_name,            // имя дискриминатора 4
+    t4Discr_led,             // светодиод дискриминатора 4
+    t4Discr_enabled,         // включение дискриминатора 4
+    t4Discr_startTime,       // время включения дискриминатора 4
+    t4Discr_endTime,         // время отключения дискриминатора 4
+    t5Discr_name,            // имя дискриминатора 5
+    t5Discr_led,             // светодиод дискриминатора 5
+    t5Discr_enabled,         // включение дискриминатора 5
+    t5Discr_startTime,       // время включения дискриминатора 5
+    t5Discr_endTime,         // время отключения дискриминатора 5
+    t6Discr_name,            // имя дискриминатора 6
+    t6Discr_led,             // светодиод дискриминатора 6
+    t6Discr_enabled,         // включение дискриминатора 6
+    t6Discr_startTime,       // время включения дискриминатора 6
+    t6Discr_endTime,         // время отключения дискриминатора 6
+    t6Discr_inMonday,        // включение дискриминатора 6 в понедельник
+    t6Discr_inTuesday,       // включение дискриминатора 6 во вторник
+    t6Discr_inWensday,       // включение дискриминатора 6 в среду
+    t6Discr_inThursday,      // включение дискриминатора 6 в четверг
+    t6Discr_inFriday,        // включение дискриминатора 6 в пятницу    
+    t6Discr_inSaturday,      // включение дискриминатора 6 в субботу
+    t6Discr_inSunday,        // включение дискриминатора 6 в воскресенье
+    date,                    // дата
+    datime,                  // дата и время
+    nowData,                 // текущая дата
+    nowTime,                 // текущее время
+    btn1,                    // кнопка 1
+    btn2                     // кнопка 2
 );
     
 
-extern GyverDBFile db;  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
-extern SettingsGyver sett;
+extern GyverDBFile db;       // база данных для хранения настроек будет автоматически записываться в файл при изменениях 
+extern SettingsGyver sett;   // настройки для web интерфейса
 
-extern Datime curDataTime;
-extern GyverDS3231 rtc;
+extern Datime curDataTime;   // текущая дата и время
+extern GyverDS3231 rtc;      // часы реального времени
 
-// чтобы функции были видимыми, делаем их в *.cpp  не static
-// и тут объявляем. Или же делаем их static ( не видимыми за пределами)
-//  и тут не объявляем
-void build(sets::Builder &b);
+void build(sets::Builder &b);          // функция для построения интерфейса
 //void NewFunction(sets::Builder &b);
-void update(sets::Updater &upd);
+void update(sets::Updater &upd);       // функция для обновления интерфейса 

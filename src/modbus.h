@@ -1,6 +1,5 @@
 #pragma once // защита от повторного включения
 #include <Arduino.h>
-//#include <HardwareSerial.h>
 #include <iarduino_Modbus.h>
  
 
