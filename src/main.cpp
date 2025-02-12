@@ -43,10 +43,8 @@ int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
 byte initially = 5;        // первых 10 секунд приписываем время в переменную
-// bool firstSlowSensor = 1;  // опрос датчиков по очереди
 byte checker = 0;          // автомат modbus
 uint32_t prevMs = 0;       // Опрос время цикла loop    
-uint32_t myMillis_sens;    // таймер для опроса датчиков
 
 void setup() {
     each5min.rst();
@@ -55,8 +53,6 @@ void setup() {
     rtc.begin();
     Serial.print("Часы >> ");
     Serial.println(rtc.isOK());
-    //setStampZone(3); // указать часовой пояс, если в программе нужен реальный unix
-
     
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
@@ -68,7 +64,11 @@ void setup() {
     sett.begin();
     sett.onBuild(build);
     sett.onUpdate(update);
+    sett.config.theme = sets::Colors::Orange; // цвет веб моржы ( по умолчанию зеленый)
 
+    // Оптимизация WiFi
+    WiFi.setAutoReconnect(true);
+    WiFi.persistent(true);
 
     // ======== DATABASE ========
 #ifdef ESP32
@@ -79,8 +79,8 @@ void setup() {
     db.begin();
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
-    db.init(kk::ntp_gmt, 3);
-    db.init(kk::datime, (uint32_t)0);
+    db.init(kk::datime, (uint32_t)0ul);
+    db.init(kk::secondsNow, (uint32_t)0ul);
 
     db.init(kk::dht1name, "Имя первого dht22");
     db.init(kk::dht1TempRele_enabled, (uint8_t)0);
@@ -133,6 +133,7 @@ void setup() {
     db.init(kk::t6Discr_inFriday, (uint8_t)0);
     db.init(kk::t6Discr_inSaturday, (uint8_t)0);
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
+    db.dump(Serial);
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
     data.t2discr_enbl = db[kk::t2Discr_enabled];
@@ -182,7 +183,7 @@ void setup() {
             data.Soil1.hTreshold = 10;
             break;
     }
-    // userDhtRelays();
+    userDhtRelays();
     //
   /*  data.Air1.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
     data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;  // дописать для влажности
@@ -238,14 +239,10 @@ void setup() {
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
 }   // setup
-
 void loop() {
-    if((millis()-prevMs) > 2ul){
-       Serial.print("время цикла: ");
-       Serial.println(millis()-prevMs);
-    }
-    prevMs = millis();
     
+    userDhtRelays();  // мониторим данные по воздуху и почве
+    userSixTimers();  // мониторим изменеие по реле
     // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.
     // если нет связи, ждем 5 минут и ребутаемся, а то мало ли
     // если связь восстановилась после потери, снова мигаем плавно
@@ -262,52 +259,42 @@ void loop() {
         }
         if (each5min.ready()) ESP.restart();
     }  // WiFi.connected()
-    
-    indikator.tick();  // in loop
-    sett.tick();  // поддержка веб интерфейса
-    
-     if (each5Sec.ready())  // раз в 5 сек
-     {
-        // поддержка NTP
-         if (rtc.tick()) {
-            data.secondsNow = rtc.daySeconds();
-            curDataTime = rtc.getTime().getUnix();
-            }
-         
-     }   // each5Sec
 
-    if (eachSec.ready()) {                  // раз в 1 сек
+    indikator.tick();  // in loop
+    sett.tick();       // поддержка веб интерфейса
+
+    if (rtc.tick()) {
+        data.secondsNow = rtc.daySeconds();
+        data.datime = rtc.getTime().getUnix();
+        curDataTime = rtc.getTime();
+    }
+
+    if (each5Sec.ready())  // раз в 5 сек
+    {
+    }  // each5Sec
+
+    if (eachSec.ready()) {  // раз в 1 сек
+
         data.secondsNow++;                  // инкермент реалтайм
         data.secondsUptime++;               // инкермент аптайм
         if (data.secondsUptime == 86399) {  // инкремент дней аптайма
             data.secondsUptime = 0;
             data.uptime_Days++;
         }
-        userSixTimers();
-       // userNatureTimer();
-       // userFertiTimer(); 
+
+        switch (checker) { // раз в секунду опрашиваем датчики
+            case 0:
+                checker = 5;
+                break;
+            case 5:
+                readSensorSoil();
+                checker = 10;
+                break;
+            case 10:
+                readSensorAir();
+                checker = 5;
+                break;
+        }
+
     }
-   
-    // if (millis() - myMillis_sens >= 1000) {
-    // myMillis_sens = millis(); // сбросить таймер
-
-    // // switch (checker) { // Опрос датчиков RS485
-    //     case 0: // INIT
-    //         checker = 5;
-    //         break;
-    //     case 5: // SOIL
-    //         riadSensorSoil();    // Опрос датчика почвы
-    //         Serial.println("Запрос датчику-1");
-    //         checker = 10;
-    //         delay(1);
-    //         break;
-    //     case 10://AIR
-    //         riadSensorAir();  // Опрос датчика воздуха
-    //         Serial.println("Запрос датчику-2");
-    //         checker = 5;
-    //          delay(1);
-    //         break;
-    //     }//switch(checker)
-    // } //myMillis
-
-  }// loop
+}  // loop

@@ -12,6 +12,7 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     wifi_pass,
     apply,
     ntp_gmt,
+    ntp_gmt_set,
     secondsNow,
     secondsUptime,
     dayofweek,
@@ -86,7 +87,10 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_inSunday,
     date,
     datime,
-
+    dTest,
+    dTest1,
+    nowData,
+    nowTime,
     btn1,
     btn2
 );

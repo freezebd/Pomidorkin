@@ -3,25 +3,29 @@
 
 struct Air_sensor
 {
-    float tfloat = -100.0;
-    float hfloat = -100.0;
-    int16_t tx10 = 0;       // температура переведенная из флоат в интежер * 10
-    int16_t hx10 = 0;       // влажность int
-    int16_t tTrigx10 = 0;   // температура срабатывания реле
-    int16_t hTrig = 0;      //влажность сработки реле
-    int16_t hTreshold = 0;
-    int16_t tTreshold = 0;
-    bool Rel_on = false;    // флаг включения реле
-    byte State = 0;         // автомат работы реле
+    float tfloat = 0.0;
+    float hfloat = 0.0;
+    int16_t tx10 = 0;       // температура воздуха integer
+    int16_t hx10 = 0;       // влажность воздуха integer
+    int16_t tTrigx10 = 0;   // температура воздуха срабатывания реле
+    int16_t hTrig = 0;      // влажность воздуха сработки реле
+    int16_t hTreshold = 0;  // Влажность воздуха гистерезиса отключения реле
+    int16_t tTreshold = 0;  // температура воздуха гистерезиса отключения реле
+    bool Rel_on = false;    // флаг включения реле воздкха
+    byte State = 0;         // автомат работы реле воздуха
 };
 struct Soil_sensor
 {
-    float SoilTemp = -100.0;
-    float SoilHum = -100.0;
-    int16_t hTrig = 0; //влажность сработки реле
-    int16_t hTreshold = 0;
-    bool Rel_on = false;  // флаг включения реле
-    byte State = 0;  // автомат работы реле
+    float tfloat = 0.0;
+    float hfloat = 0.0;
+    int16_t hx10 = 0;       //влажность почва integer
+    int16_t tx10 = 0;       //температура почва integer
+    int16_t tTrig = 0;      //температура почва сработки реле
+    int16_t hTrig = 0;      //влажность почва сработки реле
+    int16_t tTreshold = 0;  //температура почва гистерезиса отключения реле
+    int16_t hTreshold = 0;  //влажность почва гистерезиса отключения реле
+    bool Rel_on = false;    // флаг включения реле почвы
+    byte State = 0;         // автомат работы реле почвы
 };
 
 
@@ -38,9 +42,11 @@ struct Soil_sensor
 struct Data {  // обьявляем класс структуры
 
     uint32_t secondsNow = 44000ul;
+    uint32_t datime = 1738875600ul;
     uint32_t secondsUptime = 1;
     byte uptime_Days = 0;
-    uint32_t datime = 0ul;
+    
+    
 
     struct Air_sensor Air1;
     struct Soil_sensor Soil1;
@@ -65,6 +71,7 @@ struct Data {  // обьявляем класс структуры
 extern Data data;  // объявляем что у нас будет переменная data класса Data
 extern Air_sensor Air1; 
 extern Soil_sensor Soil1;
+
 
 
 // constexpr size_t BRIGHT_SIZE = 100;// размер массива
