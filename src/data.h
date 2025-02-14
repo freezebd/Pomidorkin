@@ -17,6 +17,7 @@ struct Air_sensor
     bool HumeRele_on = false;    // флаг включения реле влажности воздкха
     byte StateHume = 0;         // автомат работы реле влажности воздуха
 };
+
 struct Soil_sensor
 {
     float tfloat = 0.0;      // температура почва float
@@ -34,6 +35,23 @@ struct Soil_sensor
     byte StateHume = 0;         // автомат работы реле влажности почвы
 };
 
+struct Soil2_sensor
+{
+    float tfloat = 0.0;      // температура почва float
+    int16_t tx10 = 0;       //температура почва integer
+    int16_t tTrigx10 = 0;      //температура почва сработки реле
+    int16_t tTresholdx10 = 0;  //температура почва гистерезиса отключения реле
+    bool TempRele_on = false;    // флаг включения реле температуры почвы
+    byte StateTemp = 0;         // автомат работы реле температуры почвы
+
+    float hfloat = 0.0;      // влажность почва float
+    int16_t hx10 = 0;       //влажность почва integer   
+    int16_t hTrigx10 = 0;      //влажность почва сработки реле
+    int16_t hTresholdx10 = 0;  //влажность почва гистерезиса отключения реле
+    bool HumeRele_on = false;    // флаг включения реле влажности почвы
+    byte StateHume = 0;         // автомат работы реле влажности почвы
+
+};
 
 // подструктруа структуры Data
 // struct Ds18b20_sensor {
@@ -45,17 +63,27 @@ struct Soil_sensor
 //     byte State = 0;       // автомат состояний работы реле
 // };
 
+// Структура для хранения информации о найденных реле
+struct RelayInfo {
+    uint8_t address;
+    bool isPresent;
+};
+
 struct Data {  // обьявляем класс структуры
 
     uint32_t secondsNow = 44000ul;
     uint32_t datime = 1738875600ul;
     uint32_t secondsUptime = 1;
     byte uptime_Days = 0;
-    
+    uint8_t old_address = 0;  // старый адрес реле
+    uint8_t new_address = 0;  // новый адрес реле
+    RelayInfo relays[8];         // массив для хранения информации о найденных реле
+    uint8_t relay_count = 0;     // количество найденных реле
     
 
     struct Air_sensor Air1;
     struct Soil_sensor Soil1;
+    struct Soil_sensor Soil2;
  
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;
@@ -77,7 +105,7 @@ struct Data {  // обьявляем класс структуры
 extern Data data;  // объявляем что у нас будет переменная data класса Data
 extern Air_sensor Air1; 
 extern Soil_sensor Soil1;
-
+extern Soil_sensor Soil2;
 
 
 // constexpr size_t BRIGHT_SIZE = 100;// размер массива

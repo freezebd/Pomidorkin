@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include "esp_log.h"
+
 #include "led.h"
 #include "timer.h"
 #ifdef ESP8266
@@ -53,6 +55,7 @@ void setup() {
     rtc.begin();
     Serial.print("Часы >> ");
     Serial.println(rtc.isOK());
+    //Serial.println( (String)(data.Air1.tfloat + String("°C")));
     
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
@@ -82,25 +85,36 @@ void setup() {
     db.init(kk::datime, (uint32_t)0ul);
     db.init(kk::secondsNow, (uint32_t)0ul);
 
-    db.init(kk::airTempName, "Имя датчика 1");
+    db.init(kk::airTempName, "Имя датчика воздуха 1");
     db.init(kk::airTempRele_enabled, (uint8_t)0);
     db.init(kk::airRele_startTemp, (uint8_t)30);
     db.init(kk::airRele_TempThreshold, (uint8_t)1);
 
-    db.init(kk::airHumeName, "Имя датчика 3");
+  //  db.init(kk::airHumeName, "Имя датчика 3");
     db.init(kk::airHumeRele_enabled, (uint8_t)0);
     db.init(kk::airRele_startHume, (uint8_t)30);
     db.init(kk::airRele_HumeTreshold, (uint8_t)1);
 
-    db.init(kk::soilTempName, "Имя датчика 2");
+  //  db.init(kk::soilTempName, "Имя датчика 2");
     db.init(kk::soilTempRele_enabled, (uint8_t)0);
     db.init(kk::soilRele_startTemp, (uint8_t)26);
     db.init(kk::soilRele_TempThreshold, (uint8_t)1);
 
-    db.init(kk::soilHumeName, "Имя датчика 4");
+    db.init(kk::soilHumeName, "Имя датчика почвы 1");
     db.init(kk::soilHumeRele_enabled, (uint8_t)0);
     db.init(kk::soilRele_startHume, (uint8_t)30);
     db.init(kk::soilRele_HumeTreshold, (uint8_t)1);
+
+    db.init(kk::soil2TempName, "Имя датчика почвы 2");
+    db.init(kk::soil2TempRele_enabled, (uint8_t)0);
+    db.init(kk::soil2Rele_startTemp, (uint8_t)26);
+    db.init(kk::soil2Rele_TempThreshold, (uint8_t)1);
+
+  //  db.init(kk::soil2HumeName, "Имя датчика почвы 2");
+    db.init(kk::soil2HumeRele_enabled, (uint8_t)0);
+    db.init(kk::soil2Rele_startHume, (uint8_t)30);
+    db.init(kk::soil2Rele_HumeTreshold, (uint8_t)1);
+
 
     db.init(kk::t1Discr_name, "Реле 1");
     db.init(kk::t1Discr_enabled, (uint8_t)0);
@@ -133,6 +147,8 @@ void setup() {
     db.init(kk::t6Discr_inFriday, (uint8_t)0);
     db.init(kk::t6Discr_inSaturday, (uint8_t)0);
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
+    db.init(kk::old_address, (uint8_t)0x00);
+    db.init(kk::new_address, (uint8_t)0x00);
     db.dump(Serial);
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
@@ -142,14 +158,14 @@ void setup() {
     data.t5discr_enbl = db[kk::t5Discr_enabled];
     data.t6discr_enbl = db[kk::t6Discr_enabled];
     userSixTimers();
-    // пересчитываем температуру х10 чтобы не множиться в цикле
-    // tdht1MaxX10
-    // hdht2Min
-    // data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+    // пересчитываем температуру и влажность воздуха и почвы в х10 чтобы не множиться в цикле
     data.Air1.tTrigx10 = db[kk::airRele_startTemp].toInt() * 10;
-
-    //data.dhtTwo.hTrig = db[kk::dht2HumRele_startHum].toInt();
-    data.Soil1.hTrigx10 = db[kk::soilRele_startHume].toInt();
+    data.Air1.hTrigx10 = db[kk::airRele_startHume].toInt() * 10;
+    data.Soil1.tTrigx10 = db[kk::soilRele_startTemp].toInt() * 10;
+    data.Soil1.hTrigx10 = db[kk::soilRele_startHume].toInt() * 10;
+    data.Soil2.tTrigx10 = db[kk::soil2Rele_startTemp].toInt() * 10;
+    data.Soil2.hTrigx10 = db[kk::soil2Rele_startHume].toInt() * 10;  
+    
     // берем показания
     switch (db[kk::airRele_TempThreshold].toInt()) {
         case 0:
@@ -167,57 +183,36 @@ void setup() {
     }
     switch (db[kk::soilRele_HumeTreshold].toInt()) {
         case 0:
-            //data.dhtTwo.hTreshold = 1;
             data.Soil1.hTresholdx10 = 1;
             break;
         case 1:
-            //data.dhtTwo.hTreshold = 2;
             data.Soil1.hTresholdx10 = 2;
             break;
         case 2:
-            //data.dhtTwo.hTreshold = 5;
             data.Soil1.hTresholdx10 = 5;
             break;
         case 3:
-            //data.dhtTwo.hTreshold = 10;
             data.Soil1.hTresholdx10 = 10;
             break;
     }
+    switch (db[kk::soil2Rele_HumeTreshold].toInt()) {
+        case 0:
+            data.Soil2.hTresholdx10 = 1;
+            break;
+        case 1:
+            data.Soil2.hTresholdx10 = 2;    
+            break;
+        case 2:
+            data.Soil2.hTresholdx10 = 5;
+            break;
+        case 3:
+            data.Soil2.hTresholdx10 = 10;
+            break;  
+    }   
+
+
     userDhtRelays();
-    //
-  /*  data.Air1.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
-    data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;  // дописать для влажности
     
-    switch (db[kk::DS1Rele_TempThreshold].toInt()) {
-        case 0:
-            data.Air1.tTreshold = 2;
-            break;
-        case 1:
-            data.Air1.tTreshold = 5;
-            break;
-        case 2:
-            data.Air1.tTreshold = 10;
-            break;
-        case 3:
-            data.Air1.tTreshold = 30;
-            break;
-    }
-    switch (db[kk::DS2Rele_TempThreshold].toInt()) {
-        case 0:
-            data.dsTwo.tTreshold = 2;
-           
-            break;
-        case 1:
-            data.dsTwo.tTreshold = 5;
-            break;
-        case 2:
-            data.dsTwo.tTreshold = 10;
-            break;
-        case 3:
-            data.dsTwo.tTreshold = 30;
-            break;
-    }
-    // userDSRelays(); */
 
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
@@ -292,8 +287,14 @@ void loop() {
                 break;
             case 10:
                 readSensorAir();
+                checker = 15;
+                break;
+            case 15:
+                readSensorSoil2();
                 checker = 5;
                 break;
+            
+                
         }
 
     }

@@ -19,9 +19,7 @@ void userDhtRelays() {  // === термореле DHT1 AirTemp для нагре
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
-            // if (data.dht1TempRele_enbl != 0) {
             if (db[kk::airTempRele_enabled].toInt() != 0) {
-                // data.dhtOne.State = 5;
                 data.Air1.StateAir = 5;
             } else if (data.Air1.TempRele_on) {
                 data.Air1.StateAir = 20;  // выключим по перемещению ползунка в OFF
@@ -33,7 +31,7 @@ void userDhtRelays() {  // === термореле DHT1 AirTemp для нагре
             }
             break;
         case 10:  // включаем нагрев
-            reley_Air_on();
+            reley_Air_Temt_on();
             data.Air1.TempRele_on = true;
             data.Air1.StateAir = 15;
             break;
@@ -43,32 +41,30 @@ void userDhtRelays() {  // === термореле DHT1 AirTemp для нагре
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-            // digitalWrite(DHT1RELAY, OFF);
-            reley_Air_off();
+            reley_Air_Temp_off();
             data.Air1.TempRele_on = false;
             data.Air1.StateAir = 0;
             break;
     }  // switch (dht1State)
 
-    // === термореле Датчика почвы для увлажнения почвы
+    // реле Датчика почвы 1 для увлажнения почвы
     switch (data.Soil1.StateHume) {  //(data.dhtTwo.State)
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
-            //            // if (data.dht1TempRele_enbl != 0) {
             if (db[kk::soilHumeRele_enabled].toInt() != 0) {
                 data.Soil1.StateHume = 5;
             } else if (data.Soil1.HumeRele_on) {
                 data.Soil1.StateHume = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
-        case 5:                                            // ожидание понижения влажности
+        case 5:   // ожидание понижения влажности
             if (data.Soil1.hx10 <= data.Soil1.hTrigx10) { 
                 data.Soil1.StateHume = 10;
             }
             break;
-        case 10:  // включаем охлаждение
+        case 10:  // включаем полив
             reley_Soil_on();
             data.Soil1.HumeRele_on = true;
             data.Soil1.StateHume = 15;
@@ -79,88 +75,49 @@ void userDhtRelays() {  // === термореле DHT1 AirTemp для нагре
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-            // digitalWrite(DHT2RELAY, OFF);
+            // выключаем полив
             reley_Soil_off();
             // relay1.digitalWrite(1,LOW);
             data.Soil1.HumeRele_on = false;
             data.Soil1.StateHume = 0;
             break;
-    }  // switch (dhtTwo.State)
+    }   // switch (dhtTwo.State)
+        // реле Датчика почвы 2 для увлажнения почвы
+    switch (data.Soil2.StateHume) {  //(data.dhtTwo.State)
+        // инициализация
+        //  ползунок включен - отрабатываем
+        // выключен и включено реле - уйдем на выключение
+        case 0: 
+            if (db[kk::soil2HumeRele_enabled].toInt() != 0) {
+                data.Soil2.StateHume = 5;
+            } else if (data.Soil2.HumeRele_on) {
+                data.Soil2.StateHume = 20;  // выключим по перемещению ползунка в OFF
+            }
+            break;
+        case 5:   // ожидание понижения влажности
+            if (data.Soil2.hx10 <= data.Soil2.hTrigx10) { 
+                data.Soil2.StateHume = 10;
+            }
+            break;  
+        case 10:  // включаем полив
+            reley_Soil_on();
+            data.Soil2.HumeRele_on = true;
+            data.Soil2.StateHume = 15;
+            break;  
+        case 15:  // ожидаем повышения влажности + трешхолд
+            if (data.Soil2.hx10 >= data.Soil2.hTrigx10 + data.Soil2.hTresholdx10) {  //(data.dhtTwo.hum >= data.dhtTwo.hTrig + data.dhtTwo.hTreshold) {
+                data.Soil2.StateHume = 20;
+            }
+            break;  
+        case 20:  // используется при переключении ползунка в морде
+            // выключаем полив
+            reley_Soil_off();
+            // relay1.digitalWrite(1,LOW);
+            data.Soil2.HumeRele_on = false;
+            data.Soil2.StateHume = 0;
+            break;  
+    }  // switch (data.Soil2.StateHume)
 }  // userDhtRelays()
-//
-//
-//
-// void userDSRelays() {// === термореле DS18B20_1 для охлаждения воды\почвы
-
-//     switch (data.dsOne.State) {
-//         // инициализация
-//         //  ползунок включен - отрабатываем
-//         // выключен и включено реле - уйдем на выключение
-//         case 0:
-//             if (db[kk::DS1Rele_enabled].toInt() != 0) {
-//                 data.dsOne.State = 5;
-//             } else if (data.dsOne.rel_on) {
-//                 data.dsOne.State = 20;  // выключим по перемещению ползунка в OFF
-//             }
-//             break;
-//         case 5:  // ожидание превышения теспературы
-//             if (data.dsOne.tx10 >= data.dsOne.tTrigx10) {
-//                 data.dsOne.State = 10;
-//             }
-//             break;
-//         case 10:  // включаем охлаждение
-//            // digitalWrite(DS_1_RELAY, ON); // СЮДА ДОБАВИМ СВОЕ РЕЛЕ
-//             data.dsOne.rel_on = true;
-//             data.dsOne.State = 15;
-//             break;
-//         case 15:  // ожидаем понижения температуры + трешхолд
-//             if (data.dsOne.tx10 <= data.dsOne.tTrigx10 - data.dsOne.tTreshold) {
-//                 data.dsOne.State = 20;
-//             }
-//             break;
-//         case 20:  // используется при переключении ползунка в морде
-//            // digitalWrite(DS_1_RELAY, OFF);  // СЮДА ДОБАВИМ СВОЕ РЕЛЕ
-//             data.dsOne.rel_on = true;
-//             data.dsOne.rel_on = false;
-//             data.dsOne.State = 0;
-//             break;
-//     }  // switch (ds1State)
-//     //
-//     // === термореле DS18B20 2 для нагрева воды\почвы
-//     switch (data.dsTwo.State) {
-//         // инициализация
-//         //  ползунок включен - отрабатываем
-//         // выключен и включено реле - уйдем на выключение
-//         case 0:
-//             if (db[kk::DS2Rele_enabled].toInt() != 0) {
-//                 data.dsTwo.State = 5;
-//             } else if (data.dsTwo.rel_on) {
-//                 data.dsTwo.State = 20;  // выключим по перемещению ползунка в OFF
-//             }
-//             break;
-//         case 5:  // ожидание понижения теспературы
-//             if (data.dsTwo.tx10 <= data.dsTwo.tTrigx10) {
-//                 data.dsTwo.State = 10;
-//             }
-//             break;
-//         case 10:  // включаем нагрев
-//            // digitalWrite(DS_2_RELAY, ON);
-//             data.dsTwo.rel_on = true;
-//             data.dsTwo.State = 15;
-//             break;
-//         case 15:  // ожидаем повышение температуры + трешхолд
-//             if (data.dsTwo.tx10 >= data.dsTwo.tTrigx10 + data.dsTwo.tTreshold) {
-//                 data.dsTwo.State = 20;
-//             }
-//             break;
-//         case 20:  // так же используется при переключении ползунка в морде
-//            // digitalWrite(DS_2_RELAY, OFF);
-//             data.dsTwo.rel_on = false;
-//             data.dsTwo.State = 0;
-//             break;
-//     }  // switch (dsTwo.State)
-//     //
-// }  // userDSRelays()
 
 void userSixTimers() { // Таймеры с1 - по 6 ===
    
