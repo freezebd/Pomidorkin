@@ -79,7 +79,7 @@ struct Data {  // обьявляем класс структуры
     uint8_t new_address = 0;  // новый адрес реле
     RelayInfo relays[8];         // массив для хранения информации о найденных реле
     uint8_t relay_count = 0;     // количество найденных реле
-    
+
 
     struct Air_sensor Air1;
     struct Soil_sensor Soil1;

@@ -39,7 +39,7 @@ void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
 
     upd.update(kk::secondsNow, data.secondsNow);           //Секунды с начало суток
-    upd.update(kk::datime, data.datime);
+    upd.update(kk::datime, data.datime);                   //Время в секундах с 1970 года
     upd.update(kk::secondsUptime, data.secondsUptime);     // Секунды аптайм
       
     if (!data.uptime_Days) {
@@ -84,7 +84,6 @@ void update(sets::Updater &upd) {
 
     upd.update(kk::old_address, String(data.old_address));                  // обновление веб интерфейса старого адреса реле
     upd.update(kk::new_address, String(data.new_address));                  // обновление веб интерфейса нового адреса реле
-    
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -116,9 +115,21 @@ void update(sets::Updater &upd) {
     }
 }  // update
 
+void measureExecutionTime(const char* functionName, void (*func)()) {
+    unsigned long startTime = millis();
+    func();
+    unsigned long duration = millis() - startTime;
+    
+    Serial.print("Время выполнения ");
+    Serial.print(functionName);
+    Serial.print(": ");
+    Serial.print(duration);
+    Serial.println(" мс");
+}
 
 void build(sets::Builder &b) {
-
+    unsigned long startTime = millis();
+    
     if (b.build.isAction()) {// можно узнать, было ли действие по виджету
        
         Serial.print("Set: 0x");
@@ -702,16 +713,19 @@ void build(sets::Builder &b) {
                     sets::Group g(b, "Найденные реле");
                     
                     if (b.Button(0x1001, "Сканировать реле", sets::Colors::Green)) {
-                        data.relay_count = scan_relays(data.relays);
+                        measureExecutionTime("scan_relays", []() {    // измерение времени выполнения функции
+                            data.relay_count = scan_relays(data.relays);
+                        });
                         db.update();
+                        b.reload();
                     }
                     
                     if (data.relay_count > 0) {
-                        b.Label("Поиск и смена адреса реле");  // Убираем цвет из Label
+                        b.Label("Поиск и смена адреса реле");  
                         for (uint8_t i = 0; i < data.relay_count; i++) {
                             String addr = String(data.relays[i].address);
                             b.Label("Реле " + String(i+1) + " (адрес " + addr + ")");  // Используем обычный Label
-                            if (b.Button(0x1010 + i, "Выбрать", sets::Colors::Blue)) {
+                            if (b.Button(kk::relay_seach + i, "Выбрать", sets::Colors::Blue)) {
                                 data.old_address = data.relays[i].address;
                                 db[kk::old_address] = String(data.old_address);
                                 db.update();
@@ -726,9 +740,11 @@ void build(sets::Builder &b) {
                     b.Number(kk::new_address, "Новый адрес (1-127)");
                     
                     if (b.Button(0x1002, "Изменить адрес", sets::Colors::Blue)) {
-                        data.old_address = db[kk::old_address].toInt();
-                        data.new_address = db[kk::new_address].toInt();
-                        change_relay_address();
+                        measureExecutionTime("change_relay_address", []() {    // измерение времени выполнения функции
+                            data.old_address = db[kk::old_address].toInt();
+                            data.new_address = db[kk::new_address].toInt();
+                            change_relay_address();
+                        });
                         db.update();
                     }
                 }
@@ -737,4 +753,8 @@ void build(sets::Builder &b) {
    
      }  // Подстройки
 
+    unsigned long totalTime = millis() - startTime;
+    Serial.print("Общее время build(): ");
+    Serial.print(totalTime);
+    Serial.println(" мс");
 }  // builder
