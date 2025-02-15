@@ -47,7 +47,7 @@ class StampKeeper : public StampConvert {
     }
 
     // синхронизировать с Datime
-    void sync(Datime& dt, uint16_t ms = 0, bool skipTicks = false) {
+    void sync(const Datime& dt, uint16_t ms = 0, bool skipTicks = false) {
         sync(dt.getUnix(), ms, skipTicks);
     }
 
@@ -102,7 +102,7 @@ class StampKeeper : public StampConvert {
     }
 
     // получить миллисекунды с epoch
-    uint64_t unixMs() {
+    uint64_t getUnixMs() {
         return synced() ? (getUnix() * 1000ull + ms()) : 0;
     }
 

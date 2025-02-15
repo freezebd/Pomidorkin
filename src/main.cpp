@@ -27,14 +27,6 @@
 #include "modbus.h"
 #include "reley.h"
 
-
-
-
-
-// обявление фкнций для их видимости из вкладок.
-
-
-
 Timer each5Sec(5000ul);    // таймер раз в 10 сек
 Timer each5min(300000ul);  // таймер раз в 5 мин
 Timer eachSec(1000ul);     // таймер раз в сек

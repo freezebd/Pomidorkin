@@ -12,7 +12,7 @@
 static bool t6_rightDay = 0;  // День недели для таймера 6
 static uint8_t lastWeekDay = 0;
 
-void userDhtRelays() {  // === термореле DHT1 AirTemp для нагрев  воздуха
+void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
 
     switch (data.Air1.StateAir) {  
         // инициализация
@@ -45,10 +45,39 @@ void userDhtRelays() {  // === термореле DHT1 AirTemp для нагре
             data.Air1.TempRele_on = false;
             data.Air1.StateAir = 0;
             break;
-    }  // switch (dht1State)
-
-    // реле Датчика почвы 1 для увлажнения почвы
-    switch (data.Soil1.StateHume) {  //(data.dhtTwo.State)
+    }  // switch (data.Air1.StateAir)
+    switch (data.Air1.StateHume) {
+        case 0:
+            if (db[kk::airHumeRele_enabled].toInt() != 0) {
+                data.Air1.StateHume = 5;
+            } else if (data.Air1.HumeRele_on) {
+                data.Air1.StateHume = 20;  // выключим по перемещению ползунка в OFF
+            }
+            break;      
+        case 5:
+           if (data.Air1.hx10 <= data.Air1.hTrigx10 - data.Air1.hTresholdx10) {
+                data.Air1.StateHume = 10;
+            }
+            break;
+            case 10:
+           // reley_Air_Hume_on();
+            data.Air1.HumeRele_on = true;
+            data.Air1.StateHume = 15;
+            break;
+        case 15:  // ожидаем повышение влажности 
+            if (data.Air1.hx10 >= data.Air1.hTrigx10) {
+                data.Air1.StateHume = 20;
+            }
+            break;
+        case 20:  // используется при переключении ползунка в морде
+            // выключаем полив
+           // reley_Air_Hume_off();
+            data.Air1.HumeRele_on = false;
+            data.Air1.StateHume = 0;
+            break;
+    }  // switch (data.Air1.StateHume)
+                            // реле Датчика почвы 1 для увлажнения почвы
+    switch (data.Soil1.StateHume) {  // Реле почвы 1
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
