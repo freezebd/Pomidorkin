@@ -7,7 +7,7 @@
 
 
 ![Веб морда для управления открывается в Chrome телефона или компьютера]
-(https://github.com/freezebd/Pomidorkin/blob/main/pic/Pomidorkin.png)
+.(https://github.com/freezebd/Pomidorkin/blob/main/pic/Pomidorkin.png).
 
 
 
