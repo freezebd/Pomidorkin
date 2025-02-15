@@ -6,7 +6,8 @@
 Основан на Гайверовской библиотеке Settings
 
 
-![Веб морда для управления открывается в Chrome телефона или компьютера](https://github.com/nicelight/minihub-pio/blob/main/pic/promo.png)
+![Веб морда для управления открывается в Chrome телефона или компьютера]
+(https://github.com/freezebd/Pomidorkin/blob/main/pic/Pomidorkin.png)
 
 
 
