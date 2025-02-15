@@ -6,8 +6,7 @@
 Основан на Гайверовской библиотеке Settings
 
 
-![Веб морда для управления открывается в Chrome телефона или компьютера]
-.(https://github.com/freezebd/Pomidorkin/blob/main/pic/Pomidorkin.png).
+![Веб морда для управления открывается в Chrome телефона или компьютера](https://github.com/freezebd/Pomidorkin/blob/main/pic/Pomidorkin.png)
 
 
 
