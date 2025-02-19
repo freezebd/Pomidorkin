@@ -31,7 +31,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 10:  // включаем нагрев
-           // reley_Air_Temt_on();
+            reley_1_1_on(); 
             data.Air1.TempRele_on = true;
             data.Air1.StateAir = 15;
             break;
@@ -41,12 +41,12 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-           // reley_Air_Temp_off();
+            reley_1_1_off();
             data.Air1.TempRele_on = false;
             data.Air1.StateAir = 0;
             break;
     }  // switch (data.Air1.StateAir)
-    switch (data.Air1.StateHume) {
+    switch (data.Air1.StateHume) { // реле AirHume для увлажнение воздуха
         case 0:
             if (db[kk::airHumeRele_enabled].toInt() != 0) {
                 data.Air1.StateHume = 5;
@@ -60,7 +60,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
             case 10:
-           // reley_Air_Hume_on();
+           reley_1_2_on();
             data.Air1.HumeRele_on = true;
             data.Air1.StateHume = 15;
             break;
@@ -71,7 +71,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             break;
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
-           // reley_Air_Hume_off();
+            reley_1_2_off();
             data.Air1.HumeRele_on = false;
             data.Air1.StateHume = 0;
             break;
@@ -94,7 +94,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 10:  // включаем полив
-           // reley_Soil_on();
+            reley_2_1_on();
             data.Soil1.HumeRele_on = true;
             data.Soil1.StateHume = 15;
             break;
@@ -105,12 +105,11 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             break;
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
-           // reley_Soil_off();
-            // relay1.digitalWrite(1,LOW);
+            reley_2_1_off();
             data.Soil1.HumeRele_on = false;
             data.Soil1.StateHume = 0;
             break;
-    }   // switch (dhtTwo.State)
+    }   // switch (Реле почвы 1)
         // реле Датчика почвы 2 для увлажнения почвы
     switch (data.Soil2.StateHume) {  //(data.dhtTwo.State)
         // инициализация
@@ -129,7 +128,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;  
         case 10:  // включаем полив
-           // reley_Soil_on();
+            reley_2_2_on();
             data.Soil2.HumeRele_on = true;
             data.Soil2.StateHume = 15;
             break;  
@@ -140,12 +139,11 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             break;  
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
-           // reley_Soil_off();
-            // relay1.digitalWrite(1,LOW);
+            reley_2_2_off();
             data.Soil2.HumeRele_on = false;
             data.Soil2.StateHume = 0;
             break;  
-    }  // switch (data.Soil2.StateHume)
+    }  // switch (Реле почвы 2)
 }  // userDhtRelays()
 
 void userSixTimers() { // Таймеры с1 - по 6 ===
@@ -158,15 +156,13 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             if ((db[kk::t1Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t1Discr_endTime].toInt())) {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
-                   // digitalWrite(RELE_1, ON);
-                  // reley_1_on();
+                    reley_3_1_on();
                     data.rel1_on = 1;
                 }
             } else {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
-                    //digitalWrite(RELE_1, OFF);
-                   // reley_1_off();
+                    reley_3_1_off();
                     data.rel1_on = 0;
                 }
             }
@@ -175,15 +171,13 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             if ((db[kk::t1Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t1Discr_endTime].toInt())) {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
-                    //digitalWrite(RELE_1, OFF);
-                   // reley_1_off();
+                    reley_3_1_off();
                     data.rel1_on = 0;
                 }
             } else {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
-                    //digitalWrite(RELE_1, ON);
-                   // reley_1_on();
+                    reley_3_1_on();
                     data.rel1_on = 1;
                 }
             }
@@ -191,8 +185,7 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
     } else {
         if (data.rel1_on)  // если было включено, выключим
         {
-            //digitalWrite(RELE_1, OFF);
-           // reley_1_off();
+            reley_3_1_off();
             data.rel1_on = 0;
         }
     }
@@ -405,15 +398,13 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             if ((db[kk::t6Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t6Discr_endTime].toInt())) {
                 if (!data.rel6_on)  // avoid extra digWrite
                 {
-                   // digitalWrite(RELE_6, ON);
-                    rele2.digitalWrite(2,HIGH);
+                    reley_3_2_on();
                     data.rel6_on = 1; 
                 }
             } else {
                 if (data.rel6_on)  // avoid extra digWrite
                 {
-                   // digitalWrite(RELE_6, OFF);
-                    rele2.digitalWrite(2,LOW);
+                    reley_3_2_off();
                     data.rel6_on = 0;
                 }
             }
@@ -422,15 +413,13 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             if ((db[kk::t6Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t6Discr_endTime].toInt())) {
                 if (data.rel6_on)  // avoid extra digWrite
                 {
-                   // digitalWrite(RELE_6, OFF);
-                    rele2.digitalWrite(2,LOW);
+                    reley_3_2_off();
                     data.rel6_on = 0;
                 }
             } else {
                 if (!data.rel6_on)  // avoid extra digWrite
                 {
-                   // digitalWrite(RELE_6, ON);
-                    rele2.digitalWrite(2,HIGH);
+                    reley_3_2_on();
                     data.rel6_on = 1;
                 }
             }
@@ -438,8 +427,7 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
     } else {
         if (data.rel6_on)  // если было включено, выключим
         {
-           // digitalWrite(RELE_6, OFF);
-           rele2.digitalWrite(2,LOW);
+            reley_3_2_off();
             data.rel6_on = 0;
         }
     }

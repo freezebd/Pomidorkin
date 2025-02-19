@@ -97,7 +97,7 @@ void init_reley(){
        rele3_state |= 0x02;
    }
  }    
-  void reley_3_2_off(){ 
+void reley_3_2_off(){ 
    if(rele3_state & 0x02) {
        rele3.digitalWrite(2,LOW);
        rele3_state &= ~0x02;
