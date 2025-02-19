@@ -1,0 +1,44 @@
+#	####################################################
+#	СИНТАКСИЧЕСКАЯ РАСКРАСКА ДЛЯ БИБИЛИОТЕКИ:
+#	iarduino_MB_HTL
+#	####################################################
+#	ТИПЫ ДАННЫХ:							   (KEYWORD1)
+	iarduino_MB_HTL	KEYWORD1
+#	####################################################
+#	МЕТОДЫ И ФУНКЦИИ:						   (KEYWORD2)
+	begin	KEYWORD2
+	reset	KEYWORD2
+	changeID	KEYWORD2
+	setSpeedMB	KEYWORD2
+	ackSpeedMB	KEYWORD2
+	setTypeMB	KEYWORD2
+	ackTypeMB	KEYWORD2
+	writeFlash	KEYWORD2
+	readFlash	KEYWORD2
+	getID	KEYWORD2
+	getVersion	KEYWORD2
+	getPWR	KEYWORD2
+	setIDLED	KEYWORD2
+	getErr	KEYWORD2
+	getSumSensors	KEYWORD2
+	checkSensor	KEYWORD2
+	getTEM	KEYWORD2
+	getHUM	KEYWORD2
+	getHUMA	KEYWORD2
+	getCO2	KEYWORD2
+	getTVOC	KEYWORD2
+	getLUX	KEYWORD2
+	setPeriod	KEYWORD2
+	getPeriod	KEYWORD2
+#	####################################################
+#	КОНСТАНТЫ:								   (LITERAL1)
+	DEF_MODEL_SHT_LTR	LITERAL1
+	DEF_MODEL_SHT_SGP_LTR	LITERAL1
+	SENSOR_ALL	LITERAL1
+	SENSOR_SHT	LITERAL1
+	SENSOR_LTR	LITERAL1
+	ERROR_SHT_INIT	LITERAL1
+	ERROR_SHT_DATA	LITERAL1
+	ERROR_LTR_INIT	LITERAL1
+	ERROR_LTR_DATA	LITERAL1
+	ERROR_SENSORS	LITERAL1

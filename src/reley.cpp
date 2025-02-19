@@ -14,9 +14,9 @@ iarduino_I2C_Relay rele2(0x08);      //   Объявляем объект rele �
 iarduino_I2C_Relay rele3(0x0A);      //   Объявляем объект rele для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
 
 // Кэшируем состояния реле
-static uint8_t rele1_state = 0; // Свет / Влажность воздуха
-static uint8_t rele2_state = 0; // 
-static uint8_t rele3_state = 0; // 
+static uint8_t rele1_state = 0; 
+static uint8_t rele2_state = 0; 
+static uint8_t rele3_state = 0; 
 
 void init_reley(){                                                       
     rele1.begin(&Wire); // &Wire1, &Wire2 ...                       //   Инициируем работу с модулем, указав ссылку на объект для работы с шиной I2C на которой находится модуль (по умолчанию &Wire).
@@ -27,76 +27,80 @@ void init_reley(){
     rele3.digitalWrite(ALL_CHANNEL,LOW);                           // * Выключаем все каналы модуля.
 }                                                                   
 
- void reley_Soil_on(){        // Включить  реле температура почвы                                              
+ void reley_1_1_on(){                                               
    if(!(rele1_state & 0x01)) {
        rele1.digitalWrite(1, HIGH);
        rele1_state |= 0x01;
    }
  }       
- void reley_Soil_off(){       // Выключить  реле температура почвы  
+ void reley_1_1_off(){       
    if(rele1_state & 0x01) {
        rele1.digitalWrite(1, LOW); 
        rele1_state &= ~0x01;
    }
- }  
- void reley_Soil2_on(){       // Включить  реле температура почвы 2                                                      
-   if(!(rele2_state & 0x01)) {
-       rele2.digitalWrite(1, HIGH);
-       rele2_state |= 0x01;
-   }
- }       
- void reley_Soil2_off(){ // Выключить  реле температура почвы 2
-   if(rele2_state & 0x01) {
-       rele2.digitalWrite(1,LOW);
-       rele2_state &= ~0x01;
-   }
- }  
- void reley_Air_Temt_on(){ // Включить  реле температура воздуха
+ } 
+ void reley_1_2_on(){    
    if(!(rele1_state & 0x02)) {
        rele1.digitalWrite(2, HIGH);
        rele1_state |= 0x02;
    }
  } 
- void reley_Air_Temp_off(){
+ void reley_1_2_off(){   
    if(rele1_state & 0x02) {
        rele1.digitalWrite(2,LOW);
        rele1_state &= ~0x02;
    }
  }
- void reley_1_on(){ 
+
+
+ void reley_2_1_on(){                                                        
    if(!(rele2_state & 0x01)) {
        rele2.digitalWrite(1, HIGH);
        rele2_state |= 0x01;
    }
- }    
- void reley_1_off(){ 
+ }       
+ void reley_2_1_off(){      
    if(rele2_state & 0x01) {
        rele2.digitalWrite(1,LOW);
        rele2_state &= ~0x01;
    }
- }
- void reley_2_on(){ 
+ }  
+ void reley_2_2_on(){                                                        
    if(!(rele2_state & 0x02)) {
        rele2.digitalWrite(2, HIGH);
        rele2_state |= 0x02;
    }
- }    
- void reley_2_off(){ 
+ }       
+ void reley_2_2_off(){      
    if(rele2_state & 0x02) {
        rele2.digitalWrite(2,LOW);
        rele2_state &= ~0x02;
    }
- } 
- void reley_3_on(){ // Включить  реле 3
+ }  
+
+
+ void reley_3_1_on(){  
    if(!(rele3_state & 0x01)) {
        rele3.digitalWrite(1, HIGH);
        rele3_state |= 0x01;
    }
  }    
- void reley_3_off(){ // Выключить  реле 3
+ void reley_3_1_off(){  
    if(rele3_state & 0x01) {
        rele3.digitalWrite(1,LOW);
        rele3_state &= ~0x01;
+   }
+ }
+ void reley_3_2_on(){ 
+   if(!(rele3_state & 0x02)) {
+       rele3.digitalWrite(2, HIGH);
+       rele3_state |= 0x02;
+   }
+ }    
+  void reley_3_2_off(){ 
+   if(rele3_state & 0x02) {
+       rele3.digitalWrite(2,LOW);
+       rele3_state &= ~0x02;
    }
  } 
 

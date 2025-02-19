@@ -1,7 +1,13 @@
 #include "modbus.h"
 #include "data.h"
 
+// uint8_t nowAddress = 3;                     // Текущий адрес блока климатических датчиков ( 1 - 247 ).
+// uint8_t newAddress = 10;                    // Новый адрес блока климатических датчиков ( 1 - 247 ).
+// uint8_t pinDE      = 2;                     // Вывод DE конвертера UART-RS485.
+
+
 ModbusClient modbus(Serial1);
+iarduino_MB_HTL sensor(modbus);
 
 bool sens_alert = false;
 
@@ -25,7 +31,6 @@ void init_modbus() {// Чтение данных с датчика воздух�
     modbus.setTimeout( 25 ); // Указываем жать ответ от модулей не более 15 мс.
     modbus.setDelay( 10 ); // Указываем выдерживать паузу между пакетами в 5 мс.
     Serial.println("Modbus RTU Master Initialized");
-    ESP_LOGI("Modbus", "Modbus RTU Master Initialized");
 }
 void readSensorAir() {
     int16_t result;
@@ -35,8 +40,8 @@ void readSensorAir() {
     if (result < 0) {
         sens_alert = true;
         data.Air1.hfloat = -80;
-        Serial.println("Air humidity read error");
-        ESP_LOGE("Modbus", "Air humidity read error");
+        // Serial.println("Air humidity read error");
+        // ESP_LOGE("Modbus", "Air humidity read error");
     } else {
         data.Air1.hx10 = result;
         data.Air1.hfloat = (data.Air1.hx10 / 10.0);
@@ -49,8 +54,8 @@ void readSensorAir() {
     if (result < 0) {
         sens_alert = true;
         data.Air1.tfloat = -80;
-        Serial.println("Air temperature read error");
-        ESP_LOGE("Modbus", "Air temperature read error");
+        // Serial.println("Air temperature read error");
+        // ESP_LOGE("Modbus", "Air temperature read error");
         } else {
         data.Air1.tx10 = result;
         data.Air1.tfloat = (data.Air1.tx10 / 10.0);
@@ -64,8 +69,8 @@ void readSensorSoil() {
     if (result < 0) {
         sens_alert = true;
         data.Soil1.hfloat = -80;
-        Serial.println("Soil humidity read error");
-        ESP_LOGE("Modbus", "Soil humidity read error");
+        // Serial.println("Soil humidity read error");
+        // ESP_LOGE("Modbus", "Soil humidity read error");
     } else {
         data.Soil1.hx10 = result;
         data.Soil1.hfloat = (data.Soil1.hx10 / 10.0);
@@ -78,8 +83,8 @@ void readSensorSoil() {
     if (result < 0) {
         sens_alert = true;
         data.Soil1.tfloat = -80;
-        Serial.println("Soil temperature read error");
-        ESP_LOGE("Modbus", "Soil temperature read error");
+        // Serial.println("Soil temperature read error");
+        // ESP_LOGE("Modbus", "Soil temperature read error");
     } else {
         data.Soil1.tx10 = result;
         data.Soil1.tfloat = (data.Soil1.tx10 / 10.0);
@@ -93,8 +98,8 @@ void readSensorSoil2() {
     if (result < 0) {
         sens_alert = true;
         data.Soil2.tfloat = -80;
-        Serial.println("Soil2 temperature read error");
-        ESP_LOGE("Modbus", "Soil2 temperature read error");
+        // Serial.println("Soil2 temperature read error");
+        // ESP_LOGE("Modbus", "Soil2 temperature read error");
     } else {
         data.Soil2.tx10 = result;
         data.Soil2.tfloat = (data.Soil2.tx10 / 10.0);
@@ -107,8 +112,8 @@ void readSensorSoil2() {
     if (result < 0) {
         sens_alert = true;
         data.Soil2.hfloat = -80;
-        Serial.println("Soil2 humidity read error");
-        ESP_LOGE("Modbus", "Soil2 humidity read error");
+        // Serial.println("Soil2 humidity read error");
+        // ESP_LOGE("Modbus", "Soil2 humidity read error");
     } else {
         data.Soil2.hx10 = result;
         data.Soil2.hfloat = (data.Soil2.hx10 / 10.0);

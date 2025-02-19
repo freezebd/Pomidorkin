@@ -227,6 +227,12 @@ void setup() {
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
 }   // setup
 void loop() {
+
+    uint32_t ms = millis();
+      sett.tick();
+      ms = millis() - ms;
+      if (ms > 100) Serial.println(ms);
+
     
     userDhtRelays();  // мониторим данные по воздуху и почве
     userSixTimers();  // мониторим изменеие по реле

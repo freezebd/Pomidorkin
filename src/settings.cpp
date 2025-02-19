@@ -18,7 +18,7 @@ SettingsGyver sett("Помидоркин@", &db);  // указывается з�
 GyverDS3231 rtc;
 Datime curDataTime(rtc);
 
-
+bool flagreley = true;                           // флаг для перезагрузки вебморды при смене адреса реле
 static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
 
 static const char *const WEEKdays[] = {
@@ -115,7 +115,7 @@ void update(sets::Updater &upd) {
     }
 }  // update
 
-void measureExecutionTime(const char* functionName, void (*func)()) {
+void measureExecutionTime(const char* functionName, void (*func)()) { // измерение времени выполнения функции
     unsigned long startTime = millis();
     func();
     unsigned long duration = millis() - startTime;
@@ -654,15 +654,17 @@ void build(sets::Builder &b) {
                     b.endButtons();  // завершить кнопки
                 }
             }  // Расширенные
-
+            
             {  // Меню "Реле"
                 sets::Menu g(b, "Реле");
                 {
                     sets::Group g(b, "Найденные реле");
                     
+                    
                     if (b.Button(0x1001, "Сканировать реле", sets::Colors::Green)) {
                         measureExecutionTime("scan_relays", []() {    // измерение времени выполнения функции
                             data.relay_count = scan_relays(data.relays);
+                            
                         });
                         db.update();
                         b.reload();
@@ -694,6 +696,7 @@ void build(sets::Builder &b) {
                             change_relay_address();
                         });
                         db.update();
+                        
                     }
                 }
             }

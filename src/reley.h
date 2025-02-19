@@ -5,30 +5,28 @@
 
  
 
-extern iarduino_I2C_Relay rele1;                                    //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
-extern iarduino_I2C_Relay rele2;                                    //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
-extern iarduino_I2C_Relay rele3;                                    //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
+extern iarduino_I2C_Relay rele1;     //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
+extern iarduino_I2C_Relay rele2;     //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
+extern iarduino_I2C_Relay rele3;     //   Объявляем объект pwrkey для работы с функциями и методами библиотеки iarduino_I2C_Relay, указывая адрес модуля на шине I2C.
 void init_reley();
-void reley_Soil_on();
-void reley_Soil_off();
 
-void reley_1_on();
-void reley_1_off();
+void reley_1_1_on();
+void reley_1_1_off();
+void reley_1_2_on();
+void reley_1_2_off();
 
-void reley_Air_Temt_on();
-void reley_Air_Temp_off();
+void reley_2_1_on();
+void reley_2_1_off();
+void reley_2_2_on();
+void reley_2_2_off();
 
-void reley_2_on();
-void reley_2_off();
-
-void reley_3_on(); // будущее реле 3
-void reley_3_off(); // будущее реле 3
-
-void reley_Soil2_on();    
-void reley_Soil2_off(); 
+void reley_3_1_on();
+void reley_3_1_off();
+void reley_3_2_on();
+void reley_3_2_off();
 
 // Добавляем объявление новой функции
-void change_relay_address();          
+void change_relay_address();        //  функция для изменения адреса реле
 // Максимальное количество реле для сканирования
 #define MAX_RELAYS 8
 

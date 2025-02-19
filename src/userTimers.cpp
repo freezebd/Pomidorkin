@@ -31,7 +31,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 10:  // включаем нагрев
-            reley_Air_Temt_on();
+           // reley_Air_Temt_on();
             data.Air1.TempRele_on = true;
             data.Air1.StateAir = 15;
             break;
@@ -41,7 +41,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 20:  // используется при переключении ползунка в морде
-            reley_Air_Temp_off();
+           // reley_Air_Temp_off();
             data.Air1.TempRele_on = false;
             data.Air1.StateAir = 0;
             break;
@@ -94,7 +94,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
         case 10:  // включаем полив
-            reley_Soil_on();
+           // reley_Soil_on();
             data.Soil1.HumeRele_on = true;
             data.Soil1.StateHume = 15;
             break;
@@ -105,7 +105,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             break;
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
-            reley_Soil_off();
+           // reley_Soil_off();
             // relay1.digitalWrite(1,LOW);
             data.Soil1.HumeRele_on = false;
             data.Soil1.StateHume = 0;
@@ -129,7 +129,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;  
         case 10:  // включаем полив
-            reley_Soil_on();
+           // reley_Soil_on();
             data.Soil2.HumeRele_on = true;
             data.Soil2.StateHume = 15;
             break;  
@@ -140,7 +140,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             break;  
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
-            reley_Soil_off();
+           // reley_Soil_off();
             // relay1.digitalWrite(1,LOW);
             data.Soil2.HumeRele_on = false;
             data.Soil2.StateHume = 0;
@@ -159,14 +159,14 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
                    // digitalWrite(RELE_1, ON);
-                   reley_1_on();
+                  // reley_1_on();
                     data.rel1_on = 1;
                 }
             } else {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
                     //digitalWrite(RELE_1, OFF);
-                    reley_1_off();
+                   // reley_1_off();
                     data.rel1_on = 0;
                 }
             }
@@ -176,14 +176,14 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
                 if (data.rel1_on)  // avoid extra digWrite
                 {
                     //digitalWrite(RELE_1, OFF);
-                    reley_1_off();
+                   // reley_1_off();
                     data.rel1_on = 0;
                 }
             } else {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
                     //digitalWrite(RELE_1, ON);
-                    reley_1_on();
+                   // reley_1_on();
                     data.rel1_on = 1;
                 }
             }
@@ -192,7 +192,7 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
         if (data.rel1_on)  // если было включено, выключим
         {
             //digitalWrite(RELE_1, OFF);
-            reley_1_off();
+           // reley_1_off();
             data.rel1_on = 0;
         }
     }
