@@ -2,23 +2,21 @@
 #include "data.h"
 
 // uint8_t nowAddress = 3;                     // Текущий адрес блока климатических датчиков ( 1 - 247 ).
-// uint8_t newAddress = 10;                    // Новый адрес блока климатических датчиков ( 1 - 247 ).
-// uint8_t pinDE      = 2;                     // Вывод DE конвертера UART-RS485.
-
-
-ModbusClient modbus(Serial1);
+// uint8_t newAddress = 4;                     // Новый адрес блока климатических датчиков ( 1 - 247 ).
+uint8_t pinDE      = 18;                     // Вывод DE конвертера UART-RS485.
+ModbusClient modbus(Serial1, pinDE);
 iarduino_MB_HTL sensor(modbus);
 
 bool sens_alert = false;
 
 #define SENSOR_ID_SOIL 0x01  // Адрес датчика почвы
-#define SENSOR_ID_AIR  0x02  // Адрес датчика воздуха
+//#define SENSOR_ID_AIR  0x02  // Адрес датчика воздуха
 #define SENSOR_ID_SOIL2 0x03  // Адрес датчика почвы 2
 
 #define REG_SOIL_TEMP  0x01  // Температура почвы
 #define REG_SOIL_HUM   0x00  // Влажность почвы
-#define REG_AIR_TEMP   0x01  // Температура воздуха
-#define REG_AIR_HUM    0x00  // Влажность воздуха
+// #define REG_AIR_TEMP   0x01  // Температура воздуха
+// #define REG_AIR_HUM    0x00  // Влажность воздуха
 #define REG_SOIL2_TEMP  0x01  // Температура почвы 2
 #define REG_SOIL2_HUM   0x00  // Влажность почвы 2
 
@@ -26,36 +24,47 @@ bool sens_alert = false;
 #define RX_PIN 16
 #define TX_PIN 17
 
-void init_modbus() {// Чтение данных с датчика воздуха (адрес 2)
+void init_modbus() {// Инициализация Modbus
    Serial1.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);// Настройка HardwareSerial для связи с RS485
-    modbus.setTimeout( 25 ); // Указываем жать ответ от модулей не более 15 мс.
-    modbus.setDelay( 10 ); // Указываем выдерживать паузу между пакетами в 5 мс.
-    Serial.println("Modbus RTU Master Initialized");
+    modbus.begin();           //   Инициируем работу по протоколу Modbus.
+    modbus.setTimeout( 25 ); // Указываем жать ответ от модулей не более 25 мс.
+    modbus.setDelay( 10 ); // Указываем выдерживать паузу между пакетами в 10 мс.
+    Serial.println("Modbus RTU Master Initialized"); 
 }
+void init_modbus_air() {// Инициализация Modbus для датчика воздуха
+Serial.print("Инициализация "); 
+     if (sensor.begin(4)){
+        Serial.println("Датчик воздуха готов к работе");      
+     Serial.print("Текущий адрес ");        //
+     Serial.println(sensor.getID());        // Выводим текущий адрес блока климатических датчиков.
+     Serial.print("Версия прошивки ");      //
+     Serial.println(sensor.getVersion());
+     }
+     else {
+        Serial.println("Датчик воздуха не найден");
+     }
+}
+
 void readSensorAir() {
     int16_t result;
     
     // Чтение влажности
-    result = modbus.holdingRegisterRead(SENSOR_ID_AIR, REG_AIR_HUM);
-    if (result < 0) {
-        sens_alert = true;
-        data.Air1.hfloat = -80;
-        // Serial.println("Air humidity read error");
-        // ESP_LOGE("Modbus", "Air humidity read error");
-    } else {
-        data.Air1.hx10 = result;
-        data.Air1.hfloat = (data.Air1.hx10 / 10.0);
-    }
+     result = sensor.getHUM() / 0.1;
+     if (result < 0) {
+         sens_alert = true;
+         data.Air1.hfloat = -80;
+     } else {
+         data.Air1.hx10 = result;
+         data.Air1.hfloat = (data.Air1.hx10 / 10.0);
+     }
     
     delay(10); // Небольшая задержка между запросами
     
     // Чтение температуры
-    result = modbus.holdingRegisterRead(SENSOR_ID_AIR, REG_AIR_TEMP);
+    result = sensor.getTEM() / 0.1;//modbus.holdingRegisterRead(SENSOR_ID_AIR, REG_AIR_TEMP);
     if (result < 0) {
         sens_alert = true;
         data.Air1.tfloat = -80;
-        // Serial.println("Air temperature read error");
-        // ESP_LOGE("Modbus", "Air temperature read error");
         } else {
         data.Air1.tx10 = result;
         data.Air1.tfloat = (data.Air1.tx10 / 10.0);
@@ -119,5 +128,3 @@ void readSensorSoil2() {
         data.Soil2.hfloat = (data.Soil2.hx10 / 10.0);
     }
 } 
-
-

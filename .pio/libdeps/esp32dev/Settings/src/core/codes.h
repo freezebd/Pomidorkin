@@ -17,7 +17,8 @@ enum class Code : uint8_t {
     reload,
     update,
     update_tout,
-    slider_tout,
+    ping_tout,
+    send_tout,
     request_tout,
     granted,
     fs,
@@ -72,6 +73,18 @@ enum class Code : uint8_t {
     image,
     stream,
     tabs,
+    ws_port,
+    plot_run,
+    plot_stack,
+    plot,
+    plot_time,
+    period,
+    tmode,
+    uptime,
+    joystick,
+    center,
+    force,
+    link,
 };
 
 }

@@ -14,24 +14,27 @@
 #include <WiFi.h>
 #endif
 
-#include "core/builder.h"
-#include "core/colors.h"
-#include "core/containers.h"
-#include "core/fs.h"
-#include "core/logger.h"
-#include "core/packet.h"
-#include "core/updater.h"
+#include "./core/builder.h"
+#include "./core/colors.h"
+#include "./core/containers.h"
+#include "./core/fs.h"
+#include "./core/logger.h"
+#include "./core/packet.h"
+#include "./core/updater.h"
 
 namespace sets {
 
 class SettingsBase {
-   public:
-   private:
+    static const uint16_t FOCUS_TOUT = 5000;
+    static const uint16_t DB_WS_UPDATE_PRD = 300;
+
+   protected:
     typedef std::function<void(Builder& b)> BuildCallback;
     typedef std::function<void(Updater& upd)> UpdateCallback;
     typedef std::function<void(Text path)> FileCallback;
     typedef std::function<void()> FocusCallback;
 
+   private:
     struct Config {
         // таймаут отправки слайдера, мс. 0 чтобы отключить
         uint16_t sliderTout = 100;
@@ -41,6 +44,9 @@ class SettingsBase {
 
         // период обновлений, мс. 0 чтобы отключить
         uint16_t updateTout = 2500;
+
+        // период пинга, мс. 0 чтобы отключить
+        uint16_t pingTout = 2500;
 
         // основная цветовая схема
         Colors theme = Colors::Green;
@@ -53,8 +59,6 @@ class SettingsBase {
         bool isFile;
         bool gz;
     };
-
-    static const uint16_t FOCUS_TOUT = 6000;
 
     class Timer {
        public:
@@ -75,6 +79,32 @@ class SettingsBase {
        private:
         uint32_t _tmr = 0;
     };
+
+    class InlineUpdater : public Updater {
+       public:
+        InlineUpdater(SettingsBase& sets) : Updater(p), sets(sets) {
+            p('{');
+            p[Code::type] = Code::update;
+            p[Code::content]('[');
+        }
+        InlineUpdater(InlineUpdater&& u) : Updater(p), sets(u.sets), p(u.p) {}
+
+        ~InlineUpdater() {
+            p(']');
+            p('}');
+            if (sets.focused()) sets._send(p, true, false);
+        }
+
+       private:
+        SettingsBase& sets;
+        Packet p;
+    };
+
+   protected:
+    // начать обновления [ДЛЯ ВЕРСИЙ С ВЕБСОКЕТОМ]
+    InlineUpdater updater() {
+        return InlineUpdater(*this);
+    }
 
    public:
 #ifndef SETT_NO_DB
@@ -120,7 +150,7 @@ class SettingsBase {
         _build_cb = cb;
     }
 
-    // обработчик обновлений типа f(sets::Updater& upd)
+    // обработчик обновлений типа f(sets::Updater& upd) [ДЛЯ ВЕРСИЙ БЕЗ ВЕБСОКЕТА]
     void onUpdate(UpdateCallback cb) {
         _upd_cb = cb;
     }
@@ -144,21 +174,42 @@ class SettingsBase {
     void tick() {
 #ifndef SETT_NO_DB
         if (_db) _db->tick();
+        if (_upd_tmr.elapsed(DB_WS_UPDATE_PRD) && _dbHasUpdates()) {
+            _upd_tmr.restart();
+            Packet p;
+            p('{');
+            p[Code::type] = Code::update;
+            p[Code::content]('[');
+            _fillUpdates(p);
+            p(']');
+            p('}');
+            _send(p, true, false);
+        }
 #endif
         if (_rst) {
-            delay(3000);
+            delay(2000);
             ESP.restart();
         }
         if (_focus_tmr.elapsed(FOCUS_TOUT)) {
             _focus_tmr.stop();
+            _upd_tmr.stop();
             if (_focus_cb) _focus_cb();
         }
         rtc.tick();
     }
 
     // перезагрузить страницу. Можно вызывать где угодно + в обработчике update
-    void reload() {
-        _reload = true;
+    void reload(bool force = false) {
+        if (_upd_tmr.running()) {
+            Packet p;
+            p('{');
+            p[Code::type] = Code::reload;
+            if (force) p[Code::force] = true;
+            p('}');
+            _send(p, true, false);
+        } else {
+            _reload = force ? -1 : 1;
+        }
     }
 
     // установить размер пакета (умолч. 1024 Б). 0 - отключить разбивку на пакеты
@@ -210,41 +261,72 @@ class SettingsBase {
     FileCallback fetch_cb = nullptr;
     FileCallback upload_cb = nullptr;
 
-    // отправка для родительского класса
-    virtual void send(uint8_t* data, size_t len) {}
+    // ответ HTTP
+    virtual void answer(uint8_t* data, size_t len) = 0;
 
-    bool authenticate(Text passh) {
-        return !_passh || (_passh == passh.toInt32HEX());
+    // отправка WS
+    virtual void sendWS(uint8_t* data, size_t len, bool broadcast) {}
+
+    bool authenticate(size_t passh) {
+        return !_passh || (_passh == passh);
     }
 
     void restart() {
         _rst = true;
     }
 
-    // парсить запрос клиента
-    void parse(Text passh, Text action, Text idtxt, Text value) {
+    struct __attribute__((packed)) WSHeader {
+        uint16_t pid;
+        uint32_t auth;
+        uint32_t action;
+        uint32_t id;
+    };
+
+    void setWSPort(uint16_t port) {
+        _ws_port = port;
+    }
+
+    // парсить запрос WS клиента
+    void parseWS(uint8_t* data, size_t len) {
+        _upd_tmr.restart();
+        if (len < sizeof(WSHeader)) return;
+
+        WSHeader header;
+        memcpy(&header, data, sizeof(WSHeader));
+        Text value(data + sizeof(WSHeader), len - sizeof(WSHeader));
+
+        _headerP = &header;
+        parse(header.auth, header.action, header.id, value);
+        _headerP = nullptr;
+    }
+
+    // парсить запрос HTTP клиента
+    void parse(size_t passh, size_t actionh, size_t idh, Text value) {
         if (!_focus_tmr.running()) {
             _focus_tmr.restart();
             if (_focus_cb) _focus_cb();
         }
         _focus_tmr.restart();
 
-        size_t id = idtxt.toInt32HEX();
         bool granted = authenticate(passh);
 
-        switch (action.hash()) {
+        switch (actionh) {
             case SH("discover"): {
-                String str(F(R"raw({"type":"discover","name":")raw"));
-                if (_title.length()) str += _title;
-                else str += F("Unnamed");
-                str += F(R"raw(","mac":")raw");
-                str += WiFi.macAddress();
-                str += "\"}";
-                send((uint8_t*)str.c_str(), str.length());
+                Packet p;
+                p.concatString(F(R"raw({"type":"discover","name":")raw"));
+                if (_title.length()) p.concatString(_title);
+                else p.concatString(F("Unnamed"));
+                p.concatString(F(R"raw(","mac":")raw"));
+                p.concatString(WiFi.macAddress());
+                p.concatString("\"}");
+                _answer(p);
                 return;
             } break;
 
             case SH("load"):
+#ifndef SETT_NO_DB
+                if (_dbHasUpdates()) _db->skipUpdates();
+#endif
                 rtc.sync(value.toInt32HEX());
                 _sendBuild(granted);
                 return;
@@ -257,60 +339,62 @@ class SettingsBase {
             case SH("set"):
             case SH("click"):
 #ifndef SETT_NO_DB
-                if (_db && action.hash() == SH("set")) {
+                if (_db && actionh == SH("set")) {
                     if (_db_update) _db->useUpdates(false);
-                    _db->update(id, value);
+                    _db->update(idh, value);
                     if (_db_update) _db->useUpdates(true);
                 }
 #endif
                 if (_build_cb) {
-                    Build action(Build::Type::Set, granted, id, value);
+                    Build action(Build::Type::Set, granted, idh, value);
                     Builder b(this, action);
                     _build_cb(b);
-                    if (b.isReload()) {
-                        _sendBuild(granted);
+                    if (b.isReload()) _reload = b.isReload();
+                    if (_reload) {
+                        _sendReload();
                         return;
                     }
                 }
-                break;
-
-            case SH("ping"):
-#ifndef SETT_NO_DB
-                if (_upd_cb || _db) {
-#else
-                if (_upd_cb) {
-#endif
+                if (actionh == SH("set") && _headerP) {
                     Packet p;
-                    Updater upd(p);
                     p('{');
                     p[Code::type] = Code::update;
-                    p[Code::rssi] = constrain(2 * (WiFi.RSSI() + 100), 0, 100);
-                    if (p[Code::content]('[')) {
-#ifndef SETT_NO_DB
-                        if (_db && _db_update) {
-                            while (_db->updatesAvailable()) {
-                                size_t id = _db->updateNext();
-                                p('{');
-                                p[Code::id] = id;
-                                p[Code::data];
-                                p.addFromDB(_db, id);
-                                p('}');
-                            }
-                        }
-#endif
-                        if (_upd_cb) _upd_cb(upd);
-                        p(']');
-                    }
+                    p[Code::content]('[');
+
+                    p('{');
+                    p[Code::id] = idh;
+                    p[Code::data] = value;
                     p('}');
 
-                    if (_reload) {
-                        _reload = false;
-                        _sendBuild(granted);
-                        return;
-                    } else {
-                        send(p.buf(), p.length());
-                        return;
+                    p(']');
+                    p('}');
+                    _send(p, true, true);
+                    return;
+                }
+                break;
+
+            case SH("update"):
+                if (_reload) {
+#ifndef SETT_NO_DB
+                    if (_dbHasUpdates()) _db->skipUpdates();
+#endif
+                    _sendReload();
+                    return;
+                } else if (_dbHasUpdates() || _upd_cb) {
+                    Packet p;
+                    p('{');
+                    p[Code::type] = Code::update;
+                    p[Code::rssi] = _rssi();
+                    p[Code::content]('[');
+                    _fillUpdates(p);
+                    if (_upd_cb) {
+                        Updater upd(p);
+                        _upd_cb(upd);
                     }
+                    p(']');
+                    p('}');
+                    _answer(p);
+                    return;
                 }
                 break;
 
@@ -333,6 +417,16 @@ class SettingsBase {
                     return;
                 }
                 break;
+
+            case SH("ping"): {
+                BSON b;
+                b('{');
+                b[Code::rssi] = _rssi();
+                b('}');
+                _answer(b);
+                return;
+            }
+
         }  // switch
         _answerEmpty();
     }
@@ -343,19 +437,22 @@ class SettingsBase {
     FocusCallback _focus_cb = nullptr;
     String _title;
     Timer _focus_tmr;
+    Timer _upd_tmr;
     size_t _passh = 0;
     size_t _packet_size = 1024;
 #ifndef SETT_NO_DB
     GyverDB* _db = nullptr;
 #endif
+    const char *_pname = nullptr, *_plink = nullptr;
+    WSHeader* _headerP = nullptr;
+    uint16_t _ws_port = 0;
     bool _db_update = true;
     bool _rst = false;
-    bool _reload = false;
-    const char *_pname = nullptr, *_plink = nullptr;
+    int8_t _reload = 0;
 
     void _answerEmpty() {
-        uint8_t p;
-        send(&p, 0);
+        BSON b;
+        _answer(b);
     }
 
     void _sendFs(bool granted) {
@@ -370,7 +467,7 @@ class SettingsBase {
         p[Code::total] = FS.totalSpace();
         if (!granted) p[Code::error] = F("Access denied");
         p('}');
-        send(p.buf(), p.length());
+        _answer(p);
     }
 
     void _sendBuild(bool granted) {
@@ -378,11 +475,14 @@ class SettingsBase {
             Packet p(_packet_size, this, _hook);
             p('{');
             p[Code::type] = Code::build;
+            p[Code::ws_port] = _ws_port;
             p[Code::update_tout] = config.updateTout;
+            p[Code::ping_tout] = config.pingTout;
             p[Code::request_tout] = config.requestTout;
-            p[Code::slider_tout] = config.sliderTout;
+            p[Code::send_tout] = config.sliderTout;
             p[Code::color] = (uint32_t)config.theme;
-            p[Code::rssi] = constrain(2 * (WiFi.RSSI() + 100), 0, 100);
+            p[Code::rssi] = _rssi();
+            p[Code::uptime] = millis() / 1000;
             if (custom.p) p[Code::custom_hash] = custom.hash;
             if (_title.length()) p[Code::title] = _title;
             if (_passh) p[Code::granted] = granted;
@@ -402,14 +502,65 @@ class SettingsBase {
                 p(']');
             }
             p('}');
-            send(p.buf(), p.length());
+            _answer(p);
         } else {
             _answerEmpty();
         }
     }
 
+    int16_t _rssi() {
+        return constrain(2 * (WiFi.RSSI() + 100), 0, 100);
+    }
+
+    bool _dbHasUpdates() {
+#ifndef SETT_NO_DB
+        return _db && _db_update && _db->updatesAvailable();
+#endif
+        return false;
+    }
+
+    void _fillUpdates(Packet& p) {
+#ifndef SETT_NO_DB
+        if (_db && _db_update) {
+            while (_db->updatesAvailable()) {
+                size_t id = _db->updateNext();
+                p('{');
+                p[Code::id] = id;
+                p[Code::data];
+                p.addFromDB(_db, id);
+                p('}');
+            }
+        }
+#endif
+    }
+
+    void _sendReload() {
+        Packet p;
+        p('{');
+        p[Code::type] = Code::reload;
+        if (_reload < 0) p[Code::force] = true;
+        p('}');
+        _answer(p);
+        _reload = 0;
+    }
+
+    void _answer(BSON& bson) {
+        _headerP ? _send(bson, false, false) : answer(bson.buf(), bson.length());
+    }
+
+    void _send(BSON& bson, bool broadcast, bool skip) {
+        bson.write(&skip, 1);
+        if (_headerP) {
+            bson.write(&_headerP->pid, 2);
+        } else {
+            uint16_t pid = 0;
+            bson.write(&pid, 2);
+        }
+        sendWS(bson.buf(), bson.length(), broadcast);
+    }
+
     static void _hook(void* settptr, Packet& p) {
-        static_cast<SettingsBase*>(settptr)->send(p.buf(), p.length());
+        static_cast<SettingsBase*>(settptr)->_answer(p);
     }
 };
 

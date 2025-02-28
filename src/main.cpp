@@ -18,8 +18,6 @@
 #include <WiFiConnector.h>
 
 
-
-
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
 #include "settings.h"
@@ -47,10 +45,13 @@ void setup() {
     rtc.begin();
     Serial.print("Часы >> ");
     Serial.println(rtc.isOK());
-    //Serial.println( (String)(data.Air1.tfloat + String("°C")));
+    setStampZone(3);
+    
+    
     
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
+    init_modbus_air(); // Инициализация датчика воздуха
     
     Serial.println("ESP STARTED !");
 
@@ -141,7 +142,7 @@ void setup() {
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
     db.init(kk::old_address, (uint8_t)0x00);
     db.init(kk::new_address, (uint8_t)0x00);
-    db.dump(Serial);
+    //db.dump(Serial);
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
     data.t2discr_enbl = db[kk::t2Discr_enabled];
@@ -173,6 +174,21 @@ void setup() {
             data.Air1.tTresholdx10 = 30;
             break;
     }
+    switch (db[kk::airRele_HumeTreshold].toInt()) {
+        case 0:
+            data.Air1.hTresholdx10 = 5;
+            break;
+        case 1:
+            data.Air1.hTresholdx10 = 10;
+            break;
+        case 2:
+            data.Air1.hTresholdx10 = 20;
+            break;
+        case 3:
+            data.Air1.hTresholdx10 = 30;
+            break;
+    }
+   
     switch (db[kk::soilRele_HumeTreshold].toInt()) {
         case 0:
             data.Soil1.hTresholdx10 = 1;
@@ -236,6 +252,7 @@ void loop() {
     
     userDhtRelays();  // мониторим данные по воздуху и почве
     userSixTimers();  // мониторим изменеие по реле
+    
     // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.
     // если нет связи, ждем 5 минут и ребутаемся, а то мало ли
     // если связь восстановилась после потери, снова мигаем плавно
@@ -260,7 +277,7 @@ void loop() {
         data.secondsNow = rtc.daySeconds();
         data.datime = rtc.getTime().getUnix();
         curDataTime = rtc.getTime();
-    }
+    } 
 
     if (each5Sec.ready())  // раз в 5 сек
     {
@@ -290,10 +307,7 @@ void loop() {
             case 15:
                 readSensorSoil2();
                 checker = 5;
-                break;
-            
-                
+                break;      
         }
-
     }
 }  // loop

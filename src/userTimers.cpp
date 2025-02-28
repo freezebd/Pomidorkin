@@ -12,12 +12,9 @@
 static bool t6_rightDay = 0;  // День недели для таймера 6
 static uint8_t lastWeekDay = 0;
 
-void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
+void userDhtRelays() {  // реле 
 
-    switch (data.Air1.StateAir) {  
-        // инициализация
-        //  ползунок включен - отрабатываем
-        // выключен и включено реле - уйдем на выключение
+    switch (data.Air1.StateAir) {  // Реле AirTemp для нагрев  воздуха
         case 0:
             if (db[kk::airTempRele_enabled].toInt() != 0) {
                 data.Air1.StateAir = 5;
@@ -46,6 +43,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             data.Air1.StateAir = 0;
             break;
     }  // switch (data.Air1.StateAir)
+   
     switch (data.Air1.StateHume) { // реле AirHume для увлажнение воздуха
         case 0:
             if (db[kk::airHumeRele_enabled].toInt() != 0) {
@@ -60,7 +58,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             }
             break;
             case 10:
-           reley_1_2_on();
+            reley_1_2_on();
             data.Air1.HumeRele_on = true;
             data.Air1.StateHume = 15;
             break;
@@ -76,7 +74,7 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             data.Air1.StateHume = 0;
             break;
     }  // switch (data.Air1.StateHume)
-                            // реле Датчика почвы 1 для увлажнения почвы
+                            
     switch (data.Soil1.StateHume) {  // Реле почвы 1
         // инициализация
         //  ползунок включен - отрабатываем
@@ -110,8 +108,8 @@ void userDhtRelays() {  // реле AirTemp для нагрев  воздуха
             data.Soil1.StateHume = 0;
             break;
     }   // switch (Реле почвы 1)
-        // реле Датчика почвы 2 для увлажнения почвы
-    switch (data.Soil2.StateHume) {  //(data.dhtTwo.State)
+        
+    switch (data.Soil2.StateHume) {  // реле Датчика почвы 2 для 
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение

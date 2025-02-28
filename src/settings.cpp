@@ -4,7 +4,7 @@
 
 #include <GyverDS3231.h>
 #include <LittleFS.h>
-#include <SettingsGyver.h>
+#include <SettingsGyver.h> // Изменил на GyverWS  
 #include <WiFiConnector.h>
 
 #include "data.h"  // тут лежит структура data по кошерному
@@ -240,19 +240,15 @@ void build(sets::Builder &b) {
         case kk::airRele_HumeTreshold:
             switch (db[kk::airRele_HumeTreshold].toInt()) {
                 case 0:
-                    // data.dhtTwo.hTreshold = 1;
                     data.Air1.hTresholdx10 = 1;
                     break;
                 case 1:
-                    // data.dhtTwo.hTreshold = 2;
                     data.Air1.hTresholdx10 = 2;
                     break;
                 case 2:
-                    // data.dhtTwo.hTreshold = 5;
                     data.Air1.hTresholdx10 = 5;
                     break;
                 case 3:
-                    // data.dhtTwo.hTreshold = 10;
                     data.Air1.hTresholdx10 = 10;
                     break;
             }
@@ -425,7 +421,7 @@ void build(sets::Builder &b) {
         if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, 0xb7701e)) {  // Реле 1 увлажнение воздуха
 
             if (db[kk::airHumeRele_enabled].toInt() == 0)
-                data.Air1.StateAir = 0;  // принудительно выключаем реле
+                data.Air1.StateHume = 0;  // принудительно выключаем реле
                 userDhtRelays();
                 b.reload();
         }
@@ -700,6 +696,13 @@ void build(sets::Builder &b) {
                     }
                 }
             }
+             {  // Меню "Графики"
+                sets::Menu g(b, "Графики");
+                {
+                    sets::Group g(b, "Графики");
+                   
+                }
+            }  // Графики
         } // настройки
    
      }  // Подстройки
