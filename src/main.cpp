@@ -45,7 +45,7 @@ void setup() {
     rtc.begin();
     Serial.print("Часы >> ");
     Serial.println(rtc.isOK());
-    setStampZone(3);
+    //setStampZone(3);
     
     
     

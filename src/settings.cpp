@@ -361,7 +361,8 @@ void build(sets::Builder &b) {
 
     {// WEB интерфейс ВЕБ морда формируется здесь
         sets::Group g(b, "Дата & Время");
-        if (rtc.tick() || rtc.updateNow()) {
+       // if (rtc.tick() || rtc.updateNow() ) { 
+      //  if (rtc.updateNow()) {
             {
                 sets::Row g(b);
                 b.Label(kk::dayofweek, "");  // текущая дата
@@ -378,7 +379,7 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             }
-        }  // rtc.setTime()
+      //  }  // rtc.setTime()
 
         {
             sets::Row g(b);
