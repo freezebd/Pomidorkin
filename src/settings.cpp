@@ -359,27 +359,27 @@ void build(sets::Builder &b) {
     
     }  //  switch (b.build.id)
 
-    {// WEB интерфейс ВЕБ морда формируется здесь
+    {  // WEB интерфейс ВЕБ морда формируется здесь
         sets::Group g(b, "Дата & Время");
-       // if (rtc.tick() || rtc.updateNow() ) { 
-      //  if (rtc.updateNow()) {
-            {
-                sets::Row g(b);
-                b.Label(kk::dayofweek, "");  // текущая дата
-            if (b.Date(kk::datime, ""))      // Установка даты
+        // if (rtc.tick() || rtc.updateNow() ) {
+        //  if (rtc.updateNow()) {
+        {
+            sets::Row g(b);
+            b.Label(kk::dayofweek, "");  // текущая дата
+            if (b.Date(kk::datime, ""))  // Установка даты
             {
                 rtc.setTime((db[datime].toInt32()) + rtc.daySeconds());
                 db.update();
-                b.reload();  
+                b.reload();
             }
             if (b.Time(kk::secondsNow))  // установка время
             {
-                rtc.setTime((db[datime].toInt32()) + (db[secondsNow].toInt32())); // UNIX - текущие секунды + установ. секунды
+                rtc.setTime((db[datime].toInt32()) + (db[secondsNow].toInt32()));  // UNIX - текущие секунды + установ. секунды
                 db.update();
                 b.reload();
             }
-            }
-      //  }  // rtc.setTime()
+        }
+        //  }  // rtc.setTime()
 
         {
             sets::Row g(b);
@@ -387,327 +387,337 @@ void build(sets::Builder &b) {
             b.Label(kk::uptimeDays, "Аптайм");
             b.Time(kk::secondsUptime, " ");
         }
-
-        
     }
+    static uint8_t tab;  // статическая
 
-    {//"Воздух"  
-        sets::Group g(b, db[kk::airTempName]); 
+    if (b.Tabs("Домой;Таймеры;Настройки;Графики", &tab)) {  // Вкладки
+        // при нажатии перезагружаемся и выходим
+        b.reload();
+        return;
+    }
+    if (tab == 0) {
+        // Сюда добавляем показания со всех датчиков
         {
-            sets::Row g(b);
-            b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), 0xec9736);  
-           // b.Label("°С");
+            sets::Group g(b, db[kk::airTempName]);  // Воздух
+            {
+                sets::Row g(b);
+                b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), 0xec9736);
+                // b.Label("°С");
+            }
+            {
+                sets::Row g(b);
+                b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
+            }
         }
         {
-            sets::Row g(b);
-            b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);  
-            
+            sets::Group g(b, db[kk::soilTempName]);  // датчик почвы 1
+            {
+                sets::Row g(b);
+                b.Label(kk::floattempsoil, "Температура", String(data.Soil1.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
+                // b.Label("°С");
+            }
+            {
+                sets::Row g(b);
+                b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                // b.Label("%");
+            }
         }
-        if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, 0xb7701e)) {  // Реле нагрем воздуха
+        {
+            sets::Group g(b, db[kk::soil2TempName]);  // датчик почвы 2
+            {
+                sets::Row g(b);
+                b.Label(kk::floattempsoil2, "Температура", String(data.Soil2.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
+                // b.Label("°С");
+            }
+            {
+                sets::Row g(b);
+                b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                // b.Label("%");
+            }
+        }
+    } else if (tab == 1) {
+        // Сюда добавляем управление всеми реле
+        {  //"Воздух"
 
-            if (db[kk::airTempRele_enabled].toInt() == 0)
-                data.Air1.StateAir = 0;  // принудительно выключаем реле
+            if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, 0xb7701e)) {  // Реле нагрем воздуха
+
+                if (db[kk::airTempRele_enabled].toInt() == 0)
+                    data.Air1.StateAir = 0;  // принудительно выключаем реле
                 userRelays();
                 b.reload();
-        }
-        if (db[kk::airTempRele_enabled].toInt() != 0) {
-            {
-                sets::Row g(b);
-                b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Yellow);
-
             }
-            b.Number(kk::airRele_startTemp, "Включается если ниже");
-            b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
-        }
-        if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, 0xb7701e)) {  // Реле 1 увлажнение воздуха
-
-            if (db[kk::airHumeRele_enabled].toInt() == 0)
-                data.Air1.StateHume = 0;  // принудительно выключаем реле
-                userRelays();
-                b.reload();
-        }
-        if (db[kk::airHumeRele_enabled].toInt() != 0) {
-            {
-                sets::Row g(b);
-                b.LED(kk::airHumeRele_led, "Cтатус >>", data.Air1.HumeRele_on, sets::Colors::Gray, sets::Colors::Yellow);
-
-                //b.Label(" ");
-            }
-            b.Number(kk::airRele_startHume, "Включается если ниже");
-            b.Select(kk::airRele_HumeTreshold, "Порог отключения", "0,5 h%;1 h%;2 h%;3 h%");
-        }
-    }     //"Воздух"   
-    
-    {     //"Почва 1" 
-        sets::Group g(b, db[kk::soilTempName]); // датчик почвы 1
-        {
-            sets::Row g(b);
-            b.Label(kk::floattempsoil, "Температура", String(data.Soil1.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
-            //b.Label("°С");
-        }
-        {
-            sets::Row g(b);
-            b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
-            //b.Label("%");
-        }
-        if (b.Switch(kk::soilHumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
-            if (db[kk::soilHumeRele_enabled].toInt() == 0)
-                data.Soil1.StateHume = 0;  // принудительно выключаем реле
-            userRelays();
-            b.reload();
-        }
-        if (db[kk::soilHumeRele_enabled].toInt() != 0) {
-            {
-                sets::Row g(b);
-                b.LED(kk::soilHumeRele_led, "Cтатус >>", data.Soil1.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
-                b.Label(" ");
-            }
-            b.Number(kk::soilRele_startHume, "Включается, если ниже");
-            b.Select(kk::soilRele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
-        }
-    }  //"Почва 1"
-      
-    {  // "Почва 2"
-        sets::Group g(b, db[kk::soil2TempName]); // датчик почвы 2
-        {
-            sets::Row g(b);
-            b.Label(kk::floattempsoil2, "Температура", String(data.Soil2.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
-            //b.Label("°С");
-        }
-        {
-            sets::Row g(b);
-            b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
-            //b.Label("%");
-        }   
-        if (b.Switch(kk::soil2HumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
-            if (db[kk::soil2HumeRele_enabled].toInt() == 0)
-                data.Soil2.StateHume = 0;  // принудительно выключаем реле
-            userRelays();
-            b.reload();
-        }
-        if (db[kk::soil2HumeRele_enabled].toInt() != 0) {
-            {
-                sets::Row g(b);
-                b.LED(kk::soil2HumeRele_led, "Cтатус >>", data.Soil2.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
-                b.Label(" ");
-            }   
-            b.Number(kk::soil2Rele_startHume, "Включается, если ниже");
-            b.Select(kk::soil2Rele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
-        }   
-    } //"Почва 2"
-    { /* суточные таймеры */
-        sets::Group g(b, "Суточные таймеры");
-        if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) {  // Реле 1
-            data.t1discr_enbl = db[kk::t1Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t1discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t1Discr_startTime, "Включается в ..");
-            b.Time(kk::t1Discr_endTime, ".. и отключается в");
-            b.Label(" ", " ");
-        }
-        if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green))  // Реле 2
-        {
-            data.t2discr_enbl = db[kk::t2Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t2discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Gray, sets::Colors::Green);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t2Discr_startTime, "Вкл в ..");
-            b.Time(kk::t2Discr_endTime, ".. откл ");
-            b.Label(" ", " ");
-        }
-        
-        if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint))  // Реле 3
-        {
-            data.t3discr_enbl = db[kk::t3Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t3discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Gray, sets::Colors::Mint);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t3Discr_startTime, "Вкл в ..");
-            b.Time(kk::t3Discr_endTime, ".. откл");
-            b.Label(" ", " ");
-        }
-        if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua))  // Реле 4
-        {
-            data.t4discr_enbl = db[kk::t4Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t4discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Gray, sets::Colors::Aqua);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t4Discr_startTime, "Вкл в ..");
-            b.Time(kk::t4Discr_endTime, ".. откл");
-            b.Label(" ", " ");
-        }
-        if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue))  // Реле 5
-        {
-            data.t5discr_enbl = db[kk::t5Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t5discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Gray, sets::Colors::Blue);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t5Discr_startTime, "Вкл в ..");
-            b.Time(kk::t5Discr_endTime, ".. откл");
-            b.Label(" ", " ");
-        }
-        if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet))  // Реле 6
-        {
-            data.t6discr_enbl = db[kk::t6Discr_enabled];
-            userSixTimers();
-            b.reload();
-        }
-        if (data.t6discr_enbl) {
-            {
-                sets::Row g(b);
-                b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Gray, sets::Colors::Violet);
-                b.Label(" ");
-            }  // LED row
-            b.Time(kk::t6Discr_startTime, "Вкл в ..");
-            b.Time(kk::t6Discr_endTime, ".. откл");
-            b.Label("Дни недели", " ");
-            b.Switch(kk::t6Discr_inMonday, "Понедельник", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inTuesday, "Вторник", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inWensday, "Среда", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inThursday, "Четверг", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inFriday, "Пятница", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inSaturday, "Суббота", nullptr, sets::Colors::Violet);
-            b.Switch(kk::t6Discr_inSunday, "Воскресенье", nullptr, sets::Colors::Violet);
-            b.Label(" ", " ");
-            b.Label(" ", " ");
-        }
-    } /* суточные таймеры */
-    {/* Настройки , внизу страницы*/
-        sets::Group g(b, " ");
-        {
-            sets::Menu g(b, "Опции");
-
-            {
-                sets::Menu g(b, "Интерфейс");
-                /*
-                      //пример изменения имени виджета
-                      b.Input(kk::btnName, "новое имя кнопки:");
-                      if(b.Button(kk::btnflex, db[kk::btnName], db[kk::btnColor])) b.reload();
-                */
-
-                b.Input(kk::t1Discr_name, "Имя Реле1:");
-                b.Input(kk::t2Discr_name, "Имя Реле2:");
-                b.Input(kk::t3Discr_name, "Имя Реле3:");
-                b.Input(kk::t4Discr_name, "Имя Реле4:");
-                b.Input(kk::t5Discr_name, "Имя Реле5:");
-                b.Input(kk::t6Discr_name, "Имя Реле6:");
-                b.Input(kk::airTempName, "Имя датчика воздуха 1");
-                b.Input(kk::soilTempName, "Имя датчика почвы 1");
-                b.Input(kk::soil2TempName, "Имя датчика почвы 2");
-            }
-            {
-                sets::Menu g(b, "Расширенные");
-                /// провалились в расширенные пристройки
+            if (db[kk::airTempRele_enabled].toInt() != 0) {
                 {
-                    sets::Group g(b, "настройки WiFi");
-                    b.Input(kk::wifi_ssid, "SSID");
-                    b.Pass(kk::wifi_pass, "Password");
-                    if (b.Button(kk::apply, "Save & Restart")) {
-                        db.update();  // сохраняем БД не дожидаясь таймаута
-                        WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
-                        notice_f = true;
-                        //          ESP.restart();
-                    }  // button Save
-                }  // настройки wifi
-
-                // кнопки являются "групповым" виджетом, можно сделать несколько кнопок в одной строке
-                if (b.beginButtons()) {
-                    if (b.Button(kk::btn2, "стереть базу !", sets::Colors::Red)) {
-                        Serial.println("could clear db");
-                        db.clear();
-                        db.update();
-                    }
-                    b.endButtons();  // завершить кнопки
+                    sets::Row g(b);
+                    b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Yellow);
                 }
-            }  // Расширенные
-            
-            {  // Меню "Реле"
-                sets::Menu g(b, "Реле");
+                b.Number(kk::airRele_startTemp, "Включается если ниже");
+                b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
+            }
+            if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, 0xb7701e)) {  // Реле 1 увлажнение воздуха
+
+                if (db[kk::airHumeRele_enabled].toInt() == 0)
+                    data.Air1.StateHume = 0;  // принудительно выключаем реле
+                userRelays();
+                b.reload();
+            }
+            if (db[kk::airHumeRele_enabled].toInt() != 0) {
                 {
-                    sets::Group g(b, "Найденные реле");
-                    
-                    
-                    if (b.Button(0x1001, "Сканировать реле", sets::Colors::Green)) {
-                        measureExecutionTime("scan_relays", []() {    // измерение времени выполнения функции
-                            data.relay_count = scan_relays(data.relays);
-                            
-                        });
-                        db.update();
-                        b.reload();
-                    }
-                    
-                    if (data.relay_count > 0) {
-                        b.Label("Поиск и смена адреса реле");  
-                        for (uint8_t i = 0; i < data.relay_count; i++) {
-                            String addr = String(data.relays[i].address);
-                            b.Label("Реле " + String(i+1) + " (адрес " + addr + ")");  // Используем обычный Label
-                            if (b.Button(kk::relay_seach + i, "Выбрать", sets::Colors::Blue)) {
-                                data.old_address = data.relays[i].address;
-                                db[kk::old_address] = String(data.old_address);
-                                db.update();
-                            }
+                    sets::Row g(b);
+                    b.LED(kk::airHumeRele_led, "Cтатус >>", data.Air1.HumeRele_on, sets::Colors::Gray, sets::Colors::Yellow);
+
+                    // b.Label(" ");
+                }
+                b.Number(kk::airRele_startHume, "Включается если ниже");
+                b.Select(kk::airRele_HumeTreshold, "Порог отключения", "0,5 h%;1 h%;2 h%;3 h%");
+            }
+        }  //"Воздух"
+
+        {  //"Почва 1"
+
+            if (b.Switch(kk::soilHumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
+                if (db[kk::soilHumeRele_enabled].toInt() == 0)
+                    data.Soil1.StateHume = 0;  // принудительно выключаем реле
+                userRelays();
+                b.reload();
+            }
+            if (db[kk::soilHumeRele_enabled].toInt() != 0) {
+                {
+                    sets::Row g(b);
+                    b.LED(kk::soilHumeRele_led, "Cтатус >>", data.Soil1.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
+                    b.Label(" ");
+                }
+                b.Number(kk::soilRele_startHume, "Включается, если ниже");
+                b.Select(kk::soilRele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
+            }
+        }  //"Почва 1"
+
+        {  // "Почва 2"
+
+            if (b.Switch(kk::soil2HumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
+                if (db[kk::soil2HumeRele_enabled].toInt() == 0)
+                    data.Soil2.StateHume = 0;  // принудительно выключаем реле
+                userRelays();
+                b.reload();
+            }
+            if (db[kk::soil2HumeRele_enabled].toInt() != 0) {
+                {
+                    sets::Row g(b);
+                    b.LED(kk::soil2HumeRele_led, "Cтатус >>", data.Soil2.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
+                    b.Label(" ");
+                }
+                b.Number(kk::soil2Rele_startHume, "Включается, если ниже");
+                b.Select(kk::soil2Rele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
+            }
+        }  //"Почва 2"
+        { /* суточные таймеры */
+            sets::Group g(b, "Суточные таймеры");
+            if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) {  // Реле 1
+                data.t1discr_enbl = db[kk::t1Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t1discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t1Discr_startTime, "Включается в ..");
+                b.Time(kk::t1Discr_endTime, ".. и отключается в");
+                b.Label(" ", " ");
+            }
+            if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green))  // Реле 2
+            {
+                data.t2discr_enbl = db[kk::t2Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t2discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Gray, sets::Colors::Green);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t2Discr_startTime, "Вкл в ..");
+                b.Time(kk::t2Discr_endTime, ".. откл ");
+                b.Label(" ", " ");
+            }
+
+            if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint))  // Реле 3
+            {
+                data.t3discr_enbl = db[kk::t3Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t3discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Gray, sets::Colors::Mint);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t3Discr_startTime, "Вкл в ..");
+                b.Time(kk::t3Discr_endTime, ".. откл");
+                b.Label(" ", " ");
+            }
+            if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua))  // Реле 4
+            {
+                data.t4discr_enbl = db[kk::t4Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t4discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Gray, sets::Colors::Aqua);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t4Discr_startTime, "Вкл в ..");
+                b.Time(kk::t4Discr_endTime, ".. откл");
+                b.Label(" ", " ");
+            }
+            if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue))  // Реле 5
+            {
+                data.t5discr_enbl = db[kk::t5Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t5discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Gray, sets::Colors::Blue);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t5Discr_startTime, "Вкл в ..");
+                b.Time(kk::t5Discr_endTime, ".. откл");
+                b.Label(" ", " ");
+            }
+            if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet))  // Реле 6
+            {
+                data.t6discr_enbl = db[kk::t6Discr_enabled];
+                userSixTimers();
+                b.reload();
+            }
+            if (data.t6discr_enbl) {
+                {
+                    sets::Row g(b);
+                    b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Gray, sets::Colors::Violet);
+                    b.Label(" ");
+                }  // LED row
+                b.Time(kk::t6Discr_startTime, "Вкл в ..");
+                b.Time(kk::t6Discr_endTime, ".. откл");
+                b.Label("Дни недели", " ");
+                b.Switch(kk::t6Discr_inMonday, "Понедельник", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inTuesday, "Вторник", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inWensday, "Среда", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inThursday, "Четверг", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inFriday, "Пятница", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inSaturday, "Суббота", nullptr, sets::Colors::Violet);
+                b.Switch(kk::t6Discr_inSunday, "Воскресенье", nullptr, sets::Colors::Violet);
+                b.Label(" ", " ");
+                b.Label(" ", " ");
+            }
+        } /* суточные таймеры */
+
+    } else if (tab == 2) {
+        // Сюда добовляем настройки
+
+        { /* Настройки , внизу страницы*/
+            sets::Group g(b, " ");
+            {
+                sets::Menu g(b, "Опции");
+
+                {
+                    sets::Menu g(b, "Интерфейс");
+                    /*
+                          //пример изменения имени виджета
+                          b.Input(kk::btnName, "новое имя кнопки:");
+                          if(b.Button(kk::btnflex, db[kk::btnName], db[kk::btnColor])) b.reload();
+                    */
+
+                    b.Input(kk::t1Discr_name, "Имя Реле1:");
+                    b.Input(kk::t2Discr_name, "Имя Реле2:");
+                    b.Input(kk::t3Discr_name, "Имя Реле3:");
+                    b.Input(kk::t4Discr_name, "Имя Реле4:");
+                    b.Input(kk::t5Discr_name, "Имя Реле5:");
+                    b.Input(kk::t6Discr_name, "Имя Реле6:");
+                    b.Input(kk::airTempName, "Имя датчика воздуха 1");
+                    b.Input(kk::soilTempName, "Имя датчика почвы 1");
+                    b.Input(kk::soil2TempName, "Имя датчика почвы 2");
+                }
+                {
+                    sets::Menu g(b, "Расширенные");
+                    /// провалились в расширенные пристройки
+                    {
+                        sets::Group g(b, "настройки WiFi");
+                        b.Input(kk::wifi_ssid, "SSID");
+                        b.Pass(kk::wifi_pass, "Password");
+                        if (b.Button(kk::apply, "Save & Restart")) {
+                            db.update();  // сохраняем БД не дожидаясь таймаута
+                            WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
+                            notice_f = true;
+                            //          ESP.restart();
+                        }  // button Save
+                    }  // настройки wifi
+
+                    // кнопки являются "групповым" виджетом, можно сделать несколько кнопок в одной строке
+                    if (b.beginButtons()) {
+                        if (b.Button(kk::btn2, "стереть базу !", sets::Colors::Red)) {
+                            Serial.println("could clear db");
+                            db.clear();
+                            db.update();
                         }
-                    } else {
-                        b.Label("Реле не найдены. Нажмите 'Сканировать реле'");
+                        b.endButtons();  // завершить кнопки
                     }
-                    
-                    b.Label("Смена адреса реле:");
-                    b.Number(kk::old_address, "Текущий адрес (1-127)");
-                    b.Number(kk::new_address, "Новый адрес (1-127)");
-                    
-                    if (b.Button(0x1002, "Изменить адрес", sets::Colors::Blue)) {
-                        measureExecutionTime("change_relay_address", []() {    // измерение времени выполнения функции
-                            data.old_address = db[kk::old_address].toInt();
-                            data.new_address = db[kk::new_address].toInt();
-                            change_relay_address();
-                        });
-                        db.update();
-                        
-                    }
-                }
-            }
-             {  // Меню "Графики"
-                sets::Menu g(b, "Графики");
-                {
-                    sets::Group g(b, "Графики");
-                   
-                }
-            }  // Графики
-        } // настройки
-   
-     }  // Подстройки
+                }  // Расширенные
 
+                {  // Меню "Реле"
+                    sets::Menu g(b, "Реле");
+                    {
+                        sets::Group g(b, "Найденные реле");
+
+                        if (b.Button(0x1001, "Сканировать реле", sets::Colors::Green)) {
+                            measureExecutionTime("scan_relays", []() {  // измерение времени выполнения функции
+                                data.relay_count = scan_relays(data.relays);
+
+                            });
+                            db.update();
+                            b.reload();
+                        }
+
+                        if (data.relay_count > 0) {
+                            b.Label("Поиск и смена адреса реле");
+                            for (uint8_t i = 0; i < data.relay_count; i++) {
+                                String addr = String(data.relays[i].address);
+                                b.Label("Реле " + String(i + 1) + " (адрес " + addr + ")");  // Используем обычный Label
+                                if (b.Button(kk::relay_seach + i, "Выбрать", sets::Colors::Blue)) {
+                                    data.old_address = data.relays[i].address;
+                                    db[kk::old_address] = String(data.old_address);
+                                    db.update();
+                                }
+                            }
+                        } else {
+                            b.Label("Реле не найдены. Нажмите 'Сканировать реле'");
+                        }
+
+                        b.Label("Смена адреса реле:");
+                        b.Number(kk::old_address, "Текущий адрес (1-127)");
+                        b.Number(kk::new_address, "Новый адрес (1-127)");
+
+                        if (b.Button(0x1002, "Изменить адрес", sets::Colors::Blue)) {
+                            measureExecutionTime("change_relay_address", []() {  // измерение времени выполнения функции
+                                data.old_address = db[kk::old_address].toInt();
+                                data.new_address = db[kk::new_address].toInt();
+                                change_relay_address();
+                            });
+                            db.update();
+                        }
+                    }
+                }
+
+            }  // настройки
+        }  // Подстройки
+    }  // меню
     unsigned long totalTime = millis() - startTime;
     Serial.print("Общее время build(): ");
     Serial.print(totalTime);
