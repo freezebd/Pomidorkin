@@ -209,7 +209,7 @@ void build(sets::Builder &b) {
         case kk::airRele_startTemp:
             // пересчитываем температуру воздуха х10 чтобы не множиться в цикле. аналогично в setup()
             data.Air1.tTrigx10 = db[kk::airRele_startTemp].toInt() * 10;
-            userDhtRelays();
+            userRelays();
             b.reload();
             break;
         case kk::airRele_TempThreshold:
@@ -227,14 +227,14 @@ void build(sets::Builder &b) {
                     data.Air1.tTresholdx10 = 30;
                     break;
             }
-            userDhtRelays();
+            userRelays();
             b.reload();
             break;
 
         case kk::airRele_startHume:
             // пересчитываем влажность воздуха х10 чтобы не множиться в цикле. аналогично в setup()
             data.Air1.hTrigx10 = db[kk::airRele_startHume].toInt() * 10;
-            userDhtRelays();
+            userRelays();
             b.reload();
             break;
         case kk::airRele_HumeTreshold:
@@ -252,14 +252,14 @@ void build(sets::Builder &b) {
                     data.Air1.hTresholdx10 = 10;
                     break;
             }
-            userDhtRelays();
+            userRelays();
             b.reload();
             break;
 
         case kk::soilRele_startTemp:
                 // пересчитываем температуру почвы датчика 1 х10 чтобы не множиться в цикле.
                 data.Soil1.tTrigx10 = db[kk::soilRele_startTemp].toInt() * 10;
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
 
@@ -278,14 +278,14 @@ void build(sets::Builder &b) {
                         data.Soil1.tTresholdx10 = 30;
                         break;
                 }
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
 
             case kk::soilRele_startHume:
                 // пересчитываем влажность почвы х10 чтобы не множиться в цикле.
                 data.Soil1.hTrigx10 = db[kk::soilRele_startHume].toInt() * 10;
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
 
@@ -304,13 +304,13 @@ void build(sets::Builder &b) {
                         data.Soil1.hTresholdx10 = 30;
                         break;
                 }
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
             case kk::soil2Rele_startTemp:
                 // пересчитываем температуру почвы датчика 2 х10 чтобы не множиться в цикле.
                 data.Soil2.tTrigx10 = db[kk::soil2Rele_startTemp].toInt() * 10;
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;      
             case kk::soil2Rele_TempThreshold:
@@ -328,13 +328,13 @@ void build(sets::Builder &b) {
                         data.Soil2.tTresholdx10 = 30;
                         break;
                 }
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
             case kk::soil2Rele_startHume:
                 // пересчитываем влажность почвы датчика 2 х10 чтобы не множиться в цикле.
                 data.Soil2.hTrigx10 = db[kk::soil2Rele_startHume].toInt() * 10;
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
             case kk::soil2Rele_HumeTreshold:
@@ -352,7 +352,7 @@ void build(sets::Builder &b) {
                         data.Soil2.hTresholdx10 = 10;
                         break;
                 }
-                userDhtRelays();
+                userRelays();
                 b.reload();
                 break;
                 
@@ -406,7 +406,7 @@ void build(sets::Builder &b) {
 
             if (db[kk::airTempRele_enabled].toInt() == 0)
                 data.Air1.StateAir = 0;  // принудительно выключаем реле
-                userDhtRelays();
+                userRelays();
                 b.reload();
         }
         if (db[kk::airTempRele_enabled].toInt() != 0) {
@@ -422,7 +422,7 @@ void build(sets::Builder &b) {
 
             if (db[kk::airHumeRele_enabled].toInt() == 0)
                 data.Air1.StateHume = 0;  // принудительно выключаем реле
-                userDhtRelays();
+                userRelays();
                 b.reload();
         }
         if (db[kk::airHumeRele_enabled].toInt() != 0) {
@@ -452,7 +452,7 @@ void build(sets::Builder &b) {
         if (b.Switch(kk::soilHumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
             if (db[kk::soilHumeRele_enabled].toInt() == 0)
                 data.Soil1.StateHume = 0;  // принудительно выключаем реле
-            userDhtRelays();
+            userRelays();
             b.reload();
         }
         if (db[kk::soilHumeRele_enabled].toInt() != 0) {
@@ -481,7 +481,7 @@ void build(sets::Builder &b) {
         if (b.Switch(kk::soil2HumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
             if (db[kk::soil2HumeRele_enabled].toInt() == 0)
                 data.Soil2.StateHume = 0;  // принудительно выключаем реле
-            userDhtRelays();
+            userRelays();
             b.reload();
         }
         if (db[kk::soil2HumeRele_enabled].toInt() != 0) {

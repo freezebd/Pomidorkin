@@ -219,7 +219,7 @@ void setup() {
     }   
 
 
-    userDhtRelays();
+    userRelays();
     
 
     // ======== WIFI ========
@@ -250,7 +250,7 @@ void loop() {
       if (ms > 100) Serial.println(ms);
 
     
-    userDhtRelays();  // мониторим данные по воздуху и почве
+    userRelays();  // мониторим данные по воздуху и почве
     userSixTimers();  // мониторим изменеие по реле
     
     // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.

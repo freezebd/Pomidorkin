@@ -3,6 +3,6 @@
 
 #include "nastroyki.h"
 
-void userDhtRelays();
+void userRelays();
 void userDSRelays();
 void userSixTimers();

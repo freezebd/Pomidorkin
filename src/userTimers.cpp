@@ -12,7 +12,7 @@
 static bool t6_rightDay = 0;  // День недели для таймера 6
 static uint8_t lastWeekDay = 0;
 
-void userDhtRelays() {  // реле 
+void userRelays() {  // реле 
 
     switch (data.Air1.StateAir) {  // Реле AirTemp для нагрев  воздуха
         case 0:
@@ -142,7 +142,7 @@ void userDhtRelays() {  // реле
             data.Soil2.StateHume = 0;
             break;  
     }  // switch (Реле почвы 2)
-}  // userDhtRelays()
+}  // userRelays()
 
 void userSixTimers() { // Таймеры с1 - по 6 ===
    
