@@ -87,6 +87,12 @@ void update(sets::Updater &upd) {
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
+
+    // Обновление графики
+    float v[] = {data.Air1.tfloat, data.Air1.hfloat};
+    upd.updatePlot(H(run), v);
+    upd.updatePlot(H(stack), v);
+
     if (notice_f)  // уведомление при вводе wifi данных
     {
         notice_f = false;
@@ -434,19 +440,27 @@ void build(sets::Builder &b) {
                 b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
                 // b.Label("%");
             }
+
+           // b.PlotRunning(H(run), "Температура;Влажность");
+            b.PlotStack(H(stack), "Температура;Влажность");
         }
     } else if (tab == 1) {
         // Сюда добавляем управление всеми реле
         {  //"Воздух"
 
             if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, 0xb7701e)) {  // Реле нагрем воздуха
-
                 if (db[kk::airTempRele_enabled].toInt() == 0)
                     data.Air1.StateAir = 0;  // принудительно выключаем реле
                 userRelays();
                 b.reload();
             }
             if (db[kk::airTempRele_enabled].toInt() != 0) {
+                sets::Group g(b, db[kk::airTempName]);  // Воздух
+                {
+                    sets::Row g(b);
+                    b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), 0xec9736);
+                    // b.Label("°С");
+                }
                 {
                     sets::Row g(b);
                     b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Yellow);
@@ -462,6 +476,10 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (db[kk::airHumeRele_enabled].toInt() != 0) {
+                {
+                    sets::Row g(b);
+                    b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
+                }
                 {
                     sets::Row g(b);
                     b.LED(kk::airHumeRele_led, "Cтатус >>", data.Air1.HumeRele_on, sets::Colors::Gray, sets::Colors::Yellow);
@@ -482,6 +500,12 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (db[kk::soilHumeRele_enabled].toInt() != 0) {
+                sets::Group g(b, db[kk::soilTempName]);  // датчик почвы 1
+                {
+                    sets::Row g(b);
+                    b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                    // b.Label("%");
+                }
                 {
                     sets::Row g(b);
                     b.LED(kk::soilHumeRele_led, "Cтатус >>", data.Soil1.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
@@ -501,6 +525,12 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (db[kk::soil2HumeRele_enabled].toInt() != 0) {
+                sets::Group g(b, db[kk::soil2TempName]);  // датчик почвы 2
+                {
+                    sets::Row g(b);
+                    b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                    // b.Label("%");
+                }
                 {
                     sets::Row g(b);
                     b.LED(kk::soil2HumeRele_led, "Cтатус >>", data.Soil2.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);

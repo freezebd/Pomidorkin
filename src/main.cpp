@@ -246,10 +246,11 @@ void loop() {
 
     uint32_t ms = millis();
       sett.tick();
-      ms = millis() - ms;
-      if (ms > 100) Serial.println(ms);
+      ms = millis() - ms;   
+      if (ms > 100) measureExecutionTime("sett.tick", []() {  // измерение времени выполнения функции
+        sett.tick();
+    }); 
 
-    
     userRelays();  // мониторим данные по воздуху и почве
     userSixTimers();  // мониторим изменеие по реле
     
@@ -271,7 +272,7 @@ void loop() {
     }  // WiFi.connected()
 
     indikator.tick();  // in loop
-    sett.tick();       // поддержка веб интерфейса
+   // sett.tick();       // поддержка веб интерфейса
 
     if (rtc.tick()) {
         data.secondsNow = rtc.daySeconds();
@@ -310,4 +311,5 @@ void loop() {
                 break;      
         }
     }
+   
 }  // loop
