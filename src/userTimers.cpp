@@ -1,18 +1,31 @@
 #include "userTimers.h"
 
 #include <Arduino.h>
-#include <iarduino_I2C_Relay.h> 
-
+#include <GyverDBFile.h>
+#include <GyverDS3231.h>
+#include <SettingsGyver.h>
+#include <iarduino_I2C_Relay.h>
 
 #include "data.h"
+#include "led.h"
+#include "modbus.h"
 #include "nastroyki.h"
-#include "settings.h"
+#include "relay6_algorithms.h"
 #include "reley.h"
+#include "settings.h"
+#include "timer.h"
 
 static bool t6_rightDay = 0;  // День недели для таймера 6
 static uint8_t lastWeekDay = 0;
 
-void userRelays() {  // реле 
+// Объявления функций
+static bool checkTimeBasedAlgorithm();
+static bool checkTemperatureBasedAlgorithm();
+static bool checkHumidityBasedAlgorithm();
+static bool checkSoil1BasedAlgorithm();
+static bool checkSoil2BasedAlgorithm();
+
+void userRelays() {  // реле
 
     switch (data.Air1.StateAir) {  // Реле AirTemp для нагрев  воздуха
         case 0:
@@ -22,18 +35,18 @@ void userRelays() {  // реле
                 data.Air1.StateAir = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
-        case 5:                                          
+        case 5:
             if (data.Air1.tx10 <= data.Air1.tTrigx10 - data.Air1.tTresholdx10) {  // data.dhtOne.tx10 >= data.dhtOne.tTrigx10) { // ожидание понижение температуры
                 data.Air1.StateAir = 10;
             }
             break;
         case 10:  // включаем нагрев
-            reley_1_1_on(); 
+            reley_1_1_on();
             data.Air1.TempRele_on = true;
             data.Air1.StateAir = 15;
             break;
         case 15:  // ожидаем повышение температуры - трешхолд
-            if (data.Air1.tx10 >= data.Air1.tTrigx10 ) {
+            if (data.Air1.tx10 >= data.Air1.tTrigx10) {
                 data.Air1.StateAir = 20;
             }
             break;
@@ -43,26 +56,26 @@ void userRelays() {  // реле
             data.Air1.StateAir = 0;
             break;
     }  // switch (data.Air1.StateAir)
-   
-    switch (data.Air1.StateHume) { // реле AirHume для увлажнение воздуха
+
+    switch (data.Air1.StateHume) {  // реле AirHume для увлажнение воздуха
         case 0:
             if (db[kk::airHumeRele_enabled].toInt() != 0) {
                 data.Air1.StateHume = 5;
             } else if (data.Air1.HumeRele_on) {
                 data.Air1.StateHume = 20;  // выключим по перемещению ползунка в OFF
             }
-            break;      
+            break;
         case 5:
-           if (data.Air1.hx10 <= data.Air1.hTrigx10 - data.Air1.hTresholdx10) {
+            if (data.Air1.hx10 <= data.Air1.hTrigx10 - data.Air1.hTresholdx10) {
                 data.Air1.StateHume = 10;
             }
             break;
-            case 10:
+        case 10:
             reley_1_2_on();
             data.Air1.HumeRele_on = true;
             data.Air1.StateHume = 15;
             break;
-        case 15:  // ожидаем повышение влажности 
+        case 15:  // ожидаем повышение влажности
             if (data.Air1.hx10 >= data.Air1.hTrigx10) {
                 data.Air1.StateHume = 20;
             }
@@ -74,7 +87,7 @@ void userRelays() {  // реле
             data.Air1.StateHume = 0;
             break;
     }  // switch (data.Air1.StateHume)
-                            
+
     switch (data.Soil1.StateHume) {  // Реле почвы 1
         // инициализация
         //  ползунок включен - отрабатываем
@@ -86,8 +99,8 @@ void userRelays() {  // реле
                 data.Soil1.StateHume = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
-        case 5:   // ожидание понижения влажности
-            if (data.Soil1.hx10 <= data.Soil1.hTrigx10) { 
+        case 5:  // ожидание понижения влажности
+            if (data.Soil1.hx10 <= data.Soil1.hTrigx10) {
                 data.Soil1.StateHume = 10;
             }
             break;
@@ -96,7 +109,7 @@ void userRelays() {  // реле
             data.Soil1.HumeRele_on = true;
             data.Soil1.StateHume = 15;
             break;
-        case 15:                                                                  // ожидаем повышения влажности + трешхолд
+        case 15:                                                                     // ожидаем повышения влажности + трешхолд
             if (data.Soil1.hx10 >= data.Soil1.hTrigx10 + data.Soil1.hTresholdx10) {  //(data.dhtTwo.hum >= data.dhtTwo.hTrig + data.dhtTwo.hTreshold) {
                 data.Soil1.StateHume = 20;
             }
@@ -107,45 +120,110 @@ void userRelays() {  // реле
             data.Soil1.HumeRele_on = false;
             data.Soil1.StateHume = 0;
             break;
-    }   // switch (Реле почвы 1)
-        
-    switch (data.Soil2.StateHume) {  // реле Датчика почвы 2 для 
+    }  // switch (Реле почвы 1)
+
+    switch (data.Soil2.StateHume) {  // реле Датчика почвы 2 для
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
-        case 0: 
+        case 0:
             if (db[kk::soil2HumeRele_enabled].toInt() != 0) {
                 data.Soil2.StateHume = 5;
             } else if (data.Soil2.HumeRele_on) {
                 data.Soil2.StateHume = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
-        case 5:   // ожидание понижения влажности
-            if (data.Soil2.hx10 <= data.Soil2.hTrigx10) { 
+        case 5:  // ожидание понижения влажности
+            if (data.Soil2.hx10 <= data.Soil2.hTrigx10) {
                 data.Soil2.StateHume = 10;
             }
-            break;  
+            break;
         case 10:  // включаем полив
             reley_2_2_on();
             data.Soil2.HumeRele_on = true;
             data.Soil2.StateHume = 15;
-            break;  
-        case 15:  // ожидаем повышения влажности + трешхолд
+            break;
+        case 15:                                                                     // ожидаем повышения влажности + трешхолд
             if (data.Soil2.hx10 >= data.Soil2.hTrigx10 + data.Soil2.hTresholdx10) {  //(data.dhtTwo.hum >= data.dhtTwo.hTrig + data.dhtTwo.hTreshold) {
                 data.Soil2.StateHume = 20;
             }
-            break;  
+            break;
         case 20:  // используется при переключении ползунка в морде
             // выключаем полив
             reley_2_2_off();
             data.Soil2.HumeRele_on = false;
             data.Soil2.StateHume = 0;
-            break;  
+            break;
     }  // switch (Реле почвы 2)
 }  // userRelays()
 
-void userSixTimers() { // Таймеры с1 - по 6 ===
-   
+// Реализации функций
+static bool checkTimeBasedAlgorithm() {
+    bool isRightDay = false;
+    switch (curDataTime.weekDay) {
+        case 1: isRightDay = db[kk::t6Discr_inMonday].toInt(); break;
+        case 2: isRightDay = db[kk::t6Discr_inTuesday].toInt(); break;
+        case 3: isRightDay = db[kk::t6Discr_inWensday].toInt(); break;
+        case 4: isRightDay = db[kk::t6Discr_inThursday].toInt(); break;
+        case 5: isRightDay = db[kk::t6Discr_inFriday].toInt(); break;
+        case 6: isRightDay = db[kk::t6Discr_inSaturday].toInt(); break;
+        case 7: isRightDay = db[kk::t6Discr_inSunday].toInt(); break;
+    }
+
+    if (isRightDay) {
+        if (db[kk::t6Discr_startTime].toInt() < db[kk::t6Discr_endTime].toInt()) {
+            return (db[kk::t6Discr_startTime].toInt() <= data.secondsNow) &&
+                   (data.secondsNow <= db[kk::t6Discr_endTime].toInt());
+        } else {
+            return !((db[kk::t6Discr_startTime].toInt() >= data.secondsNow) &&
+                     (data.secondsNow >= db[kk::t6Discr_endTime].toInt()));
+        }
+    }
+    return false;
+}
+
+static bool checkTemperatureBasedAlgorithm() {
+    int16_t threshold = db[kk::t6Discr_temp_threshold].toInt() * 10;
+    int16_t hysteresis = db[kk::t6Discr_hysteresis].toInt() * 10;
+    if (!data.rel6_on) {
+        return data.Air1.tx10 <= threshold;
+    } else {
+        return data.Air1.tx10 < threshold + hysteresis;
+    }
+}
+
+static bool checkHumidityBasedAlgorithm() {
+    int16_t threshold = db[kk::t6Discr_hum_threshold].toInt() * 10;
+    int16_t hysteresis = db[kk::t6Discr_hysteresis].toInt() * 10;
+    if (!data.rel6_on) {
+        return data.Air1.hx10 <= threshold;
+    } else {
+        return data.Air1.hx10 < threshold + hysteresis;
+    }
+}
+
+static bool checkSoil1BasedAlgorithm() {
+    int16_t threshold = db[kk::t6Discr_hum_threshold].toInt() * 10;
+    int16_t hysteresis = db[kk::t6Discr_hysteresis].toInt() * 10;
+    if (!data.rel6_on) {
+        return data.Soil1.hx10 <= threshold;
+    } else {
+        return data.Soil1.hx10 < threshold + hysteresis;
+    }
+}
+
+static bool checkSoil2BasedAlgorithm() {
+    int16_t threshold = db[kk::t6Discr_hum_threshold].toInt() * 10;
+    int16_t hysteresis = db[kk::t6Discr_hysteresis].toInt() * 10;
+    if (!data.rel6_on) {
+        return data.Soil2.hx10 <= threshold;
+    } else {
+        return data.Soil2.hx10 < threshold + hysteresis;
+    }
+}
+
+void userSixTimers() {  // Таймеры с1 - по 6 ===
+
     // === таймер Реле 1
     // if (db[kk::t1Discr_enabled].toBool()) {
     if (data.t1discr_enbl) {
@@ -187,248 +265,26 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             data.rel1_on = 0;
         }
     }
-    // // таймер 2 ===
-    // //=== таймер Реле 2
-    // // if (db[kk::t2Discr_enabled].toBool()) {
-    // if (data.t2discr_enbl) {
-    //     if (db[kk::t2Discr_startTime].toInt() < db[kk::t2Discr_endTime].toInt())  // если нет перехода через полночь
-    //     {
-    //         if ((db[kk::t2Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t2Discr_endTime].toInt())) {
-    //             if (!data.rel2_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_2, ON);
-    //                 data.rel2_on = 1;
-    //             }
-    //         } else {
-    //             if (data.rel2_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_2, OFF);
-    //                 data.rel2_on = 0;
-    //             }
-    //         }
-    //     } else if (db[kk::t2Discr_startTime].toInt() > db[kk::t2Discr_endTime].toInt())  // если есть переход через полночь
-    //     {
-    //         if ((db[kk::t2Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t2Discr_endTime].toInt())) {
-    //             if (data.rel2_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_2, OFF);
-    //                 data.rel2_on = 0;
-    //             }
-    //         } else {
-    //             if (!data.rel2_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_2, ON);
-    //                 data.rel2_on = 1;
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     if (data.rel2_on)  // если было включено, выключим
-    //     {
-    //       //  digitalWrite(RELE_2, OFF);
-    //         data.rel2_on = 0;
-    //     }
-    // }
-    // // таймер 3 ===
-    // //=== таймер Реле 3
-    // // if (db[kk::t3Discr_enabled].toBool()) {
-    // if (data.t3discr_enbl) {
-    //     if (db[kk::t3Discr_startTime].toInt() < db[kk::t3Discr_endTime].toInt())  // если нет перехода через полночь
-    //     {
-    //         if ((db[kk::t3Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t3Discr_endTime].toInt())) {
-    //             if (!data.rel3_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_3, ON);
-    //                 data.rel3_on = 1;
-    //             }
-    //         } else {
-    //             if (data.rel3_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_3, OFF);
-    //                 data.rel3_on = 0;
-    //             }
-    //         }
-    //     } else if (db[kk::t3Discr_startTime].toInt() > db[kk::t3Discr_endTime].toInt())  // если есть переход через полночь
-    //     {
-    //         if ((db[kk::t3Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t3Discr_endTime].toInt())) {
-    //             if (data.rel3_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_3, OFF);
-    //                 data.rel3_on = 0;
-    //             }
-    //         } else {
-    //             if (!data.rel3_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_3, ON);
-    //                 data.rel3_on = 1;
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     if (data.rel3_on)  // если было включено, выключим
-    //     {
-    //        // digitalWrite(RELE_3, OFF);
-    //         data.rel3_on = 0;
-    //     }
-    // }
-    // // таймер 4 ===
-    // //=== таймер Реле4
-    // // if (db[kk::t4Discr_enabled].toBool()) {
-    // if (data.t4discr_enbl) {
-    //     if (db[kk::t4Discr_startTime].toInt() < db[kk::t4Discr_endTime].toInt())  // если нет перехода через полночь
-    //     {
-    //         if ((db[kk::t4Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t4Discr_endTime].toInt())) {
-    //             if (!data.rel4_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_4, ON);
-    //                 data.rel4_on = 1;
-    //             }
-    //         } else {
-    //             if (data.rel4_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_4, OFF);
-    //                 data.rel4_on = 0;
-    //             }
-    //         }
-    //     } else if (db[kk::t4Discr_startTime].toInt() > db[kk::t4Discr_endTime].toInt())  // если есть переход через полночь
-    //     {
-    //         if ((db[kk::t4Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t4Discr_endTime].toInt())) {
-    //             if (data.rel4_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_4, OFF);
-    //                 data.rel4_on = 0;
-    //             }
-    //         } else {
-    //             if (!data.rel4_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_4, ON);
-    //                 data.rel4_on = 1;
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     if (data.rel4_on)  // если было включено, выключим
-    //     {
-    //         data.rel4_on = 0;
-    //       // digitalWrite(RELE_4, OFF);
-    //     }
-    // }
-    // // таймер 5===
-    // //=== таймер Реле 5
-    // // if (db[kk::t5Discr_enabled].toBool()) {
-    // if (data.t5discr_enbl) {
-    //     if (db[kk::t5Discr_startTime].toInt() < db[kk::t5Discr_endTime].toInt())  // если нет перехода через полночь
-    //     {
-    //         if ((db[kk::t5Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t5Discr_endTime].toInt())) {
-    //             if (!data.rel5_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_5, ON);
-    //                 data.rel5_on = 1;
-    //             }
-    //         } else {
-    //             if (data.rel5_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_5, OFF);
-    //                 data.rel5_on = 0;
-    //             }
-    //         }
-    //     } else if (db[kk::t5Discr_startTime].toInt() > db[kk::t5Discr_endTime].toInt())  // если есть переход через полночь
-    //     {
-    //         if ((db[kk::t5Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t5Discr_endTime].toInt())) {
-    //             if (data.rel5_on)  // avoid extra digWrite
-    //             {
-    //               //  digitalWrite(RELE_5, OFF);
-    //                 data.rel5_on = 0;
-    //             }
-    //         } else {
-    //             if (!data.rel5_on)  // avoid extra digWrite
-    //             {
-    //                // digitalWrite(RELE_5, ON);
-    //                 data.rel5_on = 1;
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     if (data.rel5_on)  // если было включено, выключим
-    //     {
-    //       //  digitalWrite(RELE_5, OFF);
-    //         data.rel5_on = 0;
-    //     }
-    // }
 
-    // таймер 6===+++++++++++++++++
-    // проверяем, правильный ли день для включения таймера 6
-    switch (curDataTime.weekDay) {
-        case 1:
-            if (db[kk::t6Discr_inMonday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 2:
-            if (db[kk::t6Discr_inTuesday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 3:
-            if (db[kk::t6Discr_inWensday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 4:
-            if (db[kk::t6Discr_inThursday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 5:
-            if (db[kk::t6Discr_inFriday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 6:
-            if (db[kk::t6Discr_inSaturday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-        case 7:
-            if (db[kk::t6Discr_inSunday].toInt() == 1) t6_rightDay = 1;
-            else t6_rightDay = 0;
-            break;
-    }
-    //=== таймер Реле 6
-    // if (db[kk::t6Discr_enabled].toBool()) {
-    if (data.t6discr_enbl && t6_rightDay) {
-        if (db[kk::t6Discr_startTime].toInt() < db[kk::t6Discr_endTime].toInt())  // если нет перехода через полночь
-        {
-            if ((db[kk::t6Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t6Discr_endTime].toInt())) {
-                if (!data.rel6_on)  // avoid extra digWrite
-                {
-                    reley_3_2_on();
-                    data.rel6_on = 1; 
-                }
+    //=== таймер Реле 6 ===
+    if (data.t6discr_enbl) {
+        uint8_t algorithm = db[kk::t6Discr_algorithm].toInt();
+        bool shouldBeOn = Relay6Algorithms::executeAlgorithm(algorithm);
+
+        if (shouldBeOn != data.rel6_on) {
+            if (shouldBeOn) {
+                reley_3_2_on();
+                data.rel6_on = 1;
             } else {
-                if (data.rel6_on)  // avoid extra digWrite
-                {
-                    reley_3_2_off();
-                    data.rel6_on = 0;
-                }
-            }
-        } else if (db[kk::t6Discr_startTime].toInt() > db[kk::t6Discr_endTime].toInt())  // если есть переход через полночь
-        {
-            if ((db[kk::t6Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t6Discr_endTime].toInt())) {
-                if (data.rel6_on)  // avoid extra digWrite
-                {
-                    reley_3_2_off();
-                    data.rel6_on = 0;
-                }
-            } else {
-                if (!data.rel6_on)  // avoid extra digWrite
-                {
-                    reley_3_2_on();
-                    data.rel6_on = 1;
-                }
+                reley_3_2_off();
+                data.rel6_on = 0;
             }
         }
     } else {
-        if (data.rel6_on)  // если было включено, выключим
-        {
+        if (data.rel6_on) {
             reley_3_2_off();
             data.rel6_on = 0;
         }
     }
-    // таймер6 ===
 
 }  // userSixTimers()

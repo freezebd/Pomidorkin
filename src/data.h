@@ -70,7 +70,6 @@ struct Data {  // обьявляем класс структуры
     RelayInfo relays[8];         // массив для хранения информации о найденных реле
     uint8_t relay_count = 0;     // количество найденных реле
 
-
     struct Air_sensor Air1;
     struct Soil_sensor Soil1;
     struct Soil_sensor Soil2;
@@ -78,14 +77,14 @@ struct Data {  // обьявляем класс структуры
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;
     bool rel1_on = 0;
-    bool t2discr_enbl = 0;
-    bool rel2_on = 0;
-    bool t3discr_enbl = 0;
-    bool rel3_on = 0;
-    bool t4discr_enbl = 0;
-    bool rel4_on = 0;
-    bool t5discr_enbl = 0;
-    bool rel5_on = 0;
+    // bool t2discr_enbl = 0;
+    // bool rel2_on = 0;
+    // bool t3discr_enbl = 0;
+    // bool rel3_on = 0;
+    // bool t4discr_enbl = 0;
+    // bool rel4_on = 0;
+    // bool t5discr_enbl = 0;
+    // bool rel5_on = 0;
     bool t6discr_enbl = 0;
     bool rel6_on = 0;
     

@@ -140,15 +140,16 @@ void setup() {
     db.init(kk::t6Discr_inFriday, (uint8_t)0);
     db.init(kk::t6Discr_inSaturday, (uint8_t)0);
     db.init(kk::t6Discr_inSunday, (uint8_t)0);
+    db.init(kk::t6Discr_algorithm, (uint8_t)0);  // По умолчанию работа по времени
+    db.init(kk::t6Discr_temp_threshold, (uint8_t)25);
+    db.init(kk::t6Discr_hum_threshold, (uint8_t)50);
+    db.init(kk::t6Discr_hysteresis, (uint8_t)1);
     db.init(kk::old_address, (uint8_t)0x00);
     db.init(kk::new_address, (uint8_t)0x00);
+    
     //db.dump(Serial);
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
-    // data.t2discr_enbl = db[kk::t2Discr_enabled];
-    // data.t3discr_enbl = db[kk::t3Discr_enabled];
-    // data.t4discr_enbl = db[kk::t4Discr_enabled];
-    // data.t5discr_enbl = db[kk::t5Discr_enabled];
     data.t6discr_enbl = db[kk::t6Discr_enabled];
     userSixTimers();
     // пересчитываем температуру и влажность воздуха и почвы в х10 чтобы не множиться в цикле
