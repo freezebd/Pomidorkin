@@ -374,12 +374,12 @@ void build(sets::Builder &b) {
             sets::Group g(b, db[kk::airTempName]);  // Воздух
             {
                 sets::Row g(b);
-                b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), 0xec9736);
+                b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), sets::Colors::Red);
                 // b.Label("°С");
             }
             {
                 sets::Row g(b);
-                b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
+                b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), sets::Colors::Blue);
             }
             b.PlotStack(H(stack), "Температура;Влажность");
         }
@@ -387,12 +387,12 @@ void build(sets::Builder &b) {
             sets::Group g(b, db[kk::soilHumeName]);  // датчик почвы 1
             {
                 sets::Row g(b);
-                b.Label(kk::floattempsoil, "Температура", String(data.Soil1.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
+                b.Label(kk::floattempsoil, "Температура", String(data.Soil1.tfloat + String(" °C")), sets::Colors::Pink);  // DHT22 темп 2
                 // b.Label("°С");
             }
             {
                 sets::Row g(b);
-                b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), sets::Colors::Pink);  // Влажность 2
                 // b.Label("%");
             }
         }
@@ -400,12 +400,12 @@ void build(sets::Builder &b) {
             sets::Group g(b, db[kk::soil2TempName]);  // датчик почвы 2
             {
                 sets::Row g(b);
-                b.Label(kk::floattempsoil2, "Температура", String(data.Soil2.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
+                b.Label(kk::floattempsoil2, "Температура", String(data.Soil2.tfloat + String(" °C")), sets::Colors::Pink);  // DHT22 темп 2
                 // b.Label("°С");
             }
             {
                 sets::Row g(b);
-                b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), sets::Colors::Pink);  // Влажность 2
                 // b.Label("%");
             }
 
@@ -415,7 +415,7 @@ void build(sets::Builder &b) {
 
         {  //"Воздух"
 
-            if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, 0xb7701e)) {  // Реле нагрем воздуха
+            if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, sets::Colors::Red)) {  // Реле нагрем воздуха
                 if (db[kk::airTempRele_enabled].toInt() == 0)
                     data.Air1.StateAir = 0;  // принудительно выключаем реле
                 userRelays();
@@ -425,7 +425,7 @@ void build(sets::Builder &b) {
                 sets::Group g(b, db[kk::airTempName]);  // Воздух
                 {
                     sets::Row g(b);
-                    b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), 0xec9736);
+                    b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), sets::Colors::Red);
                     // b.Label("°С");
                 }
                 {
@@ -435,7 +435,7 @@ void build(sets::Builder &b) {
                 b.Number(kk::airRele_startTemp, "Включается если ниже", nullptr, 0, 90);
                 b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
             }
-            if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, 0xb7701e)) {  // Реле 1 увлажнение воздуха
+            if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, sets::Colors::Blue)) {  // Реле 1 увлажнение воздуха
 
                 if (db[kk::airHumeRele_enabled].toInt() == 0)
                     data.Air1.StateHume = 0;  // принудительно выключаем реле
@@ -446,7 +446,7 @@ void build(sets::Builder &b) {
                 sets::Group g(b, db[kk::airHumeName]);
                 {
                     sets::Row g(b);
-                    b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
+                    b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), sets::Colors::Blue);
                 }
                 {
                     sets::Row g(b);
@@ -461,7 +461,7 @@ void build(sets::Builder &b) {
 
         {  //"Почва 1"
 
-            if (b.Switch(kk::soilHumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
+            if (b.Switch(kk::soilHumeRele_enabled, "Полив", nullptr, sets::Colors::Pink)) {  // Реле 1
                 if (db[kk::soilHumeRele_enabled].toInt() == 0)
                     data.Soil1.StateHume = 0;  // принудительно выключаем реле
                 userRelays();
@@ -471,7 +471,7 @@ void build(sets::Builder &b) {
                 sets::Group g(b, db[kk::soilHumeName]);  // датчик почвы 1
                 {
                     sets::Row g(b);
-                    b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                    b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), sets::Colors::Pink);  // Влажность 2
                     // b.Label("%");
                 }
                 {
@@ -486,7 +486,7 @@ void build(sets::Builder &b) {
 
         {  // "Почва 2"
 
-            if (b.Switch(kk::soil2HumeRele_enabled, "Полив", nullptr, 0x3da7f2)) {  // Реле 1
+            if (b.Switch(kk::soil2HumeRele_enabled, "Полив", nullptr, sets::Colors::Pink)) {  // Реле 1
                 if (db[kk::soil2HumeRele_enabled].toInt() == 0)
                     data.Soil2.StateHume = 0;  // принудительно выключаем реле
                 userRelays();
@@ -496,7 +496,7 @@ void build(sets::Builder &b) {
                 sets::Group g(b, db[kk::soil2TempName]);  // датчик почвы 2
                 {
                     sets::Row g(b);
-                    b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), 0x2680bf);  // Влажность 2
+                    b.Label(kk::floathumsoil2, "Влажность", String(data.Soil2.hfloat + String(" %")), sets::Colors::Pink);  // Влажность 2
                     // b.Label("%");
                 }
                 {
