@@ -1,25 +1,25 @@
-// путь где лежат бинарный файл проекта 
+// путь где лежат бинарный файл проекта
 // C:\Users\Freez\OneDrive\Документы\PlatformIO\Projects\Pomidorkin\.pio\build\esp32dev
 #include "settings.h"
 
 #include <GyverDS3231.h>
 #include <LittleFS.h>
-#include <SettingsGyver.h> // Изменил на GyverWS  
+#include <SettingsGyver.h>  // Изменил на GyverWS
 #include <WiFiConnector.h>
 
 #include "data.h"  // тут лежит структура data по кошерному
-#include "nastroyki.h"
-#include "userTimers.h"
 #include "modbus.h"
+#include "nastroyki.h"
 #include "reley.h"  // Добавляем для доступа к change_relay_address()
+#include "userTimers.h"
 
-GyverDBFile db(&LittleFS, "/pomidorkin.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
-SettingsGyver sett("Помидоркин@", &db);  // указывается заголовок меню, подключается база данных
+GyverDBFile db(&LittleFS, "/pomidorkin.db");  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
 GyverDS3231 rtc;
 Datime curDataTime(rtc);
 
-bool flagreley = true;                           // флаг для перезагрузки вебморды при смене адреса реле
-static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
+bool flagreley = true;  // флаг для перезагрузки вебморды при смене адреса реле
+static bool notice_f;   // флаг на отправку уведомления о подключении к wifi
 
 static const char *const WEEKdays[] = {
     "Выходной",
@@ -32,16 +32,15 @@ static const char *const WEEKdays[] = {
     "Воскресенье"};
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 
-//sets::Logger logger(150);
-
+// sets::Logger logger(150);
 
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
 
-    upd.update(kk::secondsNow, data.secondsNow);           //Секунды с начало суток
-    upd.update(kk::datime, data.datime);                   //Время в секундах с 1970 года
-    upd.update(kk::secondsUptime, data.secondsUptime);     // Секунды аптайм
-      
+    upd.update(kk::secondsNow, data.secondsNow);        // Секунды с начало суток
+    upd.update(kk::datime, data.datime);                // Время в секундах с 1970 года
+    upd.update(kk::secondsUptime, data.secondsUptime);  // Секунды аптайм
+
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));
     } else if (data.uptime_Days == 1)
@@ -50,40 +49,40 @@ void update(sets::Updater &upd) {
         upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дня")));
     else if (data.uptime_Days >= 5)
         upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дней")));
-    
+
     // день недели выводим, оч красиво
-    upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay])); // день недели (1 понедельник - 7 воскресенье)
+    upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay]));  // день недели (1 понедельник - 7 воскресенье)
 
     upd.update("t1Discr_led"_h, data.rel1_on);
-    upd.update("t2Discr_led"_h, data.rel2_on);
-    upd.update("t3Discr_led"_h, data.rel3_on);
-    upd.update("t4Discr_led"_h, data.rel4_on);
-    upd.update("t5Discr_led"_h, data.rel5_on);
+    // upd.update("t2Discr_led"_h, data.rel2_on);
+    // upd.update("t3Discr_led"_h, data.rel3_on);
+    // upd.update("t4Discr_led"_h, data.rel4_on);
+    // upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
 
     upd.update(kk::floattempair, (String)(data.Air1.tfloat + String(" °C")));              // обновление веб интерфейса температуры воздуха
-    upd.update(kk::airTempRele_led, data.Air1.TempRele_on);      // обновление веб интерфейса светодиода реле температуры воздуха
+    upd.update(kk::airTempRele_led, data.Air1.TempRele_on);                                // обновление веб интерфейса светодиода реле температуры воздуха
     upd.update(kk::airRele_startTemp, (String)(data.Air1.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры воздуха
-    upd.update(kk::floathumeair, (String)(data.Air1.hfloat + String(" %")));              // обновление веб интерфейса влажности воздуха
-    upd.update(kk::airHumeRele_led, data.Air1.HumeRele_on);      // обновление веб интерфейса светодиода реле влажности воздуха
-    upd.update(kk::airRele_startHume, (String)(data.Air1.hTrigx10 / 10 + String(" %")));  // обновление веб интерфейса  включения реле влажности воздуха
+    upd.update(kk::floathumeair, (String)(data.Air1.hfloat + String(" %")));               // обновление веб интерфейса влажности воздуха
+    upd.update(kk::airHumeRele_led, data.Air1.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности воздуха
+    upd.update(kk::airRele_startHume, (String)(data.Air1.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности воздуха
 
-    upd.update(kk::floattempsoil, (String)(data.Soil1.tfloat + String(" °C")));                      // обновление веб интерфейса температуры почвы
-    upd.update(kk::soilTempRele_led, data.Soil1.TempRele_on);              // обновление веб интерфейса светодиода реле температуры почвы
-    upd.update(kk::soilRele_startTemp, (String)(data.Soil1.tTrigx10 / 10 + String(" °C")));          // обновление веб интерфейса  включения реле температуры почвы
-    upd.update(kk::floathumsoil, (String)(data.Soil1.hfloat + String(" %")));                       // обновление веб интерфейса влажности почвы
-    upd.update(kk::soilHumeRele_led, data.Soil1.HumeRele_on);              // обновление веб интерфейса светодиода реле влажности почвы
-    upd.update(kk::soilRele_startHume, (String)(data.Soil1.hTrigx10 / 10 + String(" %")));          // обновление веб интерфейса  включения реле влажности почвы
+    upd.update(kk::floattempsoil, (String)(data.Soil1.tfloat + String(" °C")));              // обновление веб интерфейса температуры почвы
+    upd.update(kk::soilTempRele_led, data.Soil1.TempRele_on);                                // обновление веб интерфейса светодиода реле температуры почвы
+    upd.update(kk::soilRele_startTemp, (String)(data.Soil1.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры почвы
+    upd.update(kk::floathumsoil, (String)(data.Soil1.hfloat + String(" %")));                // обновление веб интерфейса влажности почвы
+    upd.update(kk::soilHumeRele_led, data.Soil1.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности почвы
+    upd.update(kk::soilRele_startHume, (String)(data.Soil1.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности почвы
 
-    upd.update(kk::floattempsoil2, (String)(data.Soil2.tfloat + String(" °C")));                      // обновление веб интерфейса температуры почвы 2
-    upd.update(kk::soil2TempRele_led, data.Soil2.TempRele_on);              // обновление веб интерфейса светодиода реле температуры почвы 2
-    upd.update(kk::soil2Rele_startTemp, (String)(data.Soil2.tTrigx10 / 10 + String(" °C")));          // обновление веб интерфейса  включения реле температуры почвы 2
-    upd.update(kk::floathumsoil2, (String)(data.Soil2.hfloat + String(" %")));                       // обновление веб интерфейса влажности почвы 2
-    upd.update(kk::soil2HumeRele_led, data.Soil2.HumeRele_on);              // обновление веб интерфейса светодиода реле влажности почвы 2
-    upd.update(kk::soil2Rele_startHume, (String)(data.Soil2.hTrigx10 / 10 + String(" %")));          // обновление веб интерфейса  включения реле влажности почвы 2
+    upd.update(kk::floattempsoil2, (String)(data.Soil2.tfloat + String(" °C")));              // обновление веб интерфейса температуры почвы 2
+    upd.update(kk::soil2TempRele_led, data.Soil2.TempRele_on);                                // обновление веб интерфейса светодиода реле температуры почвы 2
+    upd.update(kk::soil2Rele_startTemp, (String)(data.Soil2.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры почвы 2
+    upd.update(kk::floathumsoil2, (String)(data.Soil2.hfloat + String(" %")));                // обновление веб интерфейса влажности почвы 2
+    upd.update(kk::soil2HumeRele_led, data.Soil2.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности почвы 2
+    upd.update(kk::soil2Rele_startHume, (String)(data.Soil2.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности почвы 2
 
-    upd.update(kk::old_address, String(data.old_address));                  // обновление веб интерфейса старого адреса реле
-    upd.update(kk::new_address, String(data.new_address));                  // обновление веб интерфейса нового адреса реле
+    upd.update(kk::old_address, String(data.old_address));  // обновление веб интерфейса старого адреса реле
+    upd.update(kk::new_address, String(data.new_address));  // обновление веб интерфейса нового адреса реле
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -121,11 +120,11 @@ void update(sets::Updater &upd) {
     }
 }  // update
 
-void measureExecutionTime(const char* functionName, void (*func)()) { // измерение времени выполнения функции
+void measureExecutionTime(const char *functionName, void (*func)()) {  // измерение времени выполнения функции
     unsigned long startTime = millis();
     func();
     unsigned long duration = millis() - startTime;
-    
+
     Serial.print("Время выполнения ");
     Serial.print(functionName);
     Serial.print(": ");
@@ -135,16 +134,16 @@ void measureExecutionTime(const char* functionName, void (*func)()) { // изм�
 
 void build(sets::Builder &b) {
     unsigned long startTime = millis();
-    
-    if (b.build.isAction()) {// можно узнать, было ли действие по виджету
-       
+
+    if (b.build.isAction()) {  // можно узнать, было ли действие по виджету
+
         Serial.print("Set: 0x");
         Serial.print(b.build.id, HEX);
         Serial.print(" = ");
         Serial.println(b.build.value);
     }
-    
-    switch (b.build.id) {// обработка действий от виджетов:
+
+    switch (b.build.id) {  // обработка действий от виджетов:
         // case kk::logUpdate:  // если ввели импут
         //     // logger.println(b.build.id, HEX);
         //     logger.print("старт таймера 1 в ");
@@ -171,38 +170,38 @@ void build(sets::Builder &b) {
             userSixTimers();
             b.reload();
             break;
-        case kk::t2Discr_startTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t2Discr_endTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t3Discr_startTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t3Discr_endTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t4Discr_startTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t4Discr_endTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t5Discr_startTime:
-            userSixTimers();
-            b.reload();
-            break;
-        case kk::t5Discr_endTime:
-            userSixTimers();
-            b.reload();
-            break;
+        // case kk::t2Discr_startTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t2Discr_endTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t3Discr_startTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t3Discr_endTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t4Discr_startTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t4Discr_endTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t5Discr_startTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
+        // case kk::t5Discr_endTime:
+        //     userSixTimers();
+        //     b.reload();
+        //     break;
         case kk::t6Discr_startTime:
             userSixTimers();
             b.reload();
@@ -263,106 +262,105 @@ void build(sets::Builder &b) {
             break;
 
         case kk::soilRele_startTemp:
-                // пересчитываем температуру почвы датчика 1 х10 чтобы не множиться в цикле.
-                data.Soil1.tTrigx10 = db[kk::soilRele_startTemp].toInt() * 10;
-                userRelays();
-                b.reload();
-                break;
+            // пересчитываем температуру почвы датчика 1 х10 чтобы не множиться в цикле.
+            data.Soil1.tTrigx10 = db[kk::soilRele_startTemp].toInt() * 10;
+            userRelays();
+            b.reload();
+            break;
 
-            case kk::soilRele_TempThreshold:
-                switch (db[kk::soilRele_TempThreshold].toInt()) {
-                    case 0:
-                        data.Soil1.tTresholdx10 = 2;
-                        break;
-                    case 1:
-                        data.Soil1.tTresholdx10 = 5;
-                        break;
-                    case 2:
-                        data.Soil1.tTresholdx10 = 10;
-                        break;
-                    case 3:
-                        data.Soil1.tTresholdx10 = 30;
-                        break;
-                }
-                userRelays();
-                b.reload();
-                break;
+        case kk::soilRele_TempThreshold:
+            switch (db[kk::soilRele_TempThreshold].toInt()) {
+                case 0:
+                    data.Soil1.tTresholdx10 = 2;
+                    break;
+                case 1:
+                    data.Soil1.tTresholdx10 = 5;
+                    break;
+                case 2:
+                    data.Soil1.tTresholdx10 = 10;
+                    break;
+                case 3:
+                    data.Soil1.tTresholdx10 = 30;
+                    break;
+            }
+            userRelays();
+            b.reload();
+            break;
 
-            case kk::soilRele_startHume:
-                // пересчитываем влажность почвы х10 чтобы не множиться в цикле.
-                data.Soil1.hTrigx10 = db[kk::soilRele_startHume].toInt() * 10;
-                userRelays();
-                b.reload();
-                break;
+        case kk::soilRele_startHume:
+            // пересчитываем влажность почвы х10 чтобы не множиться в цикле.
+            data.Soil1.hTrigx10 = db[kk::soilRele_startHume].toInt() * 10;
+            userRelays();
+            b.reload();
+            break;
 
-            case kk::soilRele_HumeTreshold: // порог отключения влажности почвы датчика 1
-                switch (db[kk::soilRele_HumeTreshold].toInt()) {
-                    case 0:
-                        data.Soil1.hTresholdx10 = 2;
-                        break;
-                    case 1:
-                        data.Soil1.hTresholdx10 = 5;
-                        break;
-                    case 2:
-                        data.Soil1.hTresholdx10 = 10;
-                        break;
-                    case 3:
-                        data.Soil1.hTresholdx10 = 30;
-                        break;
-                }
-                userRelays();
-                b.reload();
-                break;
-            case kk::soil2Rele_startTemp:
-                // пересчитываем температуру почвы датчика 2 х10 чтобы не множиться в цикле.
-                data.Soil2.tTrigx10 = db[kk::soil2Rele_startTemp].toInt() * 10;
-                userRelays();
-                b.reload();
-                break;      
-            case kk::soil2Rele_TempThreshold:
-                switch (db[kk::soil2Rele_TempThreshold].toInt()) {
-                    case 0:
-                        data.Soil2.tTresholdx10 = 2;
-                        break;
-                    case 1:
-                        data.Soil2.tTresholdx10 = 5;
-                        break;
-                    case 2:
-                        data.Soil2.tTresholdx10 = 10;
-                            break;
-                    case 3:
-                        data.Soil2.tTresholdx10 = 30;
-                        break;
-                }
-                userRelays();
-                b.reload();
-                break;
-            case kk::soil2Rele_startHume:
-                // пересчитываем влажность почвы датчика 2 х10 чтобы не множиться в цикле.
-                data.Soil2.hTrigx10 = db[kk::soil2Rele_startHume].toInt() * 10;
-                userRelays();
-                b.reload();
-                break;
-            case kk::soil2Rele_HumeTreshold:
-                switch (db[kk::soil2Rele_HumeTreshold].toInt()) {
-                    case 0:
-                        data.Soil2.hTresholdx10 = 1;
-                        break;
-                    case 1:
-                        data.Soil2.hTresholdx10 = 2;
-                        break;
-                    case 2:
-                        data.Soil2.hTresholdx10 = 5;
-                        break;
-                    case 3:
-                        data.Soil2.hTresholdx10 = 10;
-                        break;
-                }
-                userRelays();
-                b.reload();
-                break;
-                
-    
+        case kk::soilRele_HumeTreshold:  // порог отключения влажности почвы датчика 1
+            switch (db[kk::soilRele_HumeTreshold].toInt()) {
+                case 0:
+                    data.Soil1.hTresholdx10 = 2;
+                    break;
+                case 1:
+                    data.Soil1.hTresholdx10 = 5;
+                    break;
+                case 2:
+                    data.Soil1.hTresholdx10 = 10;
+                    break;
+                case 3:
+                    data.Soil1.hTresholdx10 = 30;
+                    break;
+            }
+            userRelays();
+            b.reload();
+            break;
+        case kk::soil2Rele_startTemp:
+            // пересчитываем температуру почвы датчика 2 х10 чтобы не множиться в цикле.
+            data.Soil2.tTrigx10 = db[kk::soil2Rele_startTemp].toInt() * 10;
+            userRelays();
+            b.reload();
+            break;
+        case kk::soil2Rele_TempThreshold:
+            switch (db[kk::soil2Rele_TempThreshold].toInt()) {
+                case 0:
+                    data.Soil2.tTresholdx10 = 2;
+                    break;
+                case 1:
+                    data.Soil2.tTresholdx10 = 5;
+                    break;
+                case 2:
+                    data.Soil2.tTresholdx10 = 10;
+                    break;
+                case 3:
+                    data.Soil2.tTresholdx10 = 30;
+                    break;
+            }
+            userRelays();
+            b.reload();
+            break;
+        case kk::soil2Rele_startHume:
+            // пересчитываем влажность почвы датчика 2 х10 чтобы не множиться в цикле.
+            data.Soil2.hTrigx10 = db[kk::soil2Rele_startHume].toInt() * 10;
+            userRelays();
+            b.reload();
+            break;
+        case kk::soil2Rele_HumeTreshold:
+            switch (db[kk::soil2Rele_HumeTreshold].toInt()) {
+                case 0:
+                    data.Soil2.hTresholdx10 = 1;
+                    break;
+                case 1:
+                    data.Soil2.hTresholdx10 = 2;
+                    break;
+                case 2:
+                    data.Soil2.hTresholdx10 = 5;
+                    break;
+                case 3:
+                    data.Soil2.hTresholdx10 = 10;
+                    break;
+            }
+            userRelays();
+            b.reload();
+            break;
+
     }  //  switch (b.build.id)
 
     {  // WEB интерфейс ВЕБ морда формируется здесь
@@ -396,7 +394,7 @@ void build(sets::Builder &b) {
     }
     static uint8_t tab;  // статическая
 
-    if (b.Tabs("Домой;Таймеры;Настройки;Графики", &tab)) {  // Вкладки
+    if (b.Tabs("Домой;Таймеры;Настройки", &tab)) {  // Вкладки
         // при нажатии перезагружаемся и выходим
         b.reload();
         return;
@@ -414,9 +412,10 @@ void build(sets::Builder &b) {
                 sets::Row g(b);
                 b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
             }
+            b.PlotStack(H(stack), "Температура;Влажность");
         }
         {
-            sets::Group g(b, db[kk::soilTempName]);  // датчик почвы 1
+            sets::Group g(b, db[kk::soilHumeName]);  // датчик почвы 1
             {
                 sets::Row g(b);
                 b.Label(kk::floattempsoil, "Температура", String(data.Soil1.tfloat + String(" °C")), 0x3da7f2);  // DHT22 темп 2
@@ -441,11 +440,11 @@ void build(sets::Builder &b) {
                 // b.Label("%");
             }
 
-           // b.PlotRunning(H(run), "Температура;Влажность");
-            b.PlotStack(H(stack), "Температура;Влажность");
+            // b.PlotRunning(H(run), "Температура;Влажность");
+           
         }
-    } else if (tab == 1) {
-        // Сюда добавляем управление всеми реле
+    } else if (tab == 1) {  // Закладка 2 , управление всеми реле
+
         {  //"Воздух"
 
             if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, 0xb7701e)) {  // Реле нагрем воздуха
@@ -465,7 +464,7 @@ void build(sets::Builder &b) {
                     sets::Row g(b);
                     b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Yellow);
                 }
-                b.Number(kk::airRele_startTemp, "Включается если ниже");
+                b.Number(kk::airRele_startTemp, "Включается если ниже", nullptr, 0, 90);
                 b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
             }
             if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, 0xb7701e)) {  // Реле 1 увлажнение воздуха
@@ -476,6 +475,7 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (db[kk::airHumeRele_enabled].toInt() != 0) {
+                sets::Group g(b, db[kk::airHumeName]);
                 {
                     sets::Row g(b);
                     b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), 0xd17e1f);
@@ -486,7 +486,7 @@ void build(sets::Builder &b) {
 
                     // b.Label(" ");
                 }
-                b.Number(kk::airRele_startHume, "Включается если ниже");
+                b.Number(kk::airRele_startHume, "Включается если ниже", nullptr, 10, 100);
                 b.Select(kk::airRele_HumeTreshold, "Порог отключения", "0,5 h%;1 h%;2 h%;3 h%");
             }
         }  //"Воздух"
@@ -500,7 +500,7 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (db[kk::soilHumeRele_enabled].toInt() != 0) {
-                sets::Group g(b, db[kk::soilTempName]);  // датчик почвы 1
+                sets::Group g(b, db[kk::soilHumeName]);  // датчик почвы 1
                 {
                     sets::Row g(b);
                     b.Label(kk::floathumsoil, "Влажность", String(data.Soil1.hfloat + String(" %")), 0x2680bf);  // Влажность 2
@@ -511,7 +511,7 @@ void build(sets::Builder &b) {
                     b.LED(kk::soilHumeRele_led, "Cтатус >>", data.Soil1.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
                     b.Label(" ");
                 }
-                b.Number(kk::soilRele_startHume, "Включается, если ниже");
+                b.Number(kk::soilRele_startHume, "Включается, если ниже", nullptr, 10, 100);
                 b.Select(kk::soilRele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
             }
         }  //"Почва 1"
@@ -536,7 +536,7 @@ void build(sets::Builder &b) {
                     b.LED(kk::soil2HumeRele_led, "Cтатус >>", data.Soil2.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
                     b.Label(" ");
                 }
-                b.Number(kk::soil2Rele_startHume, "Включается, если ниже");
+                b.Number(kk::soil2Rele_startHume, "Включается, если ниже", nullptr, 10, 100);
                 b.Select(kk::soil2Rele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
             }
         }  //"Почва 2"
@@ -557,71 +557,71 @@ void build(sets::Builder &b) {
                 b.Time(kk::t1Discr_endTime, ".. и отключается в");
                 b.Label(" ", " ");
             }
-            if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green))  // Реле 2
-            {
-                data.t2discr_enbl = db[kk::t2Discr_enabled];
-                userSixTimers();
-                b.reload();
-            }
-            if (data.t2discr_enbl) {
-                {
-                    sets::Row g(b);
-                    b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Gray, sets::Colors::Green);
-                    b.Label(" ");
-                }  // LED row
-                b.Time(kk::t2Discr_startTime, "Вкл в ..");
-                b.Time(kk::t2Discr_endTime, ".. откл ");
-                b.Label(" ", " ");
-            }
+            // if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green))  // Реле 2
+            // {
+            //     data.t2discr_enbl = db[kk::t2Discr_enabled];
+            //     userSixTimers();
+            //     b.reload();
+            // }
+            // if (data.t2discr_enbl) {
+            //     {
+            //         sets::Row g(b);
+            //         b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Gray, sets::Colors::Green);
+            //         b.Label(" ");
+            //     }  // LED row
+            //     b.Time(kk::t2Discr_startTime, "Вкл в ..");
+            //     b.Time(kk::t2Discr_endTime, ".. откл ");
+            //     b.Label(" ", " ");
+            // }
 
-            if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint))  // Реле 3
-            {
-                data.t3discr_enbl = db[kk::t3Discr_enabled];
-                userSixTimers();
-                b.reload();
-            }
-            if (data.t3discr_enbl) {
-                {
-                    sets::Row g(b);
-                    b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Gray, sets::Colors::Mint);
-                    b.Label(" ");
-                }  // LED row
-                b.Time(kk::t3Discr_startTime, "Вкл в ..");
-                b.Time(kk::t3Discr_endTime, ".. откл");
-                b.Label(" ", " ");
-            }
-            if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua))  // Реле 4
-            {
-                data.t4discr_enbl = db[kk::t4Discr_enabled];
-                userSixTimers();
-                b.reload();
-            }
-            if (data.t4discr_enbl) {
-                {
-                    sets::Row g(b);
-                    b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Gray, sets::Colors::Aqua);
-                    b.Label(" ");
-                }  // LED row
-                b.Time(kk::t4Discr_startTime, "Вкл в ..");
-                b.Time(kk::t4Discr_endTime, ".. откл");
-                b.Label(" ", " ");
-            }
-            if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue))  // Реле 5
-            {
-                data.t5discr_enbl = db[kk::t5Discr_enabled];
-                userSixTimers();
-                b.reload();
-            }
-            if (data.t5discr_enbl) {
-                {
-                    sets::Row g(b);
-                    b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Gray, sets::Colors::Blue);
-                    b.Label(" ");
-                }  // LED row
-                b.Time(kk::t5Discr_startTime, "Вкл в ..");
-                b.Time(kk::t5Discr_endTime, ".. откл");
-                b.Label(" ", " ");
-            }
+            // if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint))  // Реле 3
+            // {
+            //     data.t3discr_enbl = db[kk::t3Discr_enabled];
+            //     userSixTimers();
+            //     b.reload();
+            // }
+            // if (data.t3discr_enbl) {
+            //     {
+            //         sets::Row g(b);
+            //         b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Gray, sets::Colors::Mint);
+            //         b.Label(" ");
+            //     }  // LED row
+            //     b.Time(kk::t3Discr_startTime, "Вкл в ..");
+            //     b.Time(kk::t3Discr_endTime, ".. откл");
+            //     b.Label(" ", " ");
+            // }
+            // if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua))  // Реле 4
+            // {
+            //     data.t4discr_enbl = db[kk::t4Discr_enabled];
+            //     userSixTimers();
+            //     b.reload();
+            // }
+            // if (data.t4discr_enbl) {
+            //     {
+            //         sets::Row g(b);
+            //         b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Gray, sets::Colors::Aqua);
+            //         b.Label(" ");
+            //     }  // LED row
+            //     b.Time(kk::t4Discr_startTime, "Вкл в ..");
+            //     b.Time(kk::t4Discr_endTime, ".. откл");
+            //     b.Label(" ", " ");
+            // }
+            // if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue))  // Реле 5
+            // {
+            //     data.t5discr_enbl = db[kk::t5Discr_enabled];
+            //     userSixTimers();
+            //     b.reload();
+            // }
+            // if (data.t5discr_enbl) {
+            //     {
+            //         sets::Row g(b);
+            //         b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Gray, sets::Colors::Blue);
+            //         b.Label(" ");
+            //     }  // LED row
+            //     b.Time(kk::t5Discr_startTime, "Вкл в ..");
+            //     b.Time(kk::t5Discr_endTime, ".. откл");
+            //     b.Label(" ", " ");
+            // }
             if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet))  // Реле 6
             {
                 data.t6discr_enbl = db[kk::t6Discr_enabled];
@@ -655,7 +655,7 @@ void build(sets::Builder &b) {
         { /* Настройки , внизу страницы*/
             sets::Group g(b, " ");
             {
-                sets::Menu g(b, "Опции");
+              //  sets::Menu g(b, "Опции");
 
                 {
                     sets::Menu g(b, "Интерфейс");
@@ -666,13 +666,14 @@ void build(sets::Builder &b) {
                     */
 
                     b.Input(kk::t1Discr_name, "Имя Реле1:");
-                    b.Input(kk::t2Discr_name, "Имя Реле2:");
-                    b.Input(kk::t3Discr_name, "Имя Реле3:");
-                    b.Input(kk::t4Discr_name, "Имя Реле4:");
-                    b.Input(kk::t5Discr_name, "Имя Реле5:");
+                    // b.Input(kk::t2Discr_name, "Имя Реле2:");
+                    // b.Input(kk::t3Discr_name, "Имя Реле3:");
+                    // b.Input(kk::t4Discr_name, "Имя Реле4:");
+                    // b.Input(kk::t5Discr_name, "Имя Реле5:");
                     b.Input(kk::t6Discr_name, "Имя Реле6:");
-                    b.Input(kk::airTempName, "Имя датчика воздуха 1");
-                    b.Input(kk::soilTempName, "Имя датчика почвы 1");
+                    b.Input(kk::airTempName, "Температура воздуха");
+                    b.Input(kk::airHumeName, "Влажность воздуха");
+                    b.Input(kk::soilHumeName, "Имя датчика почвы 1");
                     b.Input(kk::soil2TempName, "Имя датчика почвы 2");
                 }
                 {

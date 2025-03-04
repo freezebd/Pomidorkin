@@ -78,17 +78,17 @@ void setup() {
     db.init(kk::datime, (uint32_t)0ul);
     db.init(kk::secondsNow, (uint32_t)0ul);
 
-    db.init(kk::airTempName, "Имя датчика воздуха 1");
+    db.init(kk::airTempName, "Температура воздуха");
     db.init(kk::airTempRele_enabled, (uint8_t)0);
     db.init(kk::airRele_startTemp, (uint8_t)30);
     db.init(kk::airRele_TempThreshold, (uint8_t)1);
 
-  //  db.init(kk::airHumeName, "Имя датчика 3");
+    db.init(kk::airHumeName, "Влажность воздуха");
     db.init(kk::airHumeRele_enabled, (uint8_t)0);
     db.init(kk::airRele_startHume, (uint8_t)30);
     db.init(kk::airRele_HumeTreshold, (uint8_t)1);
 
-  //  db.init(kk::soilTempName, "Имя датчика 2");
+  //  db.init(kk::soilTempName, "Имя датчика почвы ");
     db.init(kk::soilTempRele_enabled, (uint8_t)0);
     db.init(kk::soilRele_startTemp, (uint8_t)26);
     db.init(kk::soilRele_TempThreshold, (uint8_t)1);
@@ -113,22 +113,22 @@ void setup() {
     db.init(kk::t1Discr_enabled, (uint8_t)0);
     db.init(kk::t1Discr_startTime, (uint32_t)21600ul);
     db.init(kk::t1Discr_endTime, (uint32_t)72000ul);
-    db.init(kk::t2Discr_name, "Реле 2");
-    db.init(kk::t2Discr_enabled, (uint8_t)0);
-    db.init(kk::t2Discr_startTime, (uint32_t)21600ul);
-    db.init(kk::t2Discr_endTime, (uint32_t)72000ul);
-    db.init(kk::t3Discr_name, "Реле 3");
-    db.init(kk::t3Discr_enabled, (uint8_t)0);
-    db.init(kk::t3Discr_startTime, (uint32_t)21600ul);
-    db.init(kk::t3Discr_endTime, (uint32_t)72000ul);
-    db.init(kk::t4Discr_name, "Реле 4");
-    db.init(kk::t4Discr_enabled, (uint8_t)0);
-    db.init(kk::t4Discr_startTime, (uint32_t)21600ul);
-    db.init(kk::t4Discr_endTime, (uint32_t)72000ul);
-    db.init(kk::t5Discr_name, "Реле 5");
-    db.init(kk::t5Discr_enabled, (uint8_t)0);
-    db.init(kk::t5Discr_startTime, (uint32_t)21600ul);
-    db.init(kk::t5Discr_endTime, (uint32_t)72000ul);
+    // db.init(kk::t2Discr_name, "Реле 2");
+    // db.init(kk::t2Discr_enabled, (uint8_t)0);
+    // db.init(kk::t2Discr_startTime, (uint32_t)21600ul);
+    // db.init(kk::t2Discr_endTime, (uint32_t)72000ul);
+    // db.init(kk::t3Discr_name, "Реле 3");
+    // db.init(kk::t3Discr_enabled, (uint8_t)0);
+    // db.init(kk::t3Discr_startTime, (uint32_t)21600ul);
+    // db.init(kk::t3Discr_endTime, (uint32_t)72000ul);
+    // db.init(kk::t4Discr_name, "Реле 4");
+    // db.init(kk::t4Discr_enabled, (uint8_t)0);
+    // db.init(kk::t4Discr_startTime, (uint32_t)21600ul);
+    // db.init(kk::t4Discr_endTime, (uint32_t)72000ul);
+    // db.init(kk::t5Discr_name, "Реле 5");
+    // db.init(kk::t5Discr_enabled, (uint8_t)0);
+    // db.init(kk::t5Discr_startTime, (uint32_t)21600ul);
+    // db.init(kk::t5Discr_endTime, (uint32_t)72000ul);
     db.init(kk::t6Discr_name, "Реле 6 недельное");
     db.init(kk::t6Discr_enabled, (uint8_t)0);
     db.init(kk::t6Discr_startTime, (uint32_t)21600ul);
@@ -145,10 +145,10 @@ void setup() {
     //db.dump(Serial);
 
     data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
-    data.t2discr_enbl = db[kk::t2Discr_enabled];
-    data.t3discr_enbl = db[kk::t3Discr_enabled];
-    data.t4discr_enbl = db[kk::t4Discr_enabled];
-    data.t5discr_enbl = db[kk::t5Discr_enabled];
+    // data.t2discr_enbl = db[kk::t2Discr_enabled];
+    // data.t3discr_enbl = db[kk::t3Discr_enabled];
+    // data.t4discr_enbl = db[kk::t4Discr_enabled];
+    // data.t5discr_enbl = db[kk::t5Discr_enabled];
     data.t6discr_enbl = db[kk::t6Discr_enabled];
     userSixTimers();
     // пересчитываем температуру и влажность воздуха и почвы в х10 чтобы не множиться в цикле

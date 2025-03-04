@@ -187,174 +187,174 @@ void userSixTimers() { // Таймеры с1 - по 6 ===
             data.rel1_on = 0;
         }
     }
-    // таймер 2 ===
-    //=== таймер Реле 2
-    // if (db[kk::t2Discr_enabled].toBool()) {
-    if (data.t2discr_enbl) {
-        if (db[kk::t2Discr_startTime].toInt() < db[kk::t2Discr_endTime].toInt())  // если нет перехода через полночь
-        {
-            if ((db[kk::t2Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t2Discr_endTime].toInt())) {
-                if (!data.rel2_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_2, ON);
-                    data.rel2_on = 1;
-                }
-            } else {
-                if (data.rel2_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_2, OFF);
-                    data.rel2_on = 0;
-                }
-            }
-        } else if (db[kk::t2Discr_startTime].toInt() > db[kk::t2Discr_endTime].toInt())  // если есть переход через полночь
-        {
-            if ((db[kk::t2Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t2Discr_endTime].toInt())) {
-                if (data.rel2_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_2, OFF);
-                    data.rel2_on = 0;
-                }
-            } else {
-                if (!data.rel2_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_2, ON);
-                    data.rel2_on = 1;
-                }
-            }
-        }
-    } else {
-        if (data.rel2_on)  // если было включено, выключим
-        {
-          //  digitalWrite(RELE_2, OFF);
-            data.rel2_on = 0;
-        }
-    }
-    // таймер 3 ===
-    //=== таймер Реле 3
-    // if (db[kk::t3Discr_enabled].toBool()) {
-    if (data.t3discr_enbl) {
-        if (db[kk::t3Discr_startTime].toInt() < db[kk::t3Discr_endTime].toInt())  // если нет перехода через полночь
-        {
-            if ((db[kk::t3Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t3Discr_endTime].toInt())) {
-                if (!data.rel3_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_3, ON);
-                    data.rel3_on = 1;
-                }
-            } else {
-                if (data.rel3_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_3, OFF);
-                    data.rel3_on = 0;
-                }
-            }
-        } else if (db[kk::t3Discr_startTime].toInt() > db[kk::t3Discr_endTime].toInt())  // если есть переход через полночь
-        {
-            if ((db[kk::t3Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t3Discr_endTime].toInt())) {
-                if (data.rel3_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_3, OFF);
-                    data.rel3_on = 0;
-                }
-            } else {
-                if (!data.rel3_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_3, ON);
-                    data.rel3_on = 1;
-                }
-            }
-        }
-    } else {
-        if (data.rel3_on)  // если было включено, выключим
-        {
-           // digitalWrite(RELE_3, OFF);
-            data.rel3_on = 0;
-        }
-    }
-    // таймер 4 ===
-    //=== таймер Реле4
-    // if (db[kk::t4Discr_enabled].toBool()) {
-    if (data.t4discr_enbl) {
-        if (db[kk::t4Discr_startTime].toInt() < db[kk::t4Discr_endTime].toInt())  // если нет перехода через полночь
-        {
-            if ((db[kk::t4Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t4Discr_endTime].toInt())) {
-                if (!data.rel4_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_4, ON);
-                    data.rel4_on = 1;
-                }
-            } else {
-                if (data.rel4_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_4, OFF);
-                    data.rel4_on = 0;
-                }
-            }
-        } else if (db[kk::t4Discr_startTime].toInt() > db[kk::t4Discr_endTime].toInt())  // если есть переход через полночь
-        {
-            if ((db[kk::t4Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t4Discr_endTime].toInt())) {
-                if (data.rel4_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_4, OFF);
-                    data.rel4_on = 0;
-                }
-            } else {
-                if (!data.rel4_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_4, ON);
-                    data.rel4_on = 1;
-                }
-            }
-        }
-    } else {
-        if (data.rel4_on)  // если было включено, выключим
-        {
-            data.rel4_on = 0;
-          // digitalWrite(RELE_4, OFF);
-        }
-    }
-    // таймер 5===
-    //=== таймер Реле 5
-    // if (db[kk::t5Discr_enabled].toBool()) {
-    if (data.t5discr_enbl) {
-        if (db[kk::t5Discr_startTime].toInt() < db[kk::t5Discr_endTime].toInt())  // если нет перехода через полночь
-        {
-            if ((db[kk::t5Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t5Discr_endTime].toInt())) {
-                if (!data.rel5_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_5, ON);
-                    data.rel5_on = 1;
-                }
-            } else {
-                if (data.rel5_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_5, OFF);
-                    data.rel5_on = 0;
-                }
-            }
-        } else if (db[kk::t5Discr_startTime].toInt() > db[kk::t5Discr_endTime].toInt())  // если есть переход через полночь
-        {
-            if ((db[kk::t5Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t5Discr_endTime].toInt())) {
-                if (data.rel5_on)  // avoid extra digWrite
-                {
-                  //  digitalWrite(RELE_5, OFF);
-                    data.rel5_on = 0;
-                }
-            } else {
-                if (!data.rel5_on)  // avoid extra digWrite
-                {
-                   // digitalWrite(RELE_5, ON);
-                    data.rel5_on = 1;
-                }
-            }
-        }
-    } else {
-        if (data.rel5_on)  // если было включено, выключим
-        {
-          //  digitalWrite(RELE_5, OFF);
-            data.rel5_on = 0;
-        }
-    }
+    // // таймер 2 ===
+    // //=== таймер Реле 2
+    // // if (db[kk::t2Discr_enabled].toBool()) {
+    // if (data.t2discr_enbl) {
+    //     if (db[kk::t2Discr_startTime].toInt() < db[kk::t2Discr_endTime].toInt())  // если нет перехода через полночь
+    //     {
+    //         if ((db[kk::t2Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t2Discr_endTime].toInt())) {
+    //             if (!data.rel2_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_2, ON);
+    //                 data.rel2_on = 1;
+    //             }
+    //         } else {
+    //             if (data.rel2_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_2, OFF);
+    //                 data.rel2_on = 0;
+    //             }
+    //         }
+    //     } else if (db[kk::t2Discr_startTime].toInt() > db[kk::t2Discr_endTime].toInt())  // если есть переход через полночь
+    //     {
+    //         if ((db[kk::t2Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t2Discr_endTime].toInt())) {
+    //             if (data.rel2_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_2, OFF);
+    //                 data.rel2_on = 0;
+    //             }
+    //         } else {
+    //             if (!data.rel2_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_2, ON);
+    //                 data.rel2_on = 1;
+    //             }
+    //         }
+    //     }
+    // } else {
+    //     if (data.rel2_on)  // если было включено, выключим
+    //     {
+    //       //  digitalWrite(RELE_2, OFF);
+    //         data.rel2_on = 0;
+    //     }
+    // }
+    // // таймер 3 ===
+    // //=== таймер Реле 3
+    // // if (db[kk::t3Discr_enabled].toBool()) {
+    // if (data.t3discr_enbl) {
+    //     if (db[kk::t3Discr_startTime].toInt() < db[kk::t3Discr_endTime].toInt())  // если нет перехода через полночь
+    //     {
+    //         if ((db[kk::t3Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t3Discr_endTime].toInt())) {
+    //             if (!data.rel3_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_3, ON);
+    //                 data.rel3_on = 1;
+    //             }
+    //         } else {
+    //             if (data.rel3_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_3, OFF);
+    //                 data.rel3_on = 0;
+    //             }
+    //         }
+    //     } else if (db[kk::t3Discr_startTime].toInt() > db[kk::t3Discr_endTime].toInt())  // если есть переход через полночь
+    //     {
+    //         if ((db[kk::t3Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t3Discr_endTime].toInt())) {
+    //             if (data.rel3_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_3, OFF);
+    //                 data.rel3_on = 0;
+    //             }
+    //         } else {
+    //             if (!data.rel3_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_3, ON);
+    //                 data.rel3_on = 1;
+    //             }
+    //         }
+    //     }
+    // } else {
+    //     if (data.rel3_on)  // если было включено, выключим
+    //     {
+    //        // digitalWrite(RELE_3, OFF);
+    //         data.rel3_on = 0;
+    //     }
+    // }
+    // // таймер 4 ===
+    // //=== таймер Реле4
+    // // if (db[kk::t4Discr_enabled].toBool()) {
+    // if (data.t4discr_enbl) {
+    //     if (db[kk::t4Discr_startTime].toInt() < db[kk::t4Discr_endTime].toInt())  // если нет перехода через полночь
+    //     {
+    //         if ((db[kk::t4Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t4Discr_endTime].toInt())) {
+    //             if (!data.rel4_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_4, ON);
+    //                 data.rel4_on = 1;
+    //             }
+    //         } else {
+    //             if (data.rel4_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_4, OFF);
+    //                 data.rel4_on = 0;
+    //             }
+    //         }
+    //     } else if (db[kk::t4Discr_startTime].toInt() > db[kk::t4Discr_endTime].toInt())  // если есть переход через полночь
+    //     {
+    //         if ((db[kk::t4Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t4Discr_endTime].toInt())) {
+    //             if (data.rel4_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_4, OFF);
+    //                 data.rel4_on = 0;
+    //             }
+    //         } else {
+    //             if (!data.rel4_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_4, ON);
+    //                 data.rel4_on = 1;
+    //             }
+    //         }
+    //     }
+    // } else {
+    //     if (data.rel4_on)  // если было включено, выключим
+    //     {
+    //         data.rel4_on = 0;
+    //       // digitalWrite(RELE_4, OFF);
+    //     }
+    // }
+    // // таймер 5===
+    // //=== таймер Реле 5
+    // // if (db[kk::t5Discr_enabled].toBool()) {
+    // if (data.t5discr_enbl) {
+    //     if (db[kk::t5Discr_startTime].toInt() < db[kk::t5Discr_endTime].toInt())  // если нет перехода через полночь
+    //     {
+    //         if ((db[kk::t5Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t5Discr_endTime].toInt())) {
+    //             if (!data.rel5_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_5, ON);
+    //                 data.rel5_on = 1;
+    //             }
+    //         } else {
+    //             if (data.rel5_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_5, OFF);
+    //                 data.rel5_on = 0;
+    //             }
+    //         }
+    //     } else if (db[kk::t5Discr_startTime].toInt() > db[kk::t5Discr_endTime].toInt())  // если есть переход через полночь
+    //     {
+    //         if ((db[kk::t5Discr_startTime].toInt() >= data.secondsNow) && (data.secondsNow >= db[kk::t5Discr_endTime].toInt())) {
+    //             if (data.rel5_on)  // avoid extra digWrite
+    //             {
+    //               //  digitalWrite(RELE_5, OFF);
+    //                 data.rel5_on = 0;
+    //             }
+    //         } else {
+    //             if (!data.rel5_on)  // avoid extra digWrite
+    //             {
+    //                // digitalWrite(RELE_5, ON);
+    //                 data.rel5_on = 1;
+    //             }
+    //         }
+    //     }
+    // } else {
+    //     if (data.rel5_on)  // если было включено, выключим
+    //     {
+    //       //  digitalWrite(RELE_5, OFF);
+    //         data.rel5_on = 0;
+    //     }
+    // }
 
     // таймер 6===+++++++++++++++++
     // проверяем, правильный ли день для включения таймера 6

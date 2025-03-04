@@ -68,6 +68,7 @@ void readSensorAir() {
         } else {
         data.Air1.tx10 = result;
         data.Air1.tfloat = (data.Air1.tx10 / 10.0);
+        Serial.println(data.Air1.tx10);
     }
 }
 void readSensorSoil() {
