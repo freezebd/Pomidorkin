@@ -2,14 +2,15 @@
 
 bool Relay6Algorithms::checkTimeBasedAlgorithm() {
     bool isRightDay = false;
+    
     switch (curDataTime.weekDay) {
-        case 0: isRightDay = db[kk::t6Discr_inMonday].toInt(); break;
-        case 1: isRightDay = db[kk::t6Discr_inTuesday].toInt(); break;
-        case 2: isRightDay = db[kk::t6Discr_inWensday].toInt(); break;
-        case 3: isRightDay = db[kk::t6Discr_inThursday].toInt(); break;
-        case 4: isRightDay = db[kk::t6Discr_inFriday].toInt(); break;
-        case 5: isRightDay = db[kk::t6Discr_inSaturday].toInt(); break;
-        case 6: isRightDay = db[kk::t6Discr_inSunday].toInt(); break;
+        case 0: isRightDay = db[kk::t6Discr_inSunday].toInt(); break;
+        case 1: isRightDay = db[kk::t6Discr_inMonday].toInt(); break;
+        case 2: isRightDay = db[kk::t6Discr_inTuesday].toInt(); break;
+        case 3: isRightDay = db[kk::t6Discr_inWensday].toInt(); break;
+        case 4: isRightDay = db[kk::t6Discr_inThursday].toInt(); break;
+        case 5: isRightDay = db[kk::t6Discr_inFriday].toInt(); break;
+        case 6: isRightDay = db[kk::t6Discr_inSaturday].toInt(); break;
     }
 
     if (isRightDay) {

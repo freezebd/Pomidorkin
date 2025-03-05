@@ -262,6 +262,13 @@ void loop() {
         data.secondsNow = rtc.daySeconds();
         data.datime = rtc.getTime().getUnix();
         curDataTime = rtc.getTime();
+        Serial.println("Обновление времени из RTC:");
+        Serial.print("День недели: ");
+        Serial.println(curDataTime.weekDay);
+        Serial.print("Время: ");
+        Serial.print(curDataTime.hour);
+        Serial.print(":");
+        Serial.println(curDataTime.minute);
     } 
 
     if (each5Sec.ready())  // раз в 5 сек

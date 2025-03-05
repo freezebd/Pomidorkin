@@ -16,14 +16,14 @@
 #include "timer.h"
 
 static bool t6_rightDay = 0;  // День недели для таймера 6
-static uint8_t lastWeekDay = 0;
+static uint8_t lastWeekDay = 0; // последний день недели
 
 // Объявления функций
-static bool checkTimeBasedAlgorithm();
-static bool checkTemperatureBasedAlgorithm();
-static bool checkHumidityBasedAlgorithm();
-static bool checkSoil1BasedAlgorithm();
-static bool checkSoil2BasedAlgorithm();
+static bool checkTimeBasedAlgorithm(); // проверка дня недели   
+static bool checkTemperatureBasedAlgorithm(); // проверка температуры
+static bool checkHumidityBasedAlgorithm(); // проверка влажности
+static bool checkSoil1BasedAlgorithm(); // проверка почвы 1
+static bool checkSoil2BasedAlgorithm(); // проверка почвы 2
 
 void userRelays() {  // реле
 
@@ -163,20 +163,59 @@ void userRelays() {  // реле
     }  // switch (Реле почвы 2)
 }  // userRelays()
 
-// Реализации функций
-static bool checkTimeBasedAlgorithm() {
+// Функция для проверки дня недели
+static bool checkTimeBasedAlgorithm() { // дня недели
     bool isRightDay = false;
+    
+    // Проверяем, что curDataTime инициализирован
+    if (curDataTime.year == 0) {
+        Serial.println("Ошибка: curDataTime не инициализирован");
+        return false;
+    }
+    
+    Serial.print("Текущий день недели: ");
+    Serial.println(curDataTime.weekDay);
+    Serial.print("Текущая дата: ");
+    Serial.print(curDataTime.day);
+    Serial.print(".");
+    Serial.print(curDataTime.month);
+    Serial.print(".");
+    Serial.println(curDataTime.year);
+    
+    // Проверяем значения дней недели в базе данных
+    Serial.println("Значения дней недели в базе данных:");
+    Serial.print("Понедельник: "); Serial.println(db[kk::t6Discr_inMonday].toInt());
+    Serial.print("Вторник: "); Serial.println(db[kk::t6Discr_inTuesday].toInt());
+    Serial.print("Среда: "); Serial.println(db[kk::t6Discr_inWensday].toInt());
+    Serial.print("Четверг: "); Serial.println(db[kk::t6Discr_inThursday].toInt());
+    Serial.print("Пятница: "); Serial.println(db[kk::t6Discr_inFriday].toInt());
+    Serial.print("Суббота: "); Serial.println(db[kk::t6Discr_inSaturday].toInt());
+    Serial.print("Воскресенье: "); Serial.println(db[kk::t6Discr_inSunday].toInt());
+    
     switch (curDataTime.weekDay) {
+        case 0: isRightDay = db[kk::t6Discr_inSunday].toInt(); break;
         case 1: isRightDay = db[kk::t6Discr_inMonday].toInt(); break;
         case 2: isRightDay = db[kk::t6Discr_inTuesday].toInt(); break;
         case 3: isRightDay = db[kk::t6Discr_inWensday].toInt(); break;
         case 4: isRightDay = db[kk::t6Discr_inThursday].toInt(); break;
         case 5: isRightDay = db[kk::t6Discr_inFriday].toInt(); break;
         case 6: isRightDay = db[kk::t6Discr_inSaturday].toInt(); break;
-        case 7: isRightDay = db[kk::t6Discr_inSunday].toInt(); break;
+        default: 
+            Serial.println("Ошибка: неверное значение дня недели");
+            return false;
     }
-
+    
+    Serial.print("Выбранный день: ");
+    Serial.println(isRightDay);
+    
     if (isRightDay) {
+        Serial.print("Время начала: ");
+        Serial.println(db[kk::t6Discr_startTime].toInt());
+        Serial.print("Текущее время: ");
+        Serial.println(data.secondsNow);
+        Serial.print("Время окончания: ");
+        Serial.println(db[kk::t6Discr_endTime].toInt());
+        
         if (db[kk::t6Discr_startTime].toInt() < db[kk::t6Discr_endTime].toInt()) {
             return (db[kk::t6Discr_startTime].toInt() <= data.secondsNow) &&
                    (data.secondsNow <= db[kk::t6Discr_endTime].toInt());
@@ -228,7 +267,7 @@ static bool checkSoil2BasedAlgorithm() {
     }
 }
 
-void userSixTimers() {  // Таймеры с1 - по 6 ===
+void userSixTimers() {  // Таймеры 1 и 6 ===
 
     // === таймер Реле 1
     // if (db[kk::t1Discr_enabled].toBool()) {
