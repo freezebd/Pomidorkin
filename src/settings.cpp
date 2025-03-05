@@ -7,9 +7,9 @@
 #include <SettingsGyver.h>  // Изменил на GyverWS
 #include <WiFiConnector.h>
 
-#define AIR_TEMP_RELE_ENABLED 0
-#define AIR_TEMP_RELE_START_TEMP 30
-#define AIR_TEMP_RELE_TEMP_THRESHOLD 1
+#define AIR_TEMP_RELE_ENABLED 0 // 0 - выключено, 1 - включено  
+#define AIR_TEMP_RELE_START_TEMP 30 // температура включения реле
+#define AIR_TEMP_RELE_TEMP_THRESHOLD 1 // порог отключения реле
 
 #include "modbus.h"
 #include "nastroyki.h"
@@ -19,7 +19,7 @@
 GyverDBFile db(&LittleFS, "/pomidorkin.db");  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
 GyverDS3231 rtc;
-Datime curDataTime(rtc);
+Datime curDataTime(rtc); // текущее время
 
 bool flagreley = true;  // флаг для перезагрузки вебморды при смене адреса реле
 static bool notice_f;   // флаг на отправку уведомления о подключении к wifi
