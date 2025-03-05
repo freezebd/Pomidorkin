@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 
-#include "esp_log.h"
-
 #include "led.h"
 #include "timer.h"
 #ifdef ESP8266
@@ -16,7 +14,6 @@
 #include <LittleFS.h>
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
-
 
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
@@ -75,6 +72,8 @@ void setup() {
     db.begin();
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
+    db.init(kk::wifi_networks, "");  // Список найденных сетей
+    db.init(kk::wifi_selected, "");  // Выбранная сеть
     db.init(kk::datime, (uint32_t)0ul);
     db.init(kk::secondsNow, (uint32_t)0ul);
 

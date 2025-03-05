@@ -41,6 +41,12 @@ void update(sets::Updater &upd) {
     upd.update(kk::datime, data.datime);                // Время в секундах с 1970 года
     upd.update(kk::secondsUptime, data.secondsUptime);  // Секунды аптайм
 
+    // Обновляем значение SSID только если оно не пустое
+    String currentSSID = db[kk::wifi_ssid];
+    if (currentSSID.length() > 0) {
+        upd.update(kk::wifi_ssid, currentSSID);
+    }
+
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));
     } else if (data.uptime_Days == 1)
@@ -594,6 +600,51 @@ void build(sets::Builder &b) {
                     sets::Menu g(b, "Система");
                     {
                         sets::Group g(b, "настройки WiFi");
+                        // Кнопка сканирования сетей
+                        if (b.Button(kk::wifi_scan, "Сканировать сети")) {
+                            int n = WiFi.scanNetworks();
+                            String networks = "";
+                            if (n > 0) {
+                                for (int i = 0; i < n; ++i) {
+                                    String ssid = WiFi.SSID(i);
+                                    networks += ssid;
+                                    if (i < n - 1) networks += ";";
+                                }
+                                db[kk::wifi_networks] = networks;
+                                db.update();
+                            }
+                            b.reload();
+                        }
+                        
+                        // Выпадающий список сетей
+                        String networks = db[kk::wifi_networks];
+                        if (networks.length() > 0) {
+                            if (b.Select(kk::wifi_selected, "Доступные сети", networks)) {
+                                // Получаем индекс выбранной сети
+                                int selectedIndex = db[kk::wifi_selected].toInt();
+                                
+                                // Получаем имя сети по индексу
+                                int startPos = 0;
+                                int endPos = 0;
+                                for (int i = 0; i <= selectedIndex; i++) {
+                                    startPos = endPos;
+                                    endPos = networks.indexOf(';', startPos);
+                                    if (endPos == -1) {
+                                        endPos = networks.length();
+                                        break;
+                                    }
+                                }
+                                if (startPos > 0) startPos++; // Пропускаем разделитель
+                                
+                                String selectedNetwork = networks.substring(startPos, endPos);
+                                if (selectedNetwork.length() > 0) {
+                                    db[kk::wifi_ssid] = selectedNetwork;
+                                    db.update();
+                                }
+                                b.reload();
+                            }
+                        }
+
                         b.Input(kk::wifi_ssid, "SSID");
                         b.Pass(kk::wifi_pass, "Password");
                         if (b.Button(kk::apply, "Save & Restart")) {
