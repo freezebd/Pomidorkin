@@ -55,6 +55,12 @@ void userRelays() {  // реле
             data.Air1.TempRele_on = false;
             data.Air1.StateAir = 0;
             break;
+        case 25:
+            if (data.Air1.tfloat == -80) { // принудительно выключаем свитч и  выключаем реле
+                db[kk::airTempRele_enabled] = 0;
+                data.Air1.StateAir = 20;  
+            }
+            break;
     }  // switch (data.Air1.StateAir)
 
     switch (data.Air1.StateHume) {  // реле AirHume для увлажнение воздуха

@@ -7,7 +7,10 @@
 #include <SettingsGyver.h>  // Изменил на GyverWS
 #include <WiFiConnector.h>
 
-#include "data.h"  // тут лежит структура data по кошерному
+#define AIR_TEMP_RELE_ENABLED 0
+#define AIR_TEMP_RELE_START_TEMP 30
+#define AIR_TEMP_RELE_TEMP_THRESHOLD 1
+
 #include "modbus.h"
 #include "nastroyki.h"
 #include "reley.h"  // Добавляем для доступа к change_relay_address()
@@ -59,10 +62,14 @@ void update(sets::Updater &upd) {
     // день недели выводим, оч красиво
     upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay]));  // день недели (1 понедельник - 7 воскресенье)
 
-    upd.update("t1Discr_led"_h, data.rel1_on);
-    upd.update("t6Discr_led"_h, data.rel6_on);
-    upd.update("t6Discr_led1"_h, data.rel6_on);
-    upd.update("t1Discr_led1"_h, data.rel1_on);
+    upd.update("t1Discr_led"_h, data.rel1_on);  // светодиоды реле 1
+    upd.update("t6Discr_led"_h, data.rel6_on);  // светодиоды реле 6
+    upd.update("t6Discr_led1"_h, data.rel6_on);  // светодиоды реле 6
+    upd.update("t1Discr_led1"_h, data.rel1_on);  // светодиоды реле 1
+    upd.update("airTempRele_led"_h, data.Air1.TempRele_on);  // светодиоды реле температуры воздуха
+    upd.update("airHumeRele_led"_h, data.Air1.HumeRele_on);  // светодиоды реле влажности воздуха
+    upd.update("soilHumeRele_led"_h, data.Soil1.HumeRele_on);  // светодиоды реле влажности почвы 1
+    upd.update("soil2HumeRele_led"_h, data.Soil2.HumeRele_on);  // светодиоды реле влажности почвы 2
 
     // Обновление значений датчиков для реле 6
     if (db[kk::t6Discr_algorithm].toInt() == 1) {
@@ -420,17 +427,16 @@ void build(sets::Builder &b) {
         {  //"Воздух"
 
             if (b.Switch(kk::airTempRele_enabled, "Нагрев", nullptr, sets::Colors::Red)) {  // Реле нагрем воздуха
-                if (db[kk::airTempRele_enabled].toInt() == 0)
+                if (db[kk::airTempRele_enabled].toInt() == 0) 
                     data.Air1.StateAir = 0;  // принудительно выключаем реле
-                userRelays();
-                b.reload();
+                    userRelays();
+                    b.reload();
             }
             if (db[kk::airTempRele_enabled].toInt() != 0) {
                 sets::Group g(b, db[kk::airTempName]);  // Воздух
                 {
                     sets::Row g(b);
                     b.Label(kk::floattempair, "Температура", String(data.Air1.tfloat + String(" °C")), sets::Colors::Red);
-                    // b.Label("°С");
                 }
                 {
                     sets::Row g(b);
@@ -438,6 +444,12 @@ void build(sets::Builder &b) {
                 }
                 b.Number(kk::airRele_startTemp, "Включается если ниже", nullptr, 0, 90);
                 b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
+                if (data.Air1.tfloat == -80) {  // если датчик отвалился, принудительно выключаем свитч и  выключаем реле
+                    (db[kk::airTempRele_enabled] = 0);
+                    data.Air1.StateAir = 0;  // принудительно выключаем реле
+                    userRelays();
+                    b.reload();
+                }
             }
             if (b.Switch(kk::airHumeRele_enabled, "Увлажнение", nullptr, sets::Colors::Blue)) {  // Реле 1 увлажнение воздуха
 
@@ -597,9 +609,9 @@ void build(sets::Builder &b) {
                     b.Input(kk::soil2TempName, "Имя датчика почвы 2");
                 }
                 {
-                    sets::Menu g(b, "Система");
+                    sets::Menu g(b, "Настройки конфигурации");
                     {
-                        sets::Group g(b, "настройки WiFi");
+                        sets::Group g(b, "Настройки WiFi");
                         // Кнопка сканирования сетей
                         if (b.Button(kk::wifi_scan, "Сканировать сети")) {
                             int n = WiFi.scanNetworks();
@@ -615,14 +627,14 @@ void build(sets::Builder &b) {
                             }
                             b.reload();
                         }
-                        
+
                         // Выпадающий список сетей
                         String networks = db[kk::wifi_networks];
                         if (networks.length() > 0) {
                             if (b.Select(kk::wifi_selected, "Доступные сети", networks)) {
                                 // Получаем индекс выбранной сети
                                 int selectedIndex = db[kk::wifi_selected].toInt();
-                                
+
                                 // Получаем имя сети по индексу
                                 int startPos = 0;
                                 int endPos = 0;
@@ -634,8 +646,8 @@ void build(sets::Builder &b) {
                                         break;
                                     }
                                 }
-                                if (startPos > 0) startPos++; // Пропускаем разделитель
-                                
+                                if (startPos > 0) startPos++;  // Пропускаем разделитель
+
                                 String selectedNetwork = networks.substring(startPos, endPos);
                                 if (selectedNetwork.length() > 0) {
                                     db[kk::wifi_ssid] = selectedNetwork;
@@ -718,4 +730,4 @@ void build(sets::Builder &b) {
     Serial.print("Общее время build(): ");
     Serial.print(totalTime);
     Serial.println(" мс");
-}  // builder   
+}  // builder

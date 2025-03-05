@@ -1,5 +1,6 @@
 #include "modbus.h"
 #include "reley.h"
+#include "settings.h"
 
 #include "data.h"
 
@@ -54,7 +55,8 @@ void readSensorAir() {
     if (result < 0) {
         sens_alert = true;
         data.Air1.hfloat = -80;
-        reley_1_2_off(); // Если датчик отвалился, отключаем реле
+        sensor.begin(4);    // принудительно перезагружаем датчик
+       // reley_1_2_off(); // Если датчик отвалился, отключаем реле
     } else {
         data.Air1.hx10 = result;
         data.Air1.hfloat = (data.Air1.hx10 / 10.0);
@@ -67,7 +69,7 @@ void readSensorAir() {
     if (result < 0) {
         sens_alert = true;
         data.Air1.tfloat = -80;
-        reley_1_1_off();  // Если датчик отвалился, отключаем реле
+      //  reley_1_1_off();  // Если датчик отвалился, отключаем реле
     } else {
         data.Air1.tx10 = result;
         data.Air1.tfloat = (data.Air1.tx10 / 10.0);
