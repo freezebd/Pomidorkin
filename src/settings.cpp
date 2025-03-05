@@ -704,7 +704,7 @@ void build(sets::Builder &b) {
                                 }
                             }
                         } else {
-                            b.Label("Реле не найдены. Нажмите 'Сканировать реле'");
+                            b.Label("Реле не найдены.'Сканировать реле'");
                         }
 
                         b.Label("Смена адреса реле:");
@@ -718,7 +718,7 @@ void build(sets::Builder &b) {
                                 change_relay_address();
                             });
                             db.update();
-                        }
+                        } 
                     }
                 }
 
