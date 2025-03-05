@@ -1,8 +1,8 @@
-tremaru/iarduino_MB_HTL@^1.0.3
-gyverlibs/GyverDS3231
-tremaru/iarduino_Modbus@^1.0.3
-gyverLibs/Settings
-tremaru/iarduino_I2C_Relay@^1.1.7
-gyverlibs/WiFiConnector
 gyverlibs/GyverDB
-GyverLibs/Table
+tremaru/iarduino_MB_HTL@^1.0.3
+gyverlibs/Table
+gyverlibs/WiFiConnector
+gyverlibs/GyverDS3231
+gyverLibs/Settings
+tremaru/iarduino_Modbus@^1.0.3
+tremaru/iarduino_I2C_Relay@^1.1.7
