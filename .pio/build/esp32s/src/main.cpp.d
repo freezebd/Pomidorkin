@@ -333,4 +333,5 @@
  .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
  .pio/libdeps/esp32s/iarduino_MB_HTL/src/iarduino_MB_HTL.h src/reley.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
- .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h
+ .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
+ src/air_temp_control.h

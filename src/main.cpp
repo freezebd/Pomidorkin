@@ -21,6 +21,7 @@
 #include "userTimers.h"
 #include "modbus.h"
 #include "reley.h"
+#include "air_temp_control.h"
 
 Timer each5Sec(5000ul);    // таймер раз в 10 сек
 Timer each5min(300000ul);  // таймер раз в 5 мин
@@ -81,6 +82,12 @@ void setup() {
     db.init(kk::airTempRele_enabled, (uint8_t)0);
     db.init(kk::airRele_startTemp, (uint8_t)30);
     db.init(kk::airRele_TempThreshold, (uint8_t)1);
+    // Инициализация новых ключей для управления температурой
+    db.init(kk::airRele_dayTemp, (uint8_t)25);      // Дневная температура по умолчанию 25°C
+    db.init(kk::airRele_nightTemp, (uint8_t)20);    // Ночная температура по умолчанию 20°C
+    db.init(kk::airRele_dayStartTime, (uint32_t)21600ul);  // Начало дня по умолчанию 6:00
+    db.init(kk::airRele_nightStartTime, (uint32_t)72000ul); // Начало ночи по умолчанию 20:00
+    db.init(kk::airRele_tempHysteresis, (uint8_t)1); // Гистерезис по умолчанию 1°C
 
     db.init(kk::airHumeName, "Влажность воздуха");
     db.init(kk::airHumeRele_enabled, (uint8_t)0);
@@ -238,6 +245,7 @@ void loop() {
     userRelays();  // мониторим данные по воздуху и почве
     userSixTimers();  // мониторим изменеие по реле
     
+    
     // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.
     // если нет связи, ждем 5 минут и ребутаемся, а то мало ли
     // если связь восстановилась после потери, снова мигаем плавно
@@ -262,18 +270,11 @@ void loop() {
         data.secondsNow = rtc.daySeconds();
         data.datime = rtc.getTime().getUnix();
         curDataTime = rtc.getTime();
-        Serial.println("Обновление времени из RTC:");
-        Serial.print("День недели: ");
-        Serial.println(curDataTime.weekDay);
-        Serial.print("Время: ");
-        Serial.print(curDataTime.hour);
-        Serial.print(":");
-        Serial.println(curDataTime.minute);
     } 
 
-    if (each5Sec.ready())  // раз в 5 сек
-    {
-    }  // each5Sec
+    // if (each5Sec.ready())  // раз в 5 сек
+    // {
+    // }  // each5Sec
 
     if (eachSec.ready()) {  // раз в 1 сек
 

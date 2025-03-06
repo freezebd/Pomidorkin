@@ -134,7 +134,8 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- src/nastroyki.h .pio/libdeps/esp32s/GyverDB/src/GyverDBFile.h \
+ src/nastroyki.h src/air_temp_control.h src/data.h src/settings.h \
+ .pio/libdeps/esp32s/GyverDB/src/GyverDBFile.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/FS/src/FS.h \
  .pio/libdeps/esp32s/GyverDB/src/GyverDB.h \
  .pio/libdeps/esp32s/GTL/src/GTL.h \
@@ -329,7 +330,7 @@
  .pio/libdeps/esp32s/Settings/src/./web/settings.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
- src/data.h src/led.h src/timer.h src/modbus.h \
+ src/led.h src/timer.h src/modbus.h \
  .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
  .pio/libdeps/esp32s/iarduino_MB_HTL/src/iarduino_MB_HTL.h \
- src/relay6_algorithms.h src/settings.h src/reley.h
+ src/relay6_algorithms.h src/reley.h

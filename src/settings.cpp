@@ -442,8 +442,11 @@ void build(sets::Builder &b) {
                     sets::Row g(b);
                     b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Red);
                 }
-                b.Number(kk::airRele_startTemp, "Включается если ниже", nullptr, 0, 90);
-                b.Select(kk::airRele_TempThreshold, "Порог отключения", "0,5 °C;1 °C;2 °C;3 °C");
+                b.Number(kk::airRele_dayTemp, "Дневная температура (°C)", nullptr, 0, 90);
+                b.Number(kk::airRele_nightTemp, "Ночная температура (°C)", nullptr, 0, 90);
+                b.Time(kk::airRele_dayStartTime, "Начало дня");
+                b.Time(kk::airRele_nightStartTime, "Начало ночи");
+                b.Select(kk::airRele_tempHysteresis, "Гистерезис", "0,5 °C;1 °C;2 °C;3 °C");
                 if (data.Air1.tfloat == -80) {  // если датчик отвалился, принудительно выключаем свитч и  выключаем реле
                     (db[kk::airTempRele_enabled] = 0);
                     data.Air1.StateAir = 0;  // принудительно выключаем реле

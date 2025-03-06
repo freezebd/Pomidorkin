@@ -1,4 +1,5 @@
 #include "userTimers.h"
+#include "air_temp_control.h"
 
 #include <Arduino.h>
 #include <GyverDBFile.h>
@@ -26,42 +27,7 @@ static bool checkSoil1BasedAlgorithm(); // проверка почвы 1
 static bool checkSoil2BasedAlgorithm(); // проверка почвы 2
 
 void userRelays() {  // реле
-
-    switch (data.Air1.StateAir) {  // Реле AirTemp для нагрев  воздуха
-        case 0:
-            if (db[kk::airTempRele_enabled].toInt() != 0) {
-                data.Air1.StateAir = 5;
-            } else if (data.Air1.TempRele_on) {
-                data.Air1.StateAir = 20;  // выключим по перемещению ползунка в OFF
-            }
-            break;
-        case 5:
-            if (data.Air1.tx10 <= data.Air1.tTrigx10 - data.Air1.tTresholdx10) {  // data.dhtOne.tx10 >= data.dhtOne.tTrigx10) { // ожидание понижение температуры
-                data.Air1.StateAir = 10;
-            }
-            break;
-        case 10:  // включаем нагрев
-            reley_1_1_on();
-            data.Air1.TempRele_on = true;
-            data.Air1.StateAir = 15;
-            break;
-        case 15:  // ожидаем повышение температуры - трешхолд
-            if (data.Air1.tx10 >= data.Air1.tTrigx10) {
-                data.Air1.StateAir = 20;
-            }
-            break;
-        case 20:  // используется при переключении ползунка в морде
-            reley_1_1_off();
-            data.Air1.TempRele_on = false;
-            data.Air1.StateAir = 0;
-            break;
-        case 25:
-            if (data.Air1.tfloat == -80) { // принудительно выключаем свитч и  выключаем реле
-                db[kk::airTempRele_enabled] = 0;
-                data.Air1.StateAir = 20;  
-            }
-            break;
-    }  // switch (data.Air1.StateAir)
+    controlAirTemperature();  // Управление температурой воздуха
 
     switch (data.Air1.StateHume) {  // реле AirHume для увлажнение воздуха
         case 0:
