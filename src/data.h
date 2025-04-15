@@ -62,7 +62,8 @@ struct RelayInfo {
 struct Data {  // обьявляем класс структуры
 
     uint32_t secondsNow = 44000ul;
-    uint32_t datime = 1738875600ul;
+    //uint32_t datime = 1738875600ul;
+    String datime;
     uint32_t secondsUptime = 1;
     byte uptime_Days = 0;
     uint8_t old_address = 0;  // старый адрес реле

@@ -1,6 +1,6 @@
 .pio/build/esp32s/FrameworkArduino/HardwareSerial.cpp.o: \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.cpp \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/variants/piranha_esp-32/pins_arduino.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/variants/esp32/pins_arduino.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \

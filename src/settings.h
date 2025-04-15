@@ -1,7 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <GyverDBFile.h>
-#include <GyverDS3231.h>
+// #include <GyverDS3231.h>
+#include <GyverNTP.h>
 #include <SettingsGyver.h>
 #include <LittleFS.h>
 
@@ -96,7 +97,9 @@ DB_KEYS(
 );
 
 extern Datime curDataTime;   // текущая дата и время
-extern GyverDS3231 rtc;      // часы реального времени
+// extern GyverDS3231 rtc;      // часы реального времени
+
+
 
 void build(sets::Builder &b);          // функция для построения интерфейса
 //void NewFunction(sets::Builder &b);

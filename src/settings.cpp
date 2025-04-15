@@ -1,9 +1,9 @@
 // путь где лежат бинарный файл проекта
 // C:\Users\Freez\OneDrive\Документы\PlatformIO\Projects\Pomidorkin\.pio\build\esp32dev
 #include "settings.h"
-
-#include <GyverDS3231.h>
+//#include <GyverNTP.h>
 #include <LittleFS.h>
+// #include <GyverDS3231.h>
 #include <SettingsGyver.h>  // Изменил на GyverWS
 #include <WiFiConnector.h>
 
@@ -18,8 +18,10 @@
 
 GyverDBFile db(&LittleFS, "/pomidorkin.db");  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
-GyverDS3231 rtc;
-Datime curDataTime(rtc); // текущее время
+// GyverDS3231 rtc;
+
+//Datime curDataTime(rtc); // текущее время
+Datime curDataTime(NTP);
 
 bool flagreley = true;  // флаг для перезагрузки вебморды при смене адреса реле
 static bool notice_f;   // флаг на отправку уведомления о подключении к wifi
@@ -336,26 +338,28 @@ void build(sets::Builder &b) {
     }  //  switch (b.build.id)
 
     {  //++++++++++++++++++++++++++++ WEB интерфейс ВЕБ морда формируется здесь++++++++++++++++++++++
-        sets::Group g(b, "Дата & Время");
+       // sets::Group g(b, "Дата & Время");
+        sets::Group g(b, "");
         // if (rtc.tick() || rtc.updateNow() ) {
         //  if (rtc.updateNow()) {
         {
             sets::Row g(b);
-            b.Label(kk::dayofweek, "");  // текущая дата
-            if (b.Date(kk::datime, ""))  // Установка даты
-            {
-                rtc.setTime((db[datime].toInt32()) + rtc.daySeconds());
-                db.update();
-                b.reload();
-            }
-            if (b.Time(kk::secondsNow))  // установка время
-            {
-                rtc.setTime((db[datime].toInt32()) + (db[secondsNow].toInt32()));  // UNIX - текущие секунды + установ. секунды
-                db.update();
-                b.reload();
-            }
+            b.Label(kk::dayofweek, "");  // текущий днень недели
+            b.Label(kk::datime,"");      // текущее время и дата
+            // if (b.Date(kk::datime, ""))  // Установка даты
+            // {
+            //     rtc.setTime((db[datime].toInt32()) + rtc.daySeconds());
+            //     db.update();
+            //     b.reload();
+            // }
+            // if (b.Time(kk::secondsNow))  // установка время
+            // {
+            //     rtc.setTime((db[datime].toInt32()) + (db[secondsNow].toInt32()));  // UNIX - дата + текущие секунды
+            //     db.update();
+            //     b.reload();
+            // }
         }
-        //  }  // rtc.setTime()
+        //  rtc.setTime()
 
         {
             sets::Row g(b);
@@ -374,7 +378,7 @@ void build(sets::Builder &b) {
         }
     }
     static uint8_t tab;                             // статическая
-    if (b.Tabs("Домой;Таймеры;Настройки", &tab)) {  // Вкладки
+    if (b.Tabs("Дом;Реле;График;Настройки", &tab)) {  // Вкладки
         // при нажатии перезагружаемся и выходим
         b.reload();
         return;
@@ -586,9 +590,16 @@ void build(sets::Builder &b) {
             }
         }
     } /* Таймеры */
-
-    //}  // Закладка 2
+    
+    // Закладка Графики
     else if (tab == 2) {
+        // Сюда  перенести все гафики
+
+    } // Графики
+
+
+    //}  // Закладка Настройки
+    else if (tab == 3) {
         // Сюда добовляем настройки
 
         { /* Настройки , внизу страницы*/

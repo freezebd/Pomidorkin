@@ -13,7 +13,9 @@
 #include <GyverDBFile.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
+//#include <GyverNTP.h>
 #include <WiFiConnector.h>
+
 
 
 #include "data.h"  // тут лежит структура data по кошерному
@@ -23,6 +25,7 @@
 #include "modbus.h"
 #include "reley.h"
 #include "air_temp_control.h"
+
 
 Timer each5Sec(5000ul);    // таймер раз в 10 сек
 Timer each5min(300000ul);  // таймер раз в 5 мин
@@ -40,14 +43,14 @@ uint32_t prevMs = 0;       // Опрос время цикла loop
 void setup() {
     each5min.rst();
     Serial.begin(115200);
-    Wire.begin(); // 
-    rtc.begin();
-    Serial.print("Часы >> ");
-    Serial.println(rtc.isOK());
-    //setStampZone(3);
+    // Wire.begin(); // 
+    // rtc.begin();
     
-    
-    
+    //NTP.attachRTC(rtc);
+
+    // Serial.print("Часы >> ");
+    // Serial.println(rtc.isOK());
+     
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
     init_modbus_air(); // Инициализация датчика воздуха
@@ -76,7 +79,8 @@ void setup() {
     db.init(kk::wifi_pass, WIFIPASS);
     db.init(kk::wifi_networks, "");  // Список найденных сетей
     db.init(kk::wifi_selected, "");  // Выбранная сеть
-    db.init(kk::datime, (uint32_t)0ul);
+   // db.init(kk::datime, (uint32_t)0ul);
+    db.init(kk::datime,"");
     db.init(kk::secondsNow, (uint32_t)0ul);
 
     db.init(kk::airTempName, "Температура воздуха");
@@ -223,6 +227,7 @@ void setup() {
         Serial.println(WiFi.localIP());
         indikator.setPeriod(3000, 1, 200, 150);  // раз в 000 сек, 0 раз взмигнем - по 00 милисек периоды, гореть будем 0 милисек
         gotWifi = true;
+        NTP.begin(3);
       
     });
     WiFiConnector.onError([]() {
@@ -265,13 +270,19 @@ void loop() {
     }  // WiFi.connected()
 
     indikator.tick();  // in loop
-   // sett.tick();       // поддержка веб интерфейса
+    // sett.tick();       // поддержка веб интерфейса
 
-    if (rtc.tick()) {
-        data.secondsNow = rtc.daySeconds();
-        data.datime = rtc.getTime().getUnix();
-        curDataTime = rtc.getTime();
-    } 
+    // if (rtc.tick()) {
+    //     data.secondsNow = rtc.daySeconds();
+    //     data.datime = rtc.getTime().getUnix();
+    //     curDataTime = rtc.getTime();
+    // } 
+    if (NTP.tick()) {
+      //  Serial.println(NTP.toString());
+        data.secondsNow = NTP.daySeconds();
+        data.datime = NTP.toString();
+        curDataTime = NTP.getUnix();
+    }
 
     // if (each5Sec.ready())  // раз в 5 сек
     // {

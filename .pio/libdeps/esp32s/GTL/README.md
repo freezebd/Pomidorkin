@@ -55,8 +55,21 @@ void reset();
 - `stack_uniq` - динамический буфер с семантикой `array_uniq`
 
 ```cpp
+// экспортировать в файл
+bool writeToFile(FS& fs, const char* path);
+
+// импортировать из файла
+bool readFromFile(FS& fs, const char* path);
+
+// экспортировать в Stream (напр. файл)
+bool writeTo(TS& stream);
+
+// импортировать из Stream (напр. файл)
+bool readFrom(TS& stream);
+
 // добавить в конец
 bool push(const T& val);
+bool pushList(...);
 
 // добавить в конец
 bool operator+=(const T& val);
@@ -65,7 +78,7 @@ bool operator+=(const T& val);
 T pop();
 
 // прочитать с конца не удаляя
-T& peek();
+T& last();
 
 // добавить в начало
 bool shift(const T& val);
@@ -74,7 +87,7 @@ bool shift(const T& val);
 T unshift();
 
 // прочитать с начала не удаляя
-T& unpeek();
+T& first();
 
 // удалить элемент. Отрицательный - с конца
 bool remove(int idx);
@@ -151,6 +164,9 @@ bsearch_t<T> searchSort(const T& val);
 
 // добавить с сортировкой. Флаг uniq - не добавлять если элемент уже есть
 bool addSort(const T& val, bool uniq = false);
+
+// добавить с сортировкой в bsearch_t из searchSort
+bool addSort(const T& val, bsearch_t<T>& pos);
 
 // ДЛЯ ДИНАМИЧЕСКИХ
 // установить увеличение размера для уменьшения количества мелких реаллокаций. Умолч. 8

@@ -27,6 +27,43 @@ class stack_ext {
         setBuffer(arr, capacity, length);
     }
 
+    // экспортировать в файл
+    template <typename FS>
+    bool writeToFile(FS& fs, const char* path) {
+        auto f = fs.open(path, "w");
+        return f ? writeTo(f) : false;
+    }
+
+    // импортировать из файла
+    template <typename FS>
+    bool readFromFile(FS& fs, const char* path) {
+        auto f = fs.open(path, "r");
+        return f ? readFrom(f) : false;
+    }
+
+    // экспортировать в Stream (напр. файл)
+    template <typename TS>
+    bool writeTo(TS& stream) {
+        return stream.write((uint8_t*)_buf, size()) == size();
+    }
+
+    // импортировать из Stream (напр. файл)
+    template <typename TS>
+    bool readFrom(TS& stream) {
+        clear();
+        while (stream.available()) {
+            size_t rlen = stream.available() / sizeof(T);
+            if (!rlen ||
+                !_fit(_len + rlen) ||
+                stream.readBytes((char*)(_buf + _len), rlen * sizeof(T)) != rlen * sizeof(T)) {
+                clear();
+                return false;
+            }
+            _len += rlen;
+        }
+        return true;
+    }
+
     // подключить буфер
     void setBuffer(T* arr, size_t capacity, size_t length = 0) {
         _buf = arr;
@@ -41,6 +78,14 @@ class stack_ext {
         return 1;
     }
 
+#if __cplusplus >= 201703L
+    // добавить в конец
+    template <typename... Args>
+    void pushList(const Args&... args) {
+        (push(args), ...);
+    }
+#endif
+
     // добавить в конец
     bool operator+=(const T& val) {
         return push(val);
@@ -52,14 +97,19 @@ class stack_ext {
     }
 
     // прочитать с конца не удаляя
-    T& peek() const {
+    T& last() const {
         return _buf[_len - 1];
+    }
+
+    // прочитать с начала не удаляя
+    T& first() const {
+        return _buf[0];
     }
 
     // добавить в начало
     bool shift(const T& val) {
         if (!_fit(_len + 1)) return 0;
-        memmove((void*)(_buf + 1), (const void*)(_buf), _len * sizeof(T));
+        memmove((void*)(_buf + 1), (const void*)(_buf), size());
         _buf[0] = val;
         _len++;
         return 1;
@@ -70,21 +120,16 @@ class stack_ext {
         if (!length()) return T();
         T t = _buf[0];
         _len--;
-        memmove((void*)(_buf), (const void*)(_buf + 1), _len * sizeof(T));
+        memmove((void*)(_buf), (const void*)(_buf + 1), size());
         return t;
-    }
-
-    // прочитать с начала не удаляя
-    T& unpeek() const {
-        return _buf[0];
     }
 
     // бинарный поиск в отсортированном стеке
     bsearch_t<T> searchSort(const T& val) {
         if (!length()) return bsearch_t<T>{0, nullptr};
-        int low = 0, high = length() - 1;
+        int mid, low = 0, high = length() - 1;
         while (low <= high) {
-            int mid = low + ((high - low) >> 1);
+            mid = low + ((high - low) >> 1);
             if (_buf[mid] == val) return bsearch_t<T>{mid, &_buf[mid]};
             if (_buf[mid] < val) low = mid + 1;
             else high = mid - 1;
@@ -96,6 +141,11 @@ class stack_ext {
     bool addSort(const T& val, bool uniq = false) {
         bsearch_t<T> pos = searchSort(val);
         if (uniq && pos) return 0;
+        return insert(pos.idx, val);
+    }
+
+    // добавить с сортировкой в bsearch_t из searchSort
+    bool addSort(const T& val, bsearch_t<T>& pos) {
         return insert(pos.idx, val);
     }
 
@@ -270,6 +320,12 @@ class stack_ext {
     //
     bool includes(const T& val) const __attribute__((deprecated)) {
         return has(val);
+    }
+    T& peek() const {
+        return last();
+    }
+    T& unpeek() const {
+        return first();
     }
 
    protected:

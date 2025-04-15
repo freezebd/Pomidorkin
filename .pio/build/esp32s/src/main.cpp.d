@@ -85,7 +85,7 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/uart_types.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/variants/piranha_esp-32/pins_arduino.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/variants/esp32/pins_arduino.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-dac.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/gpio.h \
@@ -246,45 +246,6 @@
  .pio/libdeps/esp32s/GyverHTTP/src/utils/cfg.h \
  .pio/libdeps/esp32s/GyverHTTP/src/StreamReader.h \
  .pio/libdeps/esp32s/GyverHTTP/src/utils/EspClient.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/ssl_client.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/mbedtls/esp_config.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/config.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/check_config.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/esp_mem.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform_time.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/net.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/net_sockets.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ssl.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/mbedtls/bignum.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/bignum.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ecp.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ssl_ciphersuites.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/pk.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/md.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform_util.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/rsa.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ecdsa.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/cipher.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/x509_crt.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/x509.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/asn1.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/x509_crl.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/dhm.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ecdh.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/debug.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/entropy.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/sha512.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/sha512_alt.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/sha_types.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp32/rom/sha.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/ctr_drbg.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/aes.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/aes_alt.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/aes/esp_aes.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/aes_types.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/error.h \
  .pio/libdeps/esp32s/GyverHTTP/src/utils/Server.h \
  .pio/libdeps/esp32s/GyverHTTP/src/utils/ServerBase.h \
  .pio/libdeps/esp32s/GyverHTTP/src/StreamWriter.h \
@@ -323,15 +284,13 @@
  .pio/libdeps/esp32s/Settings/src/./web/settings.h \
  .pio/libdeps/esp32s/WiFiConnector/src/WiFiConnector.h src/data.h \
  src/nastroyki.h src/settings.h \
- .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231.h \
- .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231Min.h \
- .pio/libdeps/esp32s/Stamp/src/StampBuild.h \
- .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- src/userTimers.h src/modbus.h \
+ .pio/libdeps/esp32s/GyverNTP/src/GyverNTP.h \
+ .pio/libdeps/esp32s/GyverNTP/src/GyverNTPClient.h \
+ .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h src/userTimers.h src/modbus.h \
  .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
  .pio/libdeps/esp32s/iarduino_MB_HTL/src/iarduino_MB_HTL.h src/reley.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
  src/air_temp_control.h
