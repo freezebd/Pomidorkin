@@ -15,6 +15,7 @@
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
 
+
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
 #include "settings.h"

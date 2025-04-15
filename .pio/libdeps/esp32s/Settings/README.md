@@ -32,6 +32,9 @@
 ## Совместимость
 ESP8266, ESP32
 
+> [!CAUTION]
+> Подключение в проект библиотеки FastLED версии старше [3.7.8](https://github.com/GyverLibs/Settings/issues/35#issuecomment-2691839527) ломает вебсервер! Ждём фиксов со стороны ESP или FastLED
+
 ### Зависимости
 - [GTL](https://github.com/GyverLibs/GTL) v1.2.1+
 - [GyverDB](https://github.com/GyverLibs/GyverDB) v1.2.3+
@@ -131,6 +134,10 @@ ESP8266, ESP32
   - Добавлен виджет Ссылка
   - Добавлен минимум и максимум в Number
   - Мелкие исправления и улучшения
+
+## Благодарочки
+- Александр Инфинити - материальная поддержка проекта, идеи
+- TontonMacout - идеи, десктопное приложение
 
 ## Баги и обратная связь
 При нахождении багов создавайте **Issue**, а лучше сразу пишите на почту [alex@alexgyver.ru](mailto:alex@alexgyver.ru)  

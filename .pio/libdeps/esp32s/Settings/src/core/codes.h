@@ -85,6 +85,8 @@ enum class Code : uint8_t {
     center,
     force,
     link,
+    table,
+    gauge,
 };
 
 }

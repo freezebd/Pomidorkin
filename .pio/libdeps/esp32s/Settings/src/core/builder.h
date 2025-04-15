@@ -261,6 +261,35 @@ class Builder {
         HTML(_NO_ID, label, html);
     }
 
+    // ================= TABLE =================
+    // таблица. CSV текстом или path к файлу (разделитель ';'), заголовки разделяются ;
+    void TableCSV(size_t id, Text csv, Text labels = Text()) {
+        _widget(Code::table, id, labels, &csv);
+    }
+    void TableCSV(Text csv, Text labels = Text()) {
+        TableCSV(_NO_ID, csv, labels);
+    }
+
+    // ================= GAUGE =================
+    // линейная шкала с заполнением, обновляется через апдейт
+    void LinearGauge(size_t id, Text label = "", float min = 0, float max = 100, Text unit = Text(), float value = NAN, uint32_t color = SETS_DEFAULT_COLOR) {
+        if (_beginWidget(Code::gauge, id, label, isnan(value) ? nullptr : &value, color)) {
+            (*p)[Code::min] = min;
+            (*p)[Code::max] = max;
+            (*p)[Code::unit] = unit;
+            _endWidget();
+        }
+    }
+    void LinearGauge(size_t id, Text label, float min, float max, Text unit, float value, Colors color) {
+        LinearGauge(id, label, min, max, unit, value, uint32_t(color));
+    }
+    void LinearGauge(Text label = "", float min = 0, float max = 100, Text unit = Text(), float value = NAN, uint32_t color = SETS_DEFAULT_COLOR) {
+        LinearGauge(_NO_ID, label, min, max, unit, value, color);
+    }
+    void LinearGauge(Text label, float min, float max, Text unit, float value, Colors color) {
+        LinearGauge(_NO_ID, label, min, max, unit, value, uint32_t(color));
+    }
+
     // ================= PLOT =================
     // бегущий график. Принимает обновления вида float[]. Подписи разделяются ;
     void PlotRunning(size_t id, Text labels = Text(), uint16_t period = 200) {
@@ -291,16 +320,17 @@ class Builder {
 
 #ifndef SETT_NO_TABLE
     // график с временем точек. Требует таблицу формата [unix, y1, y2...]. Подписи разделяются ;
-    void Plot(size_t id, Table& table, Text labels = Text()) {
+    void Plot(size_t id, Table& table, Text labels = Text(), bool clearTable = true) {
         if (_beginWidget(Code::plot, id, labels)) {
             (*p)[Code::value];
             p->beginBin(table.writeSize());
             table.writeTo(*p);
+            if (clearTable) table.removeAll();
             _endWidget();
         }
     }
-    void Plot(Table& table, Text labels = Text()) {
-        Plot(_NO_ID, table, labels);
+    void Plot(Table& table, Text labels = Text(), bool clearTable = true) {
+        Plot(_NO_ID, table, labels, clearTable);
     }
 #endif
 
@@ -317,17 +347,18 @@ class Builder {
 
 #ifndef SETT_NO_TABLE
     // таймлайн. Требует таблицу формата [unix, mask] - Mask, [unix, y1, y2...] - All, [unix, n, y] Single. Подписи разделяются ;
-    void PlotTimeline(size_t id, Table& table, TMode mode, Text labels) {
+    void PlotTimeline(size_t id, Table& table, TMode mode, Text labels, bool clearTable = true) {
         if (_beginWidget(Code::plot, id, labels)) {
             (*p)[Code::tmode] = (uint8_t)mode;
             (*p)[Code::value];
             p->beginBin(table.writeSize());
             table.writeTo(*p);
+            if (clearTable) table.removeAll();
             _endWidget();
         }
     }
-    void PlotTimeline(Table& table, TMode mode, Text labels) {
-        PlotTimeline(_NO_ID, table, mode, labels);
+    void PlotTimeline(Table& table, TMode mode, Text labels, bool clearTable = true) {
+        PlotTimeline(_NO_ID, table, mode, labels, clearTable);
     }
 #endif
 
