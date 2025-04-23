@@ -142,21 +142,6 @@
  src/data.h src/settings.h .pio/libdeps/esp32s/GyverDB/src/GyverDBFile.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/FS/src/FS.h \
  .pio/libdeps/esp32s/GyverDB/src/GyverDB.h \
- .pio/libdeps/esp32s/GTL/src/GTL.h \
- .pio/libdeps/esp32s/GTL/src/./array/array_copy.h \
- .pio/libdeps/esp32s/GTL/src/./array/array_shared.h \
- .pio/libdeps/esp32s/GTL/src/./array/array_uniq.h \
- .pio/libdeps/esp32s/GTL/src/./fifo/fifo_ext.h \
- .pio/libdeps/esp32s/GTL/src/./fifo/fifo_static.h \
- .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_ext.h \
- .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_static.h \
- .pio/libdeps/esp32s/GTL/src/./list/linked_list.h \
- .pio/libdeps/esp32s/GTL/src/./list/list_node.h \
- .pio/libdeps/esp32s/GTL/src/./ptr/ptr_shared.h \
- .pio/libdeps/esp32s/GTL/src/./ptr/ptr_uniq.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack_ext.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack_static.h \
  .pio/libdeps/esp32s/StreamIO/src/StreamIO.h \
  .pio/libdeps/esp32s/StreamIO/src/Reader.h \
  .pio/libdeps/esp32s/StreamIO/src/Writer.h \
@@ -177,6 +162,20 @@
  .pio/libdeps/esp32s/StringUtils/src/utils/list.h \
  .pio/libdeps/esp32s/StringUtils/src/utils/parser.h \
  .pio/libdeps/esp32s/StringUtils/src/utils/splitter.h \
+ .pio/libdeps/esp32s/GTL/src/GTL.h \
+ .pio/libdeps/esp32s/GTL/src/./array/array.h \
+ .pio/libdeps/esp32s/GTL/src/./array/../utils.h \
+ .pio/libdeps/esp32s/GTL/src/./fifo/fifo_ext.h \
+ .pio/libdeps/esp32s/GTL/src/./fifo/fifo_static.h \
+ .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_ext.h \
+ .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_static.h \
+ .pio/libdeps/esp32s/GTL/src/./list/linked_list.h \
+ .pio/libdeps/esp32s/GTL/src/./list/list_node.h \
+ .pio/libdeps/esp32s/GTL/src/./ptr/ptr_shared.h \
+ .pio/libdeps/esp32s/GTL/src/./ptr/ptr_uniq.h \
+ .pio/libdeps/esp32s/GTL/src/./stack/stack.h \
+ .pio/libdeps/esp32s/GTL/src/./stack/stack_ext.h \
+ .pio/libdeps/esp32s/GTL/src/./stack/stack_static.h \
  .pio/libdeps/esp32s/GyverDB/src/utils/access.h \
  .pio/libdeps/esp32s/GyverDB/src/utils/anytype.h \
  .pio/libdeps/esp32s/GyverDB/src/utils/types.h \

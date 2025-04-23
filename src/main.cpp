@@ -96,7 +96,7 @@ void setup() {
 
     db.init(kk::airHumeName, "Влажность воздуха");
     db.init(kk::airHumeRele_enabled, (uint8_t)0);
-    db.init(kk::airRele_startHume, (uint8_t)30);
+    db.init(kk::airRele_startHume, (uint8_t)30);      // Порог включения увлажнителя
     db.init(kk::airRele_HumeTreshold, (uint8_t)1);
 
   //  db.init(kk::soilTempName, "Имя датчика почвы ");
@@ -223,7 +223,7 @@ void setup() {
     WiFiConnector.setPass("12345678");  // пароль точки доступа
     WiFiConnector.setTimeout(10);       // сколько секунд пытаться приконнектиттся
     WiFiConnector.onConnect([]() {
-        Serial.print("Con with IP: ");
+        Serial.print("Получен IP: ");
         Serial.println(WiFi.localIP());
         indikator.setPeriod(3000, 1, 200, 150);  // раз в 000 сек, 0 раз взмигнем - по 00 милисек периоды, гореть будем 0 милисек
         gotWifi = true;
@@ -231,7 +231,7 @@ void setup() {
       
     });
     WiFiConnector.onError([]() {
-        Serial.print("Error! start AP ");
+        Serial.print("Нет подключения к WiFi! Старт точка доступа! ");
         Serial.println(WiFi.softAPIP());
         indikator.setPeriod(600, 2, 100, 50);  // раз в  секунду два раза взмигнем - по 200 милисек, гореть будем 50 милисек
         if (each5min.ready()) ESP.restart();   // через 5 минут ребутаемся

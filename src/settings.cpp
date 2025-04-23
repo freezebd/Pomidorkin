@@ -89,21 +89,23 @@ void update(sets::Updater &upd) {
     upd.update(kk::airRele_startTemp, (String)(data.Air1.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры воздуха
     upd.update(kk::floathumeair, (String)(data.Air1.hfloat + String(" %")));               // обновление веб интерфейса влажности воздуха
     upd.update(kk::airHumeRele_led, data.Air1.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности воздуха
-    upd.update(kk::airRele_startHume, (String)(data.Air1.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности воздуха
+   // upd.update(kk::airRele_startHume, (String)(data.Air1.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности воздуха
+    upd.update(kk::airRele_startHume, (data.Air1.hTrigx10 / 10));   // обновление веб интерфейса  включения реле влажности воздуха
+
 
     upd.update(kk::floattempsoil, (String)(data.Soil1.tfloat + String(" °C")));              // обновление веб интерфейса температуры почвы
     upd.update(kk::soilTempRele_led, data.Soil1.TempRele_on);                                // обновление веб интерфейса светодиода реле температуры почвы
     upd.update(kk::soilRele_startTemp, (String)(data.Soil1.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры почвы
     upd.update(kk::floathumsoil, (String)(data.Soil1.hfloat + String(" %")));                // обновление веб интерфейса влажности почвы
     upd.update(kk::soilHumeRele_led, data.Soil1.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности почвы
-    upd.update(kk::soilRele_startHume, (String)(data.Soil1.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности почвы
+    upd.update(kk::soilRele_startHume, (data.Soil1.hTrigx10 / 10));   // обновление веб интерфейса  включения реле влажности почвы
 
     upd.update(kk::floattempsoil2, (String)(data.Soil2.tfloat + String(" °C")));              // обновление веб интерфейса температуры почвы 2
     upd.update(kk::soil2TempRele_led, data.Soil2.TempRele_on);                                // обновление веб интерфейса светодиода реле температуры почвы 2
     upd.update(kk::soil2Rele_startTemp, (String)(data.Soil2.tTrigx10 / 10 + String(" °C")));  // обновление веб интерфейса  включения реле температуры почвы 2
     upd.update(kk::floathumsoil2, (String)(data.Soil2.hfloat + String(" %")));                // обновление веб интерфейса влажности почвы 2
     upd.update(kk::soil2HumeRele_led, data.Soil2.HumeRele_on);                                // обновление веб интерфейса светодиода реле влажности почвы 2
-    upd.update(kk::soil2Rele_startHume, (String)(data.Soil2.hTrigx10 / 10 + String(" %")));   // обновление веб интерфейса  включения реле влажности почвы 2
+    upd.update(kk::soil2Rele_startHume, (data.Soil2.hTrigx10 / 10));   // обновление веб интерфейса  включения реле влажности почвы 2
 
     upd.update(kk::old_address, String(data.old_address));  // обновление веб интерфейса старого адреса реле
     upd.update(kk::new_address, String(data.new_address));  // обновление веб интерфейса нового адреса реле
@@ -396,7 +398,7 @@ void build(sets::Builder &b) {
                 sets::Row g(b);
                 b.Label(kk::floathumeair, "Влажность", String(data.Air1.hfloat + String(" %")), sets::Colors::Blue);
             }
-            b.PlotStack(H(stack), "Температура;Влажность");
+            
         }
         {
             sets::Group g(b, db[kk::soilHumeName]);  // датчик почвы 1
@@ -446,8 +448,8 @@ void build(sets::Builder &b) {
                     sets::Row g(b);
                     b.LED(kk::airTempRele_led, "Cтатус >>", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Red);
                 }
-                b.Number(kk::airRele_dayTemp, "Дневная температура (°C)", nullptr, 0, 90);
-                b.Number(kk::airRele_nightTemp, "Ночная температура (°C)", nullptr, 0, 90);
+                b.Spinner(kk::airRele_dayTemp, "Дневная (t°C)", 10.0, 80.0, 1.0, nullptr );
+                b.Spinner(kk::airRele_nightTemp, "Ночная (t°C)", 10.0, 80.0, 1.0, nullptr);
                 b.Time(kk::airRele_dayStartTime, "Начало дня");
                 b.Time(kk::airRele_nightStartTime, "Начало ночи");
                 b.Select(kk::airRele_tempHysteresis, "Гистерезис", "0,5 °C;1 °C;2 °C;3 °C");
@@ -477,8 +479,9 @@ void build(sets::Builder &b) {
 
                     // b.Label(" ");
                 }
-                b.Number(kk::airRele_startHume, "Включается если ниже", nullptr, 10, 100);
-                b.Select(kk::airRele_HumeTreshold, "Порог отключения", "0,5 h%;1 h%;2 h%;3 h%");
+ //               b.Number(kk::airRele_startHume, "Включится, если ниже", nullptr, 10, 100);
+                b.Spinner(kk::airRele_startHume, "Включается если ниже (h%)", 10.0F, 90.0F, 5.0F);
+                b.Select(kk::airRele_HumeTreshold, "Гистерезис", "0,5 h%;1 h%;2 h%;3 h%");
             }
         }  //"Воздух"
 
@@ -502,8 +505,8 @@ void build(sets::Builder &b) {
                     b.LED(kk::soilHumeRele_led, "Cтатус >>", data.Soil1.HumeRele_on, sets::Colors::Gray, sets::Colors::Pink);
                     b.Label(" ");
                 }
-                b.Number(kk::soilRele_startHume, "Включается, если ниже", nullptr, 10, 100);
-                b.Select(kk::soilRele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
+                b.Spinner(kk::soilRele_startHume, "Включится, если ниже (h%)", 10.0, 90.0, 1.0, nullptr);
+                b.Select(kk::soilRele_HumeTreshold, "Гистерезис", "1 %;2 %;5 %;10 %");
             }
         }  //"Почва 1"
 
@@ -527,12 +530,13 @@ void build(sets::Builder &b) {
                     b.LED(kk::soil2HumeRele_led, "Cтатус >>", data.Soil2.HumeRele_on, sets::Colors::Gray, sets::Colors::Pink);
                     b.Label(" ");
                 }
-                b.Number(kk::soil2Rele_startHume, "Включается, если ниже", nullptr, 10, 100);
-                b.Select(kk::soil2Rele_HumeTreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
+          //      b.Number(kk::soil2Rele_startHume, "Включится, если ниже", nullptr, 10, 100);
+                b.Spinner(kk::soil2Rele_startHume, "Включится, если ниже(h%)", 10.0, 100.0, 1.0, nullptr);
+                b.Select(kk::soil2Rele_HumeTreshold, "Гистерезис,", "1 %;2 %;5 %;10 %");
             }
         }  //"Почва 2"
         { /* суточные таймеры */
-            sets::Group g(b, "Суточные таймеры");
+            sets::Group g(b, "Таймеры");
             if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) {  // Реле 1
                 data.t1discr_enbl = db[kk::t1Discr_enabled];
                 userSixTimers();
@@ -544,8 +548,8 @@ void build(sets::Builder &b) {
                     b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow);
                     b.Label(" ");
                 }  // LED row
-                b.Time(kk::t1Discr_startTime, "Включается в ..");
-                b.Time(kk::t1Discr_endTime, ".. и отключается в");
+                b.Time(kk::t1Discr_startTime, "Включитчя в ..");
+                b.Time(kk::t1Discr_endTime, "Отключится в ..");
                 b.Label(" ", " ");
             }
             if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet))  // Реле 6
@@ -555,30 +559,30 @@ void build(sets::Builder &b) {
                 b.reload();
             }
             if (data.t6discr_enbl) {
-                b.Select(kk::t6Discr_algorithm, "Алгоритм работы", "По времени;По температуре воздуха;По влажности воздуха;По влажности почвы 1;По влажности почвы 2");
+                b.Select(kk::t6Discr_algorithm, "Алгоритм ..", "По времени;(t) воздуха;(h) воздуха;(h) почвы 1;(h) почвы 2");
                 b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Gray, sets::Colors::Violet);
                 userSixTimers();
                 b.reload();
                 if (db[kk::t6Discr_algorithm].toInt() > 0) {
                     if (db[kk::t6Discr_algorithm].toInt() == 1) {
-                        b.Label("sensor_value"_h, "Настройки датчика");
+                        b.Label("sensor_value"_h, "Показание датчика");
                         b.Number(kk::t6Discr_temp_threshold, "Порог температуры (°C)", nullptr, 0, 90);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 2) {
-                        b.Label("sensor_value"_h, "Настройки датчика");
+                        b.Label("sensor_value"_h, "Показание датчика");
                         b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 3) {
-                        b.Label("sensor_value"_h, "Настройки датчика");
+                        b.Label("sensor_value"_h, "Показание датчика");
                         b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 4) {
-                        b.Label("sensor_value"_h, "Настройки датчика");
+                        b.Label("sensor_value"_h, "Показание датчика");
                         b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
                     }
                     b.Select(kk::t6Discr_hysteresis, "Гистерезис", "1 %/°C;2 %/°C;3 %/°C;4 %/°C;5 %/°C;10 %/°C;15 %/°C;20 %/°C");
                 }
                 if (db[kk::t6Discr_algorithm].toInt() == 0) {
-                    b.Time(kk::t6Discr_startTime, "Вкл в ..");
-                    b.Time(kk::t6Discr_endTime, ".. откл");
-                    b.Label("Дни недели", " ");
+                    b.Time(kk::t6Discr_startTime, "Включится в ..");
+                    b.Time(kk::t6Discr_endTime, "Отключится в ..");
+                    b.Label(" ", " ");
                     b.Switch(kk::t6Discr_inMonday, "Понедельник", nullptr, sets::Colors::Violet);
                     b.Switch(kk::t6Discr_inTuesday, "Вторник", nullptr, sets::Colors::Violet);
                     b.Switch(kk::t6Discr_inWensday, "Среда", nullptr, sets::Colors::Violet);
@@ -594,6 +598,8 @@ void build(sets::Builder &b) {
     // Закладка Графики
     else if (tab == 2) {
         // Сюда  перенести все гафики
+        b.PlotStack(H(stack), "Температура;Влажность");
+        b.PlotRunning();
 
     } // Графики
 

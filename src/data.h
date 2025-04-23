@@ -20,19 +20,19 @@ struct Air_sensor
 
 struct Soil_sensor
 {
-    float tfloat = 0.0;      // температура почва float
-    int16_t tx10 = 0;       //температура почва integer
+    float tfloat = 0.0;        // температура почва float
+    int16_t tx10 = 0;          //температура почва integer
     int16_t tTrigx10 = 0;      //температура почва сработки реле
     int16_t tTresholdx10 = 0;  //температура почва гистерезиса отключения реле
-    bool TempRele_on = false;    // флаг включения реле температуры почвы
-    byte StateTemp = 0;         // автомат работы реле температуры почвы
+    bool TempRele_on = false;  // флаг включения реле температуры почвы
+    byte StateTemp = 0;        // автомат работы реле температуры почвы
 
-    float hfloat = 0.0;      // влажность почва float
-    int16_t hx10 = 0;       //влажность почва integer
+    float hfloat = 0.0;        // влажность почва float
+    int16_t hx10 = 0;          //влажность почва integer
     int16_t hTrigx10 = 0;      //влажность почва сработки реле
     int16_t hTresholdx10 = 0;  //влажность почва гистерезиса отключения реле
-    bool HumeRele_on = false;    // флаг включения реле влажности почвы
-    byte StateHume = 0;         // автомат работы реле влажности почвы
+    bool HumeRele_on = false;  // флаг включения реле влажности почвы
+    byte StateHume = 0;        // автомат работы реле влажности почвы
 };
 
 struct Soil2_sensor
