@@ -50,7 +50,7 @@ void controlAirTemperature() {
             // Определяем целевую температуру
             data.Air1.tTrigx10 = getTargetTemperature();
             
-            if (data.Air1.tx10 <= data.Air1.tTrigx10 - data.Air1.tTresholdx10) {
+            if (data.Air1.tx10 <= data.Air1.tTrigx10 + data.Air1.tTresholdx10) {
                 data.Air1.StateAir = 10;
             }
             break;
@@ -62,7 +62,7 @@ void controlAirTemperature() {
         case 15:  // ожидаем повышение температуры - трешхолд
             // Проверяем, не стала ли целевая температура ниже текущей
             data.Air1.tTrigx10 = getTargetTemperature();
-            if (data.Air1.tx10 >= data.Air1.tTrigx10 || data.Air1.tx10 > data.Air1.tTrigx10 + data.Air1.tTresholdx10) {
+            if (data.Air1.tx10 >= data.Air1.tTrigx10 ) {
                 data.Air1.StateAir = 20;
             }
             break;

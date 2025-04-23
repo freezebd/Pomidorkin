@@ -566,16 +566,16 @@ void build(sets::Builder &b) {
                 if (db[kk::t6Discr_algorithm].toInt() > 0) {
                     if (db[kk::t6Discr_algorithm].toInt() == 1) {
                         b.Label("sensor_value"_h, "Показание датчика");
-                        b.Number(kk::t6Discr_temp_threshold, "Порог температуры (°C)", nullptr, 0, 90);
+                        b.Spinner(kk::t6Discr_temp_threshold, "Порог температуры (°C)", 0.0, 90.0, 1.0, nullptr);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 2) {
                         b.Label("sensor_value"_h, "Показание датчика");
-                        b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
+                        b.Spinner(kk::t6Discr_hum_threshold, "Порог влажности (%)", 0.0, 100.0, 1.0, nullptr);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 3) {
                         b.Label("sensor_value"_h, "Показание датчика");
-                        b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
+                        b.Spinner(kk::t6Discr_hum_threshold, "Порог влажности (%)", 0.0, 100.0, 1.0, nullptr);
                     } else if (db[kk::t6Discr_algorithm].toInt() == 4) {
                         b.Label("sensor_value"_h, "Показание датчика");
-                        b.Number(kk::t6Discr_hum_threshold, "Порог влажности (%)", nullptr, 0, 100);
+                        b.Spinner(kk::t6Discr_hum_threshold, "Порог влажности (%)", 0.0, 100.0, 1.0, nullptr);
                     }
                     b.Select(kk::t6Discr_hysteresis, "Гистерезис", "1 %/°C;2 %/°C;3 %/°C;4 %/°C;5 %/°C;10 %/°C;15 %/°C;20 %/°C");
                 }
