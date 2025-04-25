@@ -13,7 +13,6 @@
 #include <GyverDBFile.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
-//#include <GyverNTP.h>
 #include <WiFiConnector.h>
 
 
@@ -43,10 +42,10 @@ uint32_t prevMs = 0;       // Опрос время цикла loop
 void setup() {
     each5min.rst();
     Serial.begin(115200);
-    // Wire.begin(); // 
-    // rtc.begin();
+     Wire.begin(); 
+     rtc.begin();
     
-    //NTP.attachRTC(rtc);
+    NTP.attachRTC(rtc);
 
     // Serial.print("Часы >> ");
     // Serial.println(rtc.isOK());
@@ -270,7 +269,7 @@ void loop() {
     }  // WiFi.connected()
 
     indikator.tick();  // in loop
-    // sett.tick();       // поддержка веб интерфейса
+    sett.tick();       // поддержка веб интерфейса
 
     // if (rtc.tick()) {
     //     data.secondsNow = rtc.daySeconds();
@@ -315,5 +314,7 @@ void loop() {
                 break;      
         }
     }
-   
+    if (sett.rtc.newSecond()) {
+        Serial.println(sett.rtc.toString());
+    }
 }  // loop

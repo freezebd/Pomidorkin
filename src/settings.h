@@ -1,13 +1,15 @@
 #pragma once
 #include <Arduino.h>
 #include <GyverDBFile.h>
-// #include <GyverDS3231.h>
+#include <GyverDS3231.h>
 #include <GyverNTP.h>
 #include <SettingsGyver.h>
 #include <LittleFS.h>
 
 extern GyverDBFile db;
 extern SettingsGyver sett;
+extern Datime curDataTime;   // текущая дата и время
+extern GyverDS3231 rtc;      // часы реального времени
 
 DB_KEYS(
     kk,
@@ -96,8 +98,6 @@ DB_KEYS(
     relay_seach
 );
 
-extern Datime curDataTime;   // текущая дата и время
-// extern GyverDS3231 rtc;      // часы реального времени
 
 
 

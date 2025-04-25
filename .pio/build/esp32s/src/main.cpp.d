@@ -283,13 +283,16 @@
  .pio/libdeps/esp32s/Settings/src/./web/settings.h \
  .pio/libdeps/esp32s/WiFiConnector/src/WiFiConnector.h src/data.h \
  src/nastroyki.h src/settings.h \
+ .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231.h \
+ .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231Min.h \
+ .pio/libdeps/esp32s/Stamp/src/StampBuild.h \
+ .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
  .pio/libdeps/esp32s/GyverNTP/src/GyverNTP.h \
- .pio/libdeps/esp32s/GyverNTP/src/GyverNTPClient.h \
- .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h src/userTimers.h src/modbus.h \
- .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
+ .pio/libdeps/esp32s/GyverNTP/src/GyverNTPClient.h src/userTimers.h \
+ src/modbus.h .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
  .pio/libdeps/esp32s/iarduino_MB_HTL/src/iarduino_MB_HTL.h src/reley.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
  src/air_temp_control.h

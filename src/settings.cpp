@@ -1,9 +1,9 @@
 // путь где лежат бинарный файл проекта
 // C:\Users\Freez\OneDrive\Документы\PlatformIO\Projects\Pomidorkin\.pio\build\esp32dev
 #include "settings.h"
-//#include <GyverNTP.h>
+
 #include <LittleFS.h>
-// #include <GyverDS3231.h>
+#include <GyverDS3231.h>
 #include <SettingsGyver.h>  // Изменил на GyverWS
 #include <WiFiConnector.h>
 
@@ -18,7 +18,7 @@
 
 GyverDBFile db(&LittleFS, "/pomidorkin.db");  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
-// GyverDS3231 rtc;
+GyverDS3231 rtc;
 
 //Datime curDataTime(rtc); // текущее время
 Datime curDataTime(NTP);
@@ -532,7 +532,7 @@ void build(sets::Builder &b) {
                 }
           //      b.Number(kk::soil2Rele_startHume, "Включится, если ниже", nullptr, 10, 100);
                 b.Spinner(kk::soil2Rele_startHume, "Включится, если ниже(h%)", 10.0, 100.0, 1.0, nullptr);
-                b.Select(kk::soil2Rele_HumeTreshold, "Гистерезис,", "1 %;2 %;5 %;10 %");
+                b.Select(kk::soil2Rele_HumeTreshold, "Гистерезис", "1 %;2 %;5 %;10 %");
             }
         }  //"Почва 2"
         { /* суточные таймеры */

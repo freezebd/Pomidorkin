@@ -177,6 +177,18 @@
  .pio/libdeps/esp32s/FOR_MACRO/FOR_MACRO.h \
  .pio/libdeps/esp32s/GyverDB/src/utils/entry.h \
  .pio/libdeps/esp32s/GyverDB/src/utils/block.h \
+ .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231.h \
+ .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231Min.h \
+ .pio/libdeps/esp32s/Stamp/src/Datime.h \
+ .pio/libdeps/esp32s/Stamp/src/./core/StampUtils.h \
+ .pio/libdeps/esp32s/Stamp/src/./core/stamp_zone.h \
+ .pio/libdeps/esp32s/Stamp/src/DaySeconds.h \
+ .pio/libdeps/esp32s/Stamp/src/StampBuild.h \
+ .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ .pio/libdeps/esp32s/Stamp/src/StampKeeper.h \
+ .pio/libdeps/esp32s/Stamp/src/./core/StampConvert.h \
  .pio/libdeps/esp32s/GyverNTP/src/GyverNTP.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
@@ -239,13 +251,6 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  .pio/libdeps/esp32s/GyverNTP/src/GyverNTPClient.h \
- .pio/libdeps/esp32s/Stamp/src/StampKeeper.h \
- .pio/libdeps/esp32s/Stamp/src/./core/StampConvert.h \
- .pio/libdeps/esp32s/Stamp/src/./core/../Datime.h \
- .pio/libdeps/esp32s/Stamp/src/./core/.././core/StampUtils.h \
- .pio/libdeps/esp32s/Stamp/src/./core/.././core/stamp_zone.h \
- .pio/libdeps/esp32s/Stamp/src/./core/../DaySeconds.h \
- .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h \
  .pio/libdeps/esp32s/Settings/src/SettingsGyver.h \
  .pio/libdeps/esp32s/Settings/src/SettingsT.h \
  .pio/libdeps/esp32s/GyverHTTP/src/GyverHTTP.h \
@@ -285,6 +290,4 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
  .pio/libdeps/esp32s/Settings/src/./web/settings.h src/reley.h \
  .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
- .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h
+ .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h
