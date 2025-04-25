@@ -13,7 +13,9 @@
 #include <GyverDBFile.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
+//#include <SettingsGyverWS.h>
 #include <WiFiConnector.h>
+#include <TableFileStatic.h> // подключаем библиотеку для работы с таблицами
 
 
 
@@ -37,7 +39,8 @@ uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
 byte initially = 5;        // первых 10 секунд приписываем время в переменную
 byte checker = 0;          // автомат modbus
-uint32_t prevMs = 0;       // Опрос время цикла loop    
+uint32_t prevMs = 0;       // Опрос время цикла loop  
+
 
 void setup() {
     each5min.rst();
@@ -47,8 +50,6 @@ void setup() {
     
     NTP.attachRTC(rtc);
 
-    // Serial.print("Часы >> ");
-    // Serial.println(rtc.isOK());
      
     init_modbus(); // Настройка modbus
     init_reley();  // Реле I2C
@@ -61,6 +62,7 @@ void setup() {
     sett.begin();
     sett.onBuild(build);
     sett.onUpdate(update);
+    
     sett.config.theme = sets::Colors::Orange; // цвет веб моржы ( по умолчанию зеленый)
 
     // Оптимизация WiFi
@@ -314,7 +316,23 @@ void loop() {
                 break;      
         }
     }
-    if (sett.rtc.newSecond()) {
-        Serial.println(sett.rtc.toString());
-    }
+    if (sett.rtc.synced()) {
+        static uint32_t tmr;
+        if (millis() - tmr >= 2000) {
+            tmr = millis();
+            File f = LittleFS.open("/file_plot2.csv", "a");
+            if (f) {
+                f.print(sett.rtc.getUnix());
+                f.print(';');
+                f.print(data.Air1.tfloat);  // Температура воздуха и почвы 1 и 2);
+                f.print(';');
+                f.print(data.Air1.hfloat);
+                f.println();
+                // перевод строки можно делать или в начале, или в конце строки
+                // если он в начале или конце файла - будет проигнорирован вебмордой
+            }
+
+        }
+    }    
+    
 }  // loop

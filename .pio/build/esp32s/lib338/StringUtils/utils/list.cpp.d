@@ -136,8 +136,8 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  .pio/libdeps/esp32s/StringUtils/src/utils/Text.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/convert/b64.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/convert/convert.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/convert/unicode.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/convert/url.h \
+ .pio/libdeps/esp32s/StringUtils/src/utils/./convert/b64.h \
+ .pio/libdeps/esp32s/StringUtils/src/utils/./convert/convert.h \
+ .pio/libdeps/esp32s/StringUtils/src/utils/./convert/unicode.h \
+ .pio/libdeps/esp32s/StringUtils/src/utils/./convert/url.h \
  .pio/libdeps/esp32s/StringUtils/src/utils/hash.h

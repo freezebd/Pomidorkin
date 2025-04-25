@@ -4,10 +4,12 @@
 #include <GyverDS3231.h>
 #include <GyverNTP.h>
 #include <SettingsGyver.h>
+//#include <SettingsGyverWS.h>
 #include <LittleFS.h>
 
 extern GyverDBFile db;
 extern SettingsGyver sett;
+//extern SettingsGyverWS sett;
 extern Datime curDataTime;   // текущая дата и время
 extern GyverDS3231 rtc;      // часы реального времени
 

@@ -1,4 +1,6 @@
-.pio/build/esp32s/src/settings.cpp.o: src/settings.cpp src/settings.h \
+.pio/build/esp32s/lib31c/WiFiClientSecure/WiFiClientSecure.cpp.o: \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.cpp \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/freertos/FreeRTOS.h \
@@ -133,63 +135,8 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- .pio/libdeps/esp32s/GyverDB/src/GyverDBFile.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/FS/src/FS.h \
- .pio/libdeps/esp32s/GyverDB/src/GyverDB.h \
- .pio/libdeps/esp32s/StreamIO/src/StreamIO.h \
- .pio/libdeps/esp32s/StreamIO/src/Reader.h \
- .pio/libdeps/esp32s/StreamIO/src/Writer.h \
- .pio/libdeps/esp32s/StringUtils/src/StringUtils.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/PrintString.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/String.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/Text.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/./convert/b64.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/./convert/convert.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/./convert/unicode.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/./convert/url.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/hash.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/Value.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/TextList.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/TextParser.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/convert/qwerty.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/list.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/parser.h \
- .pio/libdeps/esp32s/StringUtils/src/utils/splitter.h \
- .pio/libdeps/esp32s/GTL/src/GTL.h \
- .pio/libdeps/esp32s/GTL/src/./array/array.h \
- .pio/libdeps/esp32s/GTL/src/./array/../utils.h \
- .pio/libdeps/esp32s/GTL/src/./fifo/fifo_ext.h \
- .pio/libdeps/esp32s/GTL/src/./fifo/fifo_static.h \
- .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_ext.h \
- .pio/libdeps/esp32s/GTL/src/./lbuf/lbuf_static.h \
- .pio/libdeps/esp32s/GTL/src/./list/linked_list.h \
- .pio/libdeps/esp32s/GTL/src/./list/list_node.h \
- .pio/libdeps/esp32s/GTL/src/./ptr/ptr_shared.h \
- .pio/libdeps/esp32s/GTL/src/./ptr/ptr_uniq.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack_ext.h \
- .pio/libdeps/esp32s/GTL/src/./stack/stack_static.h \
- .pio/libdeps/esp32s/GyverDB/src/utils/access.h \
- .pio/libdeps/esp32s/GyverDB/src/utils/anytype.h \
- .pio/libdeps/esp32s/GyverDB/src/utils/types.h \
- .pio/libdeps/esp32s/FOR_MACRO/FOR_MACRO.h \
- .pio/libdeps/esp32s/GyverDB/src/utils/entry.h \
- .pio/libdeps/esp32s/GyverDB/src/utils/block.h \
- .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231.h \
- .pio/libdeps/esp32s/GyverDS3231/src/GyverDS3231Min.h \
- .pio/libdeps/esp32s/Stamp/src/Datime.h \
- .pio/libdeps/esp32s/Stamp/src/./core/StampUtils.h \
- .pio/libdeps/esp32s/Stamp/src/./core/stamp_zone.h \
- .pio/libdeps/esp32s/Stamp/src/DaySeconds.h \
- .pio/libdeps/esp32s/Stamp/src/StampBuild.h \
- .pio/libdeps/esp32s/Stamp/src/VirtualRTC.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- .pio/libdeps/esp32s/Stamp/src/StampKeeper.h \
- .pio/libdeps/esp32s/Stamp/src/./core/StampConvert.h \
- .pio/libdeps/esp32s/GyverNTP/src/GyverNTP.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_wifi_types.h \
@@ -248,17 +195,6 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
- .pio/libdeps/esp32s/GyverNTP/src/GyverNTPClient.h \
- .pio/libdeps/esp32s/Settings/src/SettingsGyver.h \
- .pio/libdeps/esp32s/Settings/src/SettingsT.h \
- .pio/libdeps/esp32s/GyverHTTP/src/GyverHTTP.h \
- .pio/libdeps/esp32s/GyverHTTP/src/./utils/Client.h \
- .pio/libdeps/esp32s/GyverHTTP/src/./utils/HeadersParser.h \
- .pio/libdeps/esp32s/GyverHTTP/src/utils/cfg.h \
- .pio/libdeps/esp32s/GyverHTTP/src/StreamReader.h \
- .pio/libdeps/esp32s/GyverHTTP/src/./utils/EspClient.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/ssl_client.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/mbedtls/esp_config.h \
@@ -297,40 +233,17 @@
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/port/include/aes/esp_aes.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/aes_types.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/error.h \
- .pio/libdeps/esp32s/GyverHTTP/src/./utils/Server.h \
- .pio/libdeps/esp32s/GyverHTTP/src/./utils/ServerBase.h \
- .pio/libdeps/esp32s/GyverHTTP/src/StreamWriter.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/LittleFS/src/LittleFS.h \
- .pio/libdeps/esp32s/Settings/src/./core/DnsWrapper.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
- .pio/libdeps/esp32s/Settings/src/./core/SettingsBase.h \
- .pio/libdeps/esp32s/Settings/src/./core/HybridFS.h \
- .pio/libdeps/esp32s/Settings/src/./core/builder.h \
- .pio/libdeps/esp32s/Table/src/Table.h \
- .pio/libdeps/esp32s/Table/src/./core/row.h \
- .pio/libdeps/esp32s/Table/src/./core/cell.h \
- .pio/libdeps/esp32s/Table/src/./core/table_t.h \
- .pio/libdeps/esp32s/Settings/src/./core/AnyPtr.h \
- .pio/libdeps/esp32s/Settings/src/./core/packet.h \
- .pio/libdeps/esp32s/BSON/BSON.h \
- .pio/libdeps/esp32s/Settings/src/./core/codes.h \
- .pio/libdeps/esp32s/Settings/src/./core/logger.h \
- .pio/libdeps/esp32s/Settings/src/./core/pos.h \
- .pio/libdeps/esp32s/Settings/src/./core/build.h \
- .pio/libdeps/esp32s/Settings/src/./core/colors.h \
- .pio/libdeps/esp32s/Settings/src/./core/containers_class.h \
- .pio/libdeps/esp32s/Settings/src/./core/tmode.h \
- .pio/libdeps/esp32s/Settings/src/./core/containers.h \
- .pio/libdeps/esp32s/Settings/src/./core/updater.h \
- .pio/libdeps/esp32s/Settings/src/./core/ota.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
- C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
- .pio/libdeps/esp32s/Settings/src/./web/settings.h \
- .pio/libdeps/esp32s/WiFiConnector/src/WiFiConnector.h src/modbus.h \
- .pio/libdeps/esp32s/iarduino_Modbus/src/iarduino_Modbus.h \
- .pio/libdeps/esp32s/iarduino_MB_HTL/src/iarduino_MB_HTL.h \
- src/nastroyki.h src/reley.h \
- .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay.h \
- .pio/libdeps/esp32s/iarduino_I2C_Relay/src/iarduino_I2C_Relay_I2C.h \
- src/data.h src/userTimers.h
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/esp_crt_bundle.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/sockets.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include/sys/poll.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/netif.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/pbuf.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/stats.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/mem.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/memp.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/priv/memp_std.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/priv/memp_priv.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/priv/mem_priv.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/inet.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/errno.h \
+ C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/netdb.h

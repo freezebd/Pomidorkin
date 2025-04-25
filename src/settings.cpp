@@ -4,7 +4,8 @@
 
 #include <LittleFS.h>
 #include <GyverDS3231.h>
-#include <SettingsGyver.h>  // Изменил на GyverWS
+#include <SettingsGyver.h>  
+//#include <SettingsGyverWS.h>
 #include <WiFiConnector.h>
 
 #define AIR_TEMP_RELE_ENABLED 0 // 0 - выключено, 1 - включено  
@@ -16,12 +17,13 @@
 #include "reley.h"  // Добавляем для доступа к change_relay_address()
 #include "userTimers.h"
 
-GyverDBFile db(&LittleFS, "/pomidorkin.db");  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+GyverDBFile db(&LittleFS, "/pomidorkin.db");    // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
+//SettingsGyverWS sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
 GyverDS3231 rtc;
 
 //Datime curDataTime(rtc); // текущее время
-Datime curDataTime(NTP);
+Datime curDataTime(NTP);  // текущее время
 
 bool flagreley = true;  // флаг для перезагрузки вебморды при смене адреса реле
 static bool notice_f;   // флаг на отправку уведомления о подключении к wifi
@@ -114,9 +116,13 @@ void update(sets::Updater &upd) {
     upd.update("lbl2"_h, millis());
 
     // Обновление графики
-    float v[] = {data.Air1.tfloat, data.Air1.hfloat};
-    // upd.updatePlot(H(run), v);
-    upd.updatePlot(H(stack), v);
+    float v[] = {data.Air1.tfloat, data.Air1.hfloat};    // Температура и влажность
+    float r[] = {data.Soil1.hfloat, data.Soil2.hfloat};  // Влажность почвы 1 и 2
+//  float a[] = {data.Air1.tfloat, data.Air1.hfloat};
+    upd.updatePlot(H(run1), v);                         // Обновляем график
+    upd.updatePlot(H(run), r);                           // Обновляем график
+ //   upd.updatePlot(H(plot2),a);                         // Обновляем график
+    
 
     if (notice_f)  // уведомление при вводе wifi данных
     {
@@ -598,8 +604,9 @@ void build(sets::Builder &b) {
     // Закладка Графики
     else if (tab == 2) {
         // Сюда  перенести все гафики
-        b.PlotStack(H(stack), "Температура;Влажность");
-        b.PlotRunning();
+        b.PlotRunning(H(run1), "(t°C)Воздуха);(h%)Воздуха");
+        b.PlotRunning(H(run), "(h%)Почвы1;(h%)Почвы2");
+        b.Plot(H(plot2), "/file_plot2.csv","(t°C)Воздуха);(h%)Воздуха");  
 
     } // Графики
 
