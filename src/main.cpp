@@ -16,9 +16,6 @@
 //#include <SettingsGyverWS.h>
 #include <WiFiConnector.h>
 #include <TableFileStatic.h> // подключаем библиотеку для работы с таблицами
-
-
-
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
 #include "settings.h"
@@ -37,7 +34,7 @@ bool gotWifi = false;                      // если подключено бы
 int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
-byte initially = 5;        // первых 10 секунд приписываем время в переменную
+// byte initially = 5;        // первых 10 секунд приписываем время в переменную
 byte checker = 0;          // автомат modbus
 uint32_t prevMs = 0;       // Опрос время цикла loop  
 
@@ -45,9 +42,8 @@ uint32_t prevMs = 0;       // Опрос время цикла loop
 void setup() {
     each5min.rst();
     Serial.begin(115200);
-     Wire.begin(); 
-     rtc.begin();
-    
+    Wire.begin(); 
+    rtc.begin();
     NTP.attachRTC(rtc);
 
      
@@ -62,11 +58,9 @@ void setup() {
     sett.begin();
     sett.onBuild(build);
     sett.onUpdate(update);
-    
+    sett.setVersion("1.2");
     sett.config.theme = sets::Colors::Orange; // цвет веб моржы ( по умолчанию зеленый)
-
-    // Оптимизация WiFi
-    WiFi.setAutoReconnect(true);
+    WiFi.setAutoReconnect(true);                         // Оптимизация WiFi
     WiFi.persistent(true);
 
     // ======== DATABASE ========
@@ -285,10 +279,6 @@ void loop() {
         curDataTime = NTP.getUnix();
     }
 
-    // if (each5Sec.ready())  // раз в 5 сек
-    // {
-    // }  // each5Sec
-
     if (eachSec.ready()) {  // раз в 1 сек
 
         data.secondsNow++;                  // инкермент реалтайм
@@ -316,23 +306,23 @@ void loop() {
                 break;      
         }
     }
-    if (sett.rtc.synced()) {
-        static uint32_t tmr;
-        if (millis() - tmr >= 2000) {
-            tmr = millis();
-            File f = LittleFS.open("/file_plot2.csv", "a");
-            if (f) {
-                f.print(sett.rtc.getUnix());
-                f.print(';');
-                f.print(data.Air1.tfloat);  // Температура воздуха и почвы 1 и 2);
-                f.print(';');
-                f.print(data.Air1.hfloat);
-                f.println();
-                // перевод строки можно делать или в начале, или в конце строки
-                // если он в начале или конце файла - будет проигнорирован вебмордой
-            }
+    // if (sett.rtc.synced()) {
+    //     static uint32_t tmr;
+    //     if (millis() - tmr >= 2000) {
+    //         tmr = millis();
+    //         File f = LittleFS.open("/file_plot2.csv", "a");
+    //         if (f) {
+    //             f.print(sett.rtc.getUnix());
+    //             f.print(';');
+    //             f.print(data.Air1.tfloat);  // Температура воздуха и почвы 1 и 2);
+    //             f.print(';');
+    //             f.print(data.Air1.hfloat);
+    //             f.println();
+    //             // перевод строки можно делать или в начале, или в конце строки
+    //             // если он в начале или конце файла - будет проигнорирован вебмордой
+    //         }
 
-        }
-    }    
+    //     }
+    // }    
     
 }  // loop

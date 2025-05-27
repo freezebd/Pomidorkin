@@ -8,9 +8,9 @@
 //#include <SettingsGyverWS.h>
 #include <WiFiConnector.h>
 
-#define AIR_TEMP_RELE_ENABLED 0 // 0 - выключено, 1 - включено  
-#define AIR_TEMP_RELE_START_TEMP 30 // температура включения реле
-#define AIR_TEMP_RELE_TEMP_THRESHOLD 1 // порог отключения реле
+// #define AIR_TEMP_RELE_ENABLED 0 // 0 - выключено, 1 - включено  
+// #define AIR_TEMP_RELE_START_TEMP 30 // температура включения реле
+// #define AIR_TEMP_RELE_TEMP_THRESHOLD 1 // порог отключения реле
 
 #include "modbus.h"
 #include "nastroyki.h"
@@ -18,7 +18,7 @@
 #include "userTimers.h"
 
 GyverDBFile db(&LittleFS, "/pomidorkin.db");    // база данных для хранения настроек будет автоматически записываться в файл при изменениях
-SettingsGyver sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
+SettingsGyver sett("Помидоркин🌟", &db);       // указывается заголовок меню, подключается база данных
 //SettingsGyverWS sett("Помидоркин@", &db);       // указывается заголовок меню, подключается база данных
 GyverDS3231 rtc;
 
@@ -353,7 +353,7 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             b.Label(kk::dayofweek, "");  // текущий днень недели
-            b.Label(kk::datime,"");      // текущее время и дата
+            b.Label(kk::datime, "");      // текущее время и дата
             // if (b.Date(kk::datime, ""))  // Установка даты
             // {
             //     rtc.setTime((db[datime].toInt32()) + rtc.daySeconds());
@@ -377,6 +377,15 @@ void build(sets::Builder &b) {
         }
         {
             sets::Row g(b);
+            b.Label("","🌞");
+            b.Label("","🔥");
+            b.Label("","💧");
+            b.Label("","☔");
+            b.Label("","☔");
+            b.Label("","⭐");
+        }
+        {
+            sets::Row g(b);
             b.LED("t1Discr_led1"_h, "", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow);
             b.LED("airTempRele_led"_h, "", data.Air1.TempRele_on, sets::Colors::Gray, sets::Colors::Red);
             b.LED("airHumeRele_led"_h, "", data.Air1.HumeRele_on, sets::Colors::Gray, sets::Colors::Blue);
@@ -386,7 +395,7 @@ void build(sets::Builder &b) {
         }
     }
     static uint8_t tab;                             // статическая
-    if (b.Tabs("Дом;Реле;График;Настройки", &tab)) {  // Вкладки
+    if (b.Tabs("🏠;🔌;📈;🔧", &tab)) {  // Вкладки
         // при нажатии перезагружаемся и выходим
         b.reload();
         return;
@@ -606,7 +615,7 @@ void build(sets::Builder &b) {
         // Сюда  перенести все гафики
         b.PlotRunning(H(run1), "(t°C)Воздуха);(h%)Воздуха");
         b.PlotRunning(H(run), "(h%)Почвы1;(h%)Почвы2");
-        b.Plot(H(plot2), "/file_plot2.csv","(t°C)Воздуха);(h%)Воздуха");  
+      //  b.Plot(H(plot2), "/file_plot2.csv","(t°C)Воздуха);(h%)Воздуха");  
 
     } // Графики
 
@@ -616,7 +625,7 @@ void build(sets::Builder &b) {
         // Сюда добовляем настройки
 
         { /* Настройки , внизу страницы*/
-            sets::Group g(b, " ");
+            sets::Group g(b, "");
             {
                 //  sets::Menu g(b, "Опции");
 

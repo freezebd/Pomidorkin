@@ -297,29 +297,30 @@
  .pio/libdeps/esp32s/Stamp/src/./core/.././core/StampUtils.h \
  .pio/libdeps/esp32s/Stamp/src/./core/.././core/stamp_zone.h \
  .pio/libdeps/esp32s/Stamp/src/./core/../DaySeconds.h \
- .pio/libdeps/esp32s/Settings/src/./core/HybridFS.h \
- .pio/libdeps/esp32s/Settings/src/./core/builder.h \
+ .pio/libdeps/esp32s/Settings/src/./core/../web/settings.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./HybridFS.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./builder.h \
  .pio/libdeps/esp32s/Table/src/Table.h \
  .pio/libdeps/esp32s/Table/src/./core/row.h \
  .pio/libdeps/esp32s/Table/src/./core/cell.h \
  .pio/libdeps/esp32s/Table/src/./core/table_t.h \
- .pio/libdeps/esp32s/Settings/src/./core/AnyPtr.h \
- .pio/libdeps/esp32s/Settings/src/./core/packet.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./AnyPtr.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./packet.h \
  .pio/libdeps/esp32s/BSON/BSON.h \
- .pio/libdeps/esp32s/Settings/src/./core/codes.h \
- .pio/libdeps/esp32s/Settings/src/./core/logger.h \
- .pio/libdeps/esp32s/Settings/src/./core/pos.h \
- .pio/libdeps/esp32s/Settings/src/./core/build.h \
- .pio/libdeps/esp32s/Settings/src/./core/colors.h \
- .pio/libdeps/esp32s/Settings/src/./core/containers_class.h \
- .pio/libdeps/esp32s/Settings/src/./core/tmode.h \
- .pio/libdeps/esp32s/Settings/src/./core/containers.h \
- .pio/libdeps/esp32s/Settings/src/./core/updater.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./codes.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./logger.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./pos.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./build.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./colors.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./containers_class.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./tmode.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./containers.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./macro.h \
+ .pio/libdeps/esp32s/Settings/src/./core/./updater.h \
  .pio/libdeps/esp32s/Settings/src/./core/ota.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/Freez/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
- .pio/libdeps/esp32s/Settings/src/./web/settings.h \
  .pio/libdeps/esp32s/WiFiConnector/src/WiFiConnector.h \
  .pio/libdeps/esp32s/Table/src/TableFileStatic.h src/data.h \
  src/nastroyki.h src/settings.h \
